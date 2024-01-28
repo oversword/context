@@ -1,0 +1,31 @@
+{
+  "name": "@oversword/context",
+  "version": "1.0.0",
+  "description": "React context menu system",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oversword/context.git"
+  },
+  "keywords": [
+    "react",
+    "context",
+    "menu"
+  ],
+  "author": "oversword",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oversword/context/issues"
+  },
+  "homepage": "https://github.com/oversword/context#readme",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
