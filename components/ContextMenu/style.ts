@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-jss'
 import classes from './classes';
 /**
  * ContextMenu React Element Styles
