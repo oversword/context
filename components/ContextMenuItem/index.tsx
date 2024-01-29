@@ -1,9 +1,9 @@
 import classes from './classes';
 import Context from '../Context';
 import { ContextConfig } from '../../types/index.types';
-import StyledDiv from './style';
 import { ContextMenuItemProps } from './index.types';
 import displayKeys from '../../utils/display-keys';
+import useStyles from './style';
 
 const context: ContextConfig = {
   type: 'context-menu-item',
@@ -24,6 +24,7 @@ function ContextMenuItem({
   disabled = false,
   ...passedProps
 }: ContextMenuItemProps): React.ReactElement {
+  const styles = useStyles()
   return (
     <Context
       context={context}
@@ -31,26 +32,17 @@ function ContextMenuItem({
         ContextMenuItem_action: action,
         ContextMenuItem_data: data,
       }}
-      className={disabled ? classes.ContextMenuItemDisabled : classes.ContextMenuItem}
-      element={StyledDiv}
+      className={classes.ContextMenuItem + ' ' + (disabled ? styles[classes.ContextMenuItemDisabled] : styles[classes.ContextMenuItem])}
       {...passedProps}
     >
-      <div className={classes.ContextMenuItemLabel}>{label || passedProps.title || '(Item)'}</div>
+      <div className={styles[classes.ContextMenuItemLabel]}>{label || passedProps.title || '(Item)'}</div>
       {keys && keys.length ? (
-        <div className={classes.ContextMenuItemKeys}>{displayKeys(keys)}</div>
+        <div className={styles[classes.ContextMenuItemKeys]}>{displayKeys(keys)}</div>
       ) : null}
     </Context>
   );
 }
 
 ContextMenuItem.title = 'ContextMenu';
-ContextMenuItem.defaultProps = {
-  keys: [],
-  action: 'error',
-  data: null,
-  label: null,
-  title: null,
-  disabled: false,
-};
 
 export default ContextMenuItem;
