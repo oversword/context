@@ -1,3 +1,5 @@
+import React from 'react';
+
 import classes from './classes';
 import Context from '../Context';
 import { ContextConfig } from '../../types/index.types';
