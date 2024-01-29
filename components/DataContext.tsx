@@ -57,13 +57,4 @@ const DataContext = React.forwardRef(function Context(
   return <ReactContext.Provider value={id}>{...internalChildren}</ReactContext.Provider>;
 });
 
-DataContext.defaultProps = {
-  DataContext: null,
-  context: null,
-  data: null,
-  intercept: null,
-  outercept: null,
-  root: false,
-};
-
 export default DataContext;

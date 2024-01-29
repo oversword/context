@@ -161,22 +161,4 @@ const Context = React.forwardRef(function Context(
   );
 });
 
-Context.defaultProps = {
-  Context: null,
-  context: null,
-  focus: true,
-  onFocus: null,
-  element: 'div',
-  data: null,
-  intercept: null,
-  outercept: null,
-  tabIndex: 0,
-  onClickAction: null,
-  onDoubleClickAction: null,
-  onMouseDownAction: null,
-  onMouseUpAction: null,
-  onMouseMoveAction: null,
-  root: false,
-};
-
 export default Context;

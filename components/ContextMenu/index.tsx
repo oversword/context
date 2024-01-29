@@ -10,11 +10,12 @@ import ContextMenuItem from '../ContextMenuItem';
 import DataContext from '../DataContext';
 import classes from './classes';
 import itemClasses from '../ContextMenuItem/classes';
-import StyledDiv from './style';
 import { ContextMenuProps } from './index.types';
 import { getKey, getLabel } from './utils';
 import SystemContext from '../../constants/system-context';
 import { ContextMenuResult } from '../../types/system.types';
+
+import useStyles from './style';
 
 const OPEN_BRANCH = Symbol('open-branch');
 const MENU_ERROR = Symbol('menu-error');
@@ -94,10 +95,11 @@ function ContextMenu({
       });
     }
   };
+  const styles = useStyles()
 
   return (
     <Context
-      className={classes.ContextMenu}
+      className={styles[classes.ContextMenu]}
       {...passedProps}
       ref={contextRef}
       context={context}
@@ -105,7 +107,6 @@ function ContextMenu({
         'context-menu-item.select': handleItemSelect,
         ...intercept,
       }}
-      element={StyledDiv}
       autoFocus
       root
     >
@@ -113,9 +114,9 @@ function ContextMenu({
         switch (menuItem.mode) {
           case ContextMenuItemMode.section: {
             return (
-              <div className={classes.ContextMenuSection} key={getKey(menuItem)}>
+              <div className={styles[classes.ContextMenuSection]} key={getKey(menuItem)}>
                 {getLabel(menuItem) ? (
-                  <div className={classes.ContextMenuSectionLabel}>{getLabel(menuItem)}</div>
+                  <div className={styles[classes.ContextMenuSectionLabel]}>{getLabel(menuItem)}</div>
                 ) : null}
                 {(menuItem.children || []).map(childItem => (
                   <DataContext
@@ -176,10 +177,5 @@ function ContextMenu({
 }
 
 ContextMenu.title = 'ContextMenu';
-ContextMenu.defaultProps = {
-  menu: [{ label: 'No Actions', mode: ContextMenuItemMode.section, action: '' }],
-  level: 0,
-  intercept: {},
-};
 
 export default ContextMenu;
