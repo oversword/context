@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
-import { ContextSystemApi } from '../types/system.types';
+import { ContextSystemApi } from '../types/system.types'
 
-const SystemContext = React.createContext<ContextSystemApi | null>(null);
+const SystemContext = React.createContext<ContextSystemApi | null>(null)
 
-export default SystemContext;
+export default SystemContext

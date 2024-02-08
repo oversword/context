@@ -1,4 +1,4 @@
-import { ContextActionName, ContextMenuItemFilled } from '../../types/index.types';
+import { ContextActionName, ContextMenuItemFilled } from '../../types/index.types'
 
 /**
  * Converts a dash (-), or underscore (_) separated, lowercase string
@@ -10,10 +10,10 @@ import { ContextActionName, ContextMenuItemFilled } from '../../types/index.type
  * @returns The human version of the name
  */
 const humaniseAction = (action: ContextActionName): string =>
-  action
-    .split(/[_-]+/g)
-    .map(s => s[0].toUpperCase() + s.slice(1))
-    .join(' ');
+	action
+		.split(/[_-]+/g)
+		.map(s => s[0].toUpperCase() + s.slice(1))
+		.join(' ')
 
 /**
  * Extracts the most unique idetifier available for a the ContextMenuItem `menuItem`
@@ -22,12 +22,12 @@ const humaniseAction = (action: ContextActionName): string =>
  * @returns A pseud-unique key
  */
 export const getKey = (menuItem: ContextMenuItemFilled): string =>
-  menuItem.key ||
+	menuItem.key ||
   menuItem.id ||
   menuItem.label ||
   menuItem.title ||
   menuItem.action ||
-  String(menuItem);
+  String(menuItem)
 
 /**
  * Extracts the most human readable identifier avilable for a the ContextMenuItem `menuItem`
@@ -36,4 +36,4 @@ export const getKey = (menuItem: ContextMenuItemFilled): string =>
  * @returns A human-readable label
  */
 export const getLabel = (menuItem: ContextMenuItemFilled): string =>
-  menuItem.label || menuItem.title || (menuItem.action && humaniseAction(menuItem.action)) || '';
+	menuItem.label || menuItem.title || (menuItem.action && humaniseAction(menuItem.action)) || ''

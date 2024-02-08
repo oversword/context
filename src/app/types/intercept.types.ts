@@ -1,5 +1,5 @@
-import { ContextActionName, ContextId, ContextInterceptConfig } from './index.types';
-import { SelectorParserStack } from '../utils/selector/index.types';
+import { ContextActionName, ContextId, ContextInterceptConfig } from './index.types'
+import { SelectorParserStack } from '../utils/selector/index.types'
 
 export interface InterceptDefinition {
   path: SelectorParserStack;

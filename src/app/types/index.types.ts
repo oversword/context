@@ -1,4 +1,4 @@
-import PartialOmit from './partial-omit';
+import PartialOmit from './partial-omit'
 import {ReactElement} from 'react'
 /**
  * Atomic
@@ -36,9 +36,9 @@ export interface ContextAction {
   data: ContextData;
 }
 
-export type ContextEvent = ContextKeyEvent | {} | undefined | Event;
+export type ContextEvent = ContextKeyEvent | object | undefined | Event;
 
-export type ContextIntercept = (action: ContextAction) => void | Symbol | Promise<unknown>;
+export type ContextIntercept = (action: ContextAction) => void | symbol | Promise<unknown>;
 
 export enum ContextMenuItemMode {
   section = 'section',
@@ -188,12 +188,12 @@ export interface ContextApi {
     action: ContextActionName,
     event?: ContextEvent,
     data?: ContextData | ContextDataGenerator,
-  ) => Symbol | Promise<unknown>;
+  ) => symbol | Promise<unknown>;
   triggerAction?: (
     action: ContextActionName,
     event?: ContextEvent,
     data?: ContextData | ContextDataGenerator,
-  ) => Symbol | Promise<unknown>;
+  ) => symbol | Promise<unknown>;
 }
 
 export interface KeyInfo {

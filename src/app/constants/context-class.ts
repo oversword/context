@@ -1,3 +1,3 @@
-const CONTEXT_CLASS = 'Context-Focus';
+const CONTEXT_CLASS = 'Context-Focus'
 
-export default CONTEXT_CLASS;
+export default CONTEXT_CLASS

@@ -1,5 +1,5 @@
-import { Root } from 'react-dom/client';
-import { ContextMenuRenderer } from './system.types';
+import { Root } from 'react-dom/client'
+import { ContextMenuRenderer } from './system.types'
 
 export interface Environment {
   menus: EnvironmentMenus;

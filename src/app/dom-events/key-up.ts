@@ -1,10 +1,10 @@
-import getSymbol from '../event/transformers/event-symbols';
-import { HandleConfig } from '../types/dom-events.types';
+import getSymbol from '../event/transformers/event-symbols'
+import { HandleConfig } from '../types/dom-events.types'
 
 const keyUp: HandleConfig<KeyboardEvent> = {
-  before: (event: KeyboardEvent) => ({
-    [getSymbol(event)]: false,
-  }),
-};
+	before: (event: KeyboardEvent) => ({
+		[getSymbol(event)]: false,
+	}),
+}
 
-export default keyUp;
+export default keyUp

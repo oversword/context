@@ -1,2 +1,2 @@
-const filterTruthy = (item: unknown): boolean => Boolean(item);
-export default filterTruthy;
+const filterTruthy = (item: unknown): boolean => Boolean(item)
+export default filterTruthy

@@ -5,5 +5,5 @@
  *
  * @returns A list of individual keys
  */
-const splitCombination = (keys: string): Array<string> => keys.split('+').map(k => k || '+');
-export default splitCombination;
+const splitCombination = (keys: string): Array<string> => keys.split('+').map(k => k || '+')
+export default splitCombination
