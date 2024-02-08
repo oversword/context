@@ -1,4 +1,4 @@
-import charMap from '../../../constants/char-map';
+import charMap from '../../../app/constants/char-map';
 
 /**
  * Get character from KeyboardEvent information

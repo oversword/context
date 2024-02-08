@@ -1,4 +1,4 @@
-import iconMap from '../../../constants/icon-map';
+import iconMap from '../../../app/constants/icon-map';
 import splitCombination from '../split-combination';
 
 /**

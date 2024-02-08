@@ -1,4 +1,4 @@
-import symbolMap from '../../../constants/symbol-map';
+import symbolMap from '../../../app/constants/symbol-map';
 
 /**
  * Get symbol from KeyboardEvent information
