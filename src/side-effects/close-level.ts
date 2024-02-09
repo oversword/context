@@ -1,4 +1,4 @@
-import partition from '../../array/iterators/partition'
+import partition from '../generic/array/iterators/partition'
 import { EnvironmentApi } from '../types/environment.types'
 import closeAll from './close-all'
 

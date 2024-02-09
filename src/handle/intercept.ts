@@ -8,8 +8,8 @@ import {
 	ContextSelector,
 	StoreMetaList,
 } from '../types/index.types'
-import selectorMatch from '../utils/selector'
-import filterTruthy from '../../array/iterators/filter-truthy'
+import selectorMatch from '../selector'
+import filterTruthy from '../generic/array/iterators/filter-truthy'
 import contextsExtractPath from '../transformers/contexts-extract-path'
 import { ActionDefinition, InterceptDefinition } from '../types/intercept.types'
 import evaluateCondition from '../conditions/evaluate-condition'

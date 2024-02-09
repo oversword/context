@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { ContextActionNameConfig, ContextApi, ContextId, ContextProps } from '../types/index.types'
-import wrapElements from '../utils/wrap-elements'
+import wrapElements from './wrap-elements'
 import ReactContext from '../constants/react-context'
 import SystemContext from '../constants/system-context'
 import CONTEXT_CLASS from '../constants/context-class'

@@ -3,7 +3,7 @@ import React from 'react'
 import ReactContext from '../constants/react-context'
 import SystemContext from '../constants/system-context'
 import { ContextApi, ContextId, DataContextProps } from '../types/index.types'
-import wrapElements from '../utils/wrap-elements'
+import wrapElements from './wrap-elements'
 
 const DataContext = React.forwardRef(function Context(
 	{

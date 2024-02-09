@@ -1,4 +1,4 @@
-import { ContextTypeList, ContextSelector } from '../../types/index.types'
+import { ContextTypeList, ContextSelector } from '../types/index.types'
 import {
 	SelectorParserContext,
 	SelectorParserMode,

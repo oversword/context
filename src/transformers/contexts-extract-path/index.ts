@@ -1,5 +1,5 @@
 import { ContextTypeList, StoreMetaList } from '../../types/index.types'
-import filterTruthy from '../../../array/iterators/filter-truthy'
+import filterTruthy from '../../generic/array/iterators/filter-truthy'
 
 /**
  * 

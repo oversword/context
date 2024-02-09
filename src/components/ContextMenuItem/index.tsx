@@ -4,7 +4,7 @@ import classes from './classes'
 import Context from '../Context'
 import { ContextConfig } from '../../types/index.types'
 import { ContextMenuItemProps } from './index.types'
-import displayKeys from '../../../string/transformers/display-keys'
+import displayKeys from '../../generic/string/transformers/display-keys'
 import useStyles from './style'
 import iconMap from '../../constants/icon-map'
 

@@ -1,6 +1,6 @@
 import { ContextAction, ContextMenuItemList, StoreMetaList } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
-import selectorMatch from '../../utils/selector'
+import selectorMatch from '../../selector'
 
 /**
  * 

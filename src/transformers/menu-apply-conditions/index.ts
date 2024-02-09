@@ -4,7 +4,7 @@ import {
 	ContextMenuItemListFilled,
 	ContextActsGroup,
 } from '../../types/index.types'
-import filterTruthy from '../../../array/iterators/filter-truthy'
+import filterTruthy from '../../generic/array/iterators/filter-truthy'
 import PartialOmit from '../../types/partial-omit'
 import evaluateCondition from '../../conditions/evaluate-condition'
 import evaluateDisabled from '../../conditions/evaluate-disabled'
