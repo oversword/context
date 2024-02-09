@@ -32,17 +32,17 @@ const contextsDecideKeysAction = (
 	if (hasKeyBinds) {
 		const { event } = action
 		if (event && 'combination' in event) {
-      const transposedKeys = (
+			const transposedKeys = (
         [] as Array<{ combination: ContextKeyList; action: ContextActionName }>
-      ).concat(
-        ...Object.entries(filteredKeys).map(
-          ([action, keys]): Array<{ combination: ContextKeyList; action: ContextActionName }> =>
-            keys.map((key: string): { combination: ContextKeyList; action: ContextActionName } => ({
-              combination: splitCombination(key),
-              action,
-            })),
-        ),
-      )
+			).concat(
+				...Object.entries(filteredKeys).map(
+					([action, keys]): Array<{ combination: ContextKeyList; action: ContextActionName }> =>
+						keys.map((key: string): { combination: ContextKeyList; action: ContextActionName } => ({
+							combination: splitCombination(key),
+							action,
+						})),
+				),
+			)
 			const matchedCombination = transposedKeys.find(({ combination }) =>
 				shallowMatch(combination, event.combination),
 			)
