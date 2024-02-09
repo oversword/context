@@ -6,6 +6,7 @@ import { ContextConfig } from '../../types/index.types'
 import { ContextMenuItemProps } from './index.types'
 import displayKeys from '../../../string/transformers/display-keys'
 import useStyles from './style'
+import iconMap from '../../constants/icon-map'
 
 const context: ContextConfig = {
 	type: 'context-menu-item',
@@ -39,7 +40,7 @@ function ContextMenuItem({
 		>
 			<div className={styles[classes.ContextMenuItemLabel]}>{label || passedProps.title || '(Item)'}</div>
 			{keys && keys.length ? (
-				<div className={styles[classes.ContextMenuItemKeys]}>{displayKeys(keys)}</div>
+				<div className={styles[classes.ContextMenuItemKeys]}>{displayKeys(keys, iconMap)}</div>
 			) : null}
 		</Context>
 	)

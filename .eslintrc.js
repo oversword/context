@@ -18,8 +18,14 @@ module.exports = {
 			],
 			'parserOptions': {
 				'sourceType': 'script'
-			}
-		}
+			},
+		},
+    {
+      "files": ["src/**/*.test.ts"],
+      "env": {
+        "jest": true
+      }
+    }
 	],
 	'settings': {
 		'react': {

@@ -7,7 +7,7 @@ const closeLevel = (environment: EnvironmentApi, level: number): void => {
 		throw new Error('Could not close menus because the environment does not exist.')
 
 	// Decide which menus to remove and keep based on the level we're closing to
-	const [keep, remove] = partition(environment.menus, menu => menu.level > level, [[], []])
+	const [keep, remove] = partition(environment.menus, menu => menu.level > level)
 
 	// If there are none to remove, do nothing
 	if (remove.length === 0) return

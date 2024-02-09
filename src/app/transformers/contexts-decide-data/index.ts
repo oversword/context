@@ -15,6 +15,12 @@ const dataMerge =
 			return current
 		}
 
+/**
+ * 
+ * @param contexts 
+ * @param action 
+ * @returns 
+ */
 const contextsDecideData = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'data' | 'action'>,
@@ -24,7 +30,7 @@ const contextsDecideData = (
 		.reverse()
 		.reduce(
 			(current: ContextData, { config }): ContextData =>
-				[config.data, config.moreData].reduce(merger, current),
+				([config.data, config.moreData]).reduce<ContextData>(merger, current),
 			{},
 		)
 }

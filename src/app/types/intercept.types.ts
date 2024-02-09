@@ -2,7 +2,7 @@ import { ContextActionName, ContextId, ContextInterceptConfig } from './index.ty
 import { SelectorParserStack } from '../utils/selector/index.types'
 
 export interface InterceptDefinition {
-  path: SelectorParserStack;
+  priority: number;
   callback: ContextInterceptConfig;
 }
 

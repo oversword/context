@@ -88,22 +88,16 @@ const pathExtractReduce = (
 		}
 	}
 }
-export const pathExtract = (
+const pathExtract = (
 	string: ContextSelector,
-): {
-  stack: SelectorParserStack;
-  path: ContextSelector;
-} => {
-	const endContext = [...string, PATHEXTRACT_LIST_END].reduce(pathExtractReduce, {
+): SelectorParserStack => {
+	const endContext = [...string.split(''), PATHEXTRACT_LIST_END].reduce(pathExtractReduce, {
 		mode: SelectorParserMode.operator,
 		operator: SelectorParserOperator.inside,
 		selector: '',
 		stack: [],
 	})
-	return {
-		stack: endContext.stack,
-		path: string,
-	}
+	return endContext.stack
 }
 const pathMapString = (step: string): string => `/${step}`
 const PATH_GENERIC_SELECTOR = '(/[^/]+)'
@@ -112,10 +106,27 @@ const patternMapRegex = (step: SelectorParserStackItem): string => {
 	if (step.operator === SelectorParserOperator.direct) return selector
 	return `${PATH_GENERIC_SELECTOR}*${selector}`
 }
-export const pathMatch = (
+const pathMatch = (
 	path: ContextTypeList,
-): ((pattern: ReturnType<typeof pathExtract>) => boolean) => {
-	const pathStr = path.map(pathMapString).join('')
-	return (pattern: ReturnType<typeof pathExtract>): boolean =>
-		Boolean(pathStr.match(new RegExp(`^${pattern.stack.map(patternMapRegex).join('')}$`)))
+	pattern: ReturnType<typeof pathExtract>
+): boolean =>
+	Boolean(path.map(pathMapString).join('').match(new RegExp(`^${pattern.map(patternMapRegex).join('')}$`)))
+
+/**
+ * Parses a selector string and checks if it matches the path
+ * 
+ * @param path [ 'myTag', 'directChild', 'container', 'indirectChild', 'somethingElse' ]
+ * 
+ * @param [string]
+ * @param string in the format 'myTag > directChild indirectChild > *'
+ * 
+ * @returns false if no match
+ * @returns number priority of match (bigger is better)
+ */
+const selectorMatch = (path: ContextTypeList) => ([string]: [string] | [string, unknown]): false | number => {
+	const extractedPath = pathExtract(string)
+	if (pathMatch(path, extractedPath))
+		return extractedPath.length
+	return false
 }
+export default selectorMatch

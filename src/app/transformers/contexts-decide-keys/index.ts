@@ -1,6 +1,12 @@
 import { ContextAction, ContextKeyListGroup, StoreMetaList } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
 
+/**
+ * 
+ * @param contexts 
+ * @param _action 
+ * @returns 
+ */
 const contextsDecideKeys = (
 	contexts: StoreMetaList,
 	_action: PartialOmit<ContextAction, 'action'>,

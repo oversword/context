@@ -12,7 +12,7 @@ import contextsExtractPath from '../contexts/transformers/extract-path'
 import contextsDecideData from '../contexts/transformers/decide-data'
 import { handleNamedAction } from './action'
 import PartialOmit from '../types/partial-omit'
-import { inactiveLog as log } from '../utils/debug-log'
+import { inactiveLog as log } from '../side-effects/debug-log'
 import { ContextSystemApi } from '../types/system.types'
 
 const getActionName = (

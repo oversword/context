@@ -8,7 +8,13 @@ import filterTruthy from '../../../array/iterators/filter-truthy'
 import PartialOmit from '../../types/partial-omit'
 import evaluateCondition from '../../conditions/evaluate-condition'
 import evaluateDisabled from '../../conditions/evaluate-disabled'
-
+/**
+ * 
+ * @param menu 
+ * @param acts 
+ * @param action 
+ * @returns 
+ */
 const menuApplyConditions = (
 	menu: ContextMenuItemListFilled,
 	acts: ContextActsGroup,

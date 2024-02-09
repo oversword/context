@@ -6,7 +6,7 @@ import ReactContext from '../constants/react-context'
 import SystemContext from '../constants/system-context'
 import CONTEXT_CLASS from '../constants/context-class'
 import { ContextMenuResult } from '../types/system.types'
-import { inactiveLog as log } from '../utils/debug-log'
+import { inactiveLog as log } from '../side-effects/debug-log'
 
 /**
  * Context wrapper component

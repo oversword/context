@@ -1,7 +1,13 @@
 import { ContextAction, ContextActsGroup, ContextKeyListGroup } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
 import evaluateCondition from '../../conditions/evaluate-condition'
-
+/**
+ * 
+ * @param keys 
+ * @param acts 
+ * @param action 
+ * @returns 
+ */
 const keysApplyConditions = (
 	keys: ContextKeyListGroup,
 	acts: ContextActsGroup,

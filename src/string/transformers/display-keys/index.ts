@@ -7,7 +7,7 @@ import splitCombination from '../split-combination'
  * @param keys
  * @returns
  */
-const displayKeys = (keys: Array<string>): string =>
+const displayKeys = (keys: Array<string>, iconMap: Record<string, string> = {}): string =>
 	keys
 		.map(splitCombination)
 		.map(ks => ks.map(k => iconMap[k] || k).join('•'))

@@ -1,15 +1,17 @@
-import getChar from '../../event/transformers/event-char'
-import getSymbol from '../../event/transformers/event-symbols'
+import eventChar from '../../event/transformers/event-char'
+import eventSymbol from '../../event/transformers/event-symbol'
+import charMap from '../constants/char-map'
+import symbolMap from '../constants/symbol-map'
 import { HandleConfig } from '../types/dom-events.types'
 
 const keyDown: HandleConfig<KeyboardEvent> = {
 	before: (event: KeyboardEvent) => ({
-		[getSymbol(event)]: true,
+		[eventSymbol(event, symbolMap)]: true,
 	}),
 	keyInfo: (event: KeyboardEvent) => ({
 		pos: event.code,
-		char: getChar(event),
-		symbol: getSymbol(event),
+		char: eventChar(event, charMap),
+		symbol: eventSymbol(event, symbolMap),
 	}),
 }
 

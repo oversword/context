@@ -5,7 +5,13 @@ import {
 	ContextKeyListGroup,
 } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
-
+/**
+ * 
+ * @param menu 
+ * @param keys 
+ * @param action 
+ * @returns 
+ */
 const menuApplyKeys = (
 	menu: ContextMenuItemListFilled,
 	keys: ContextKeyListGroup,

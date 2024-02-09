@@ -26,7 +26,7 @@ import { contextTriggerAction } from '../handle/action'
 import contextHandleGlobalEvent from '../handle/global'
 import contextHandleLocalEvent from '../handle/local'
 import provideEnvironment from './render-environment'
-import { inactiveLog as log } from '../utils/debug-log'
+import { inactiveLog as log } from '../side-effects/debug-log'
 import keyDown from '../dom-events/key-down'
 import keyUp from '../dom-events/key-up'
 import click from '../dom-events/click'
@@ -42,6 +42,15 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	let _contextId: number = 0
 	const contextMetas: StoreMetaGroup = {}
 
+	/**
+	 * Gets a list of contexts from the leaf node to the root
+	 * 
+	 * @param id The ID of the leaf context
+	 * 
+	 * @returns [leaf, ...to, root] A list containing the context with the given ID
+	 *          and all its ancestor contexts, from [leaf, ...to, root]
+	 * @returns [] An empty list if the context ID is invalid
+	 */
 	const getContexts = (id: ContextId | null): StoreMetaList => {
 		if (!id) return []
 
@@ -53,9 +62,18 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 
 		return [context, ...getContexts(parent)]
 	}
+	/**
+	 * Remove a context from the context system store
+	 * 
+	 * @param contextId The ID of the context to be removed
+	 */
 	const removeContext = (contextId: ContextId): void => {
 		contextMetas[contextId] = undefined // { id, parent }
 	}
+	/**
+	 * Add a context to the context system store
+	 * @param param0 
+	 */
 	const addContext = ({
 		id,
 		intercept,
@@ -88,6 +106,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		}
 	}
 
+	// TODO: test and jsdoc
 	const decideMenuConfig = (id: ContextId, event: ContextEvent): ContextMenuItemListFilled => {
 		const contexts = getContexts(id)
 
@@ -106,6 +125,15 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		})
 	}
 
+	/**
+	 * Is the context with the given ID the tiggering context (the closest context related to given event)
+	 * 
+	 * @param id 
+	 * @param event 
+	 * 
+	 * @returns true if the context is related to the event
+	 * @returns false if the context is not related to the event
+	 */
 	const isFocus = (id: ContextId, event: Event): boolean => {
 		const focus = (event.target as HTMLElement).closest<HTMLElement>(`.${CONTEXT_CLASS}`)
 		return id === focus?.dataset.contextid

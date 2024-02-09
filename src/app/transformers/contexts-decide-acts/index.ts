@@ -1,6 +1,6 @@
 import { ContextAction, ContextActsGroup, StoreMetaList } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
-import { pathExtract, pathMatch } from '../../utils/selector'
+import selectorMatch from '../../utils/selector'
 
 const contextsDecideActs = (
 	contexts: StoreMetaList,
@@ -10,19 +10,18 @@ const contextsDecideActs = (
 		const { acts } = config
 		if (!acts) return current
 
-		const matchingActs = Object.keys(acts).map(pathExtract).filter(pathMatch(action.path))
+		const matchingActs = Object.entries(acts).filter(selectorMatch(action.path))
 		return matchingActs.reduce(
-			(current: ContextActsGroup, type: ReturnType<typeof pathExtract>): ContextActsGroup => {
-				const actsGen = acts[type.path]
+			(current: ContextActsGroup, [, actsGen]): ContextActsGroup => {
 				if (typeof actsGen === 'function') return actsGen(action, current)
-				Object.entries(actsGen).forEach(([action, options]) => {
-					if (action in current) {
-						current[action] = {
-							...current[action],
+				Object.entries(actsGen).forEach(([actionName, options]) => {
+					if (actionName in current) {
+						current[actionName] = {
+							...current[actionName],
 							...options,
 						}
 					} else {
-						current[action] = options
+						current[actionName] = options
 					}
 				})
 				return current

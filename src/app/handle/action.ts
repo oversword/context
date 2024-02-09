@@ -18,7 +18,7 @@ import contextsDecideActs from '../transformers/contexts-decide-acts'
 import PartialOmit from '../types/partial-omit'
 import getIntercept from './intercept'
 import { ActionDefinition } from '../types/intercept.types'
-import { inactiveLog as log } from '../utils/debug-log'
+import { inactiveLog as log } from '../side-effects/debug-log'
 import { ContextSystemApi } from '../types/system.types'
 import { HANDLED, UNHANDLED } from '../constants/handled'
 

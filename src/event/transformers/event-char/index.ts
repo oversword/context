@@ -1,5 +1,3 @@
-import charMap from '../../../app/constants/char-map'
-
 /**
  * Get character from KeyboardEvent information
  *
@@ -9,5 +7,5 @@ import charMap from '../../../app/constants/char-map'
  * @returns     The character that would be printed in a text input when this key is pressed
  * @returns     An empty string if no character would be printed
  */
-const getChar = ({ key }: KeyboardEvent): string => (key.length === 1 ? key : charMap[key]) || ''
-export default getChar
+const eventChar = ({ key }: KeyboardEvent, charMap: Record<string, string> = {}): string => (key.length === 1 ? key : charMap[key]) || ''
+export default eventChar

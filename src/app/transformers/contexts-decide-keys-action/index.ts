@@ -10,8 +10,14 @@ import contextsDecideActs from '../contexts-decide-acts'
 import contextsDecideKeys from '../contexts-decide-keys'
 import splitCombination from '../../../string/transformers/split-combination'
 import PartialOmit from '../../types/partial-omit'
-import { inactiveLog as log } from '../../utils/debug-log'
+import { inactiveLog as log } from '../../side-effects/debug-log'
 
+/**
+ * 
+ * @param contexts 
+ * @param action 
+ * @returns 
+ */
 const contextsDecideKeysAction = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
@@ -24,19 +30,19 @@ const contextsDecideKeysAction = (
 
 	log({ acts, keys, action, filteredKeys, hasKeyBinds })
 	if (hasKeyBinds) {
-		const transposedKeys = (
-      [] as Array<{ combination: ContextKeyList; action: ContextActionName }>
-		).concat(
-			...Object.entries(filteredKeys).map(
-				([action, keys]): Array<{ combination: ContextKeyList; action: ContextActionName }> =>
-					keys.map((key: string): { combination: ContextKeyList; action: ContextActionName } => ({
-						combination: splitCombination(key),
-						action,
-					})),
-			),
-		)
 		const { event } = action
 		if (event && 'combination' in event) {
+      const transposedKeys = (
+        [] as Array<{ combination: ContextKeyList; action: ContextActionName }>
+      ).concat(
+        ...Object.entries(filteredKeys).map(
+          ([action, keys]): Array<{ combination: ContextKeyList; action: ContextActionName }> =>
+            keys.map((key: string): { combination: ContextKeyList; action: ContextActionName } => ({
+              combination: splitCombination(key),
+              action,
+            })),
+        ),
+      )
 			const matchedCombination = transposedKeys.find(({ combination }) =>
 				shallowMatch(combination, event.combination),
 			)

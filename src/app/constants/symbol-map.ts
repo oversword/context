@@ -22,7 +22,7 @@ const symbolMap = {
 	Period: '.',
 	Quote: '\'',
 	Slash: '/',
-	NumpadPlus: '+',
+	NumpadPlus: 'Plus',
 	NumpadMinus: '-',
 	NumpadDivide: '/',
 	NumpadMultiply: '*',

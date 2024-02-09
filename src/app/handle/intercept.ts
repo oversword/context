@@ -8,7 +8,7 @@ import {
 	ContextSelector,
 	StoreMetaList,
 } from '../types/index.types'
-import { pathExtract, pathMatch } from '../utils/selector'
+import selectorMatch from '../utils/selector'
 import filterTruthy from '../../array/iterators/filter-truthy'
 import contextsExtractPath from '../transformers/contexts-extract-path'
 import { ActionDefinition, InterceptDefinition } from '../types/intercept.types'
@@ -35,16 +35,16 @@ const getInterceptDefinitions = (
 	action: ContextActionName,
 	path: ContextTypeList,
 ): (([key, callback]: [ContextSelector, ContextInterceptConfig]) => InterceptDefinition | void) => {
-	const matchPath = pathMatch(path)
+	const matchPath = selectorMatch(path)
 	return ([key, callback]: [
-	ContextSelector,
-	ContextInterceptConfig,
-]): InterceptDefinition | void => {
+		ContextSelector,
+		ContextInterceptConfig,
+	]): InterceptDefinition | void => {
 		const [type, act] = key.split('.')
 		if (act !== action) return undefined
-		const typeObj = pathExtract(type)
-		if (!matchPath(typeObj)) return undefined
-		return { path: typeObj.stack, callback }
+		const priority = matchPath([type,null])
+		if (!priority) return undefined
+		return { priority, callback }
 	}
 }
 const getIntercept =
@@ -68,7 +68,7 @@ const getIntercept =
 					const actionKeys = Object.entries(intercept || {})
 						.map(getInterceptDefinitions(action, path))
 						.filter(filterTruthy) as Array<InterceptDefinition>
-					actionKeys.sort((a, b) => b.path.length - a.path.length)
+					actionKeys.sort((a, b) => b.priority - a.priority)
 
 					const justFound = actionKeys.reduce(
 						findIntercept({ action, path, type, data, event }),

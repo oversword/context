@@ -1,7 +1,13 @@
 import { ContextAction, ContextMenuItemList, StoreMetaList } from '../../types/index.types'
 import PartialOmit from '../../types/partial-omit'
-import { pathExtract, pathMatch } from '../../utils/selector'
+import selectorMatch from '../../utils/selector'
 
+/**
+ * 
+ * @param contexts 
+ * @param action 
+ * @returns 
+ */
 const contextsDecideMenu = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
@@ -9,10 +15,9 @@ const contextsDecideMenu = (
 	contexts.reduce((current: ContextMenuItemList, { config }): ContextMenuItemList => {
 		const { menu } = config
 		if (!menu) return current
-		const matchingMenus = Object.keys(menu).map(pathExtract).filter(pathMatch(action.path))
+		const matchingMenus = Object.entries(menu).filter(selectorMatch(action.path))
 		return matchingMenus.reduce(
-			(current: ContextMenuItemList, type: ReturnType<typeof pathExtract>): ContextMenuItemList => {
-				const menuGen = menu[type.path]
+			(current: ContextMenuItemList, [,menuGen]): ContextMenuItemList => {
 				if (typeof menuGen === 'function') return menuGen(action, current)
 				if (Array.isArray(menuGen)) return [...menuGen, ...current]
 				console.error(`Unknown menu type: ${typeof menuGen}`)

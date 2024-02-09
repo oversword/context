@@ -20,7 +20,7 @@ export interface ContextAct {
 }
 
 export interface ContextActionNameObject {
-  condition: ContextCondition<PartialOmit<ContextAction, 'action'>>;
+  condition: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
   action: ContextActionName | ContextActionNameGenerator;
 }
 
