@@ -4,8 +4,9 @@
   "description": "React context menu system",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest",
+    "test": "npx jest",
     "lint": "npx eslint --fix src",
+    "check": "npx tsc-files --noEmit src/**/*.ts",
     "lint-check": "npx eslint src"
   },
   "repository": {
