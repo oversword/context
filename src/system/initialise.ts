@@ -1,4 +1,4 @@
-import bindEvent from '../side-effects/bind-event'
+import bindEvent from 'side-effects/bind-event'
 import {
 	ContextId,
 	StoreMetaGroup,
@@ -12,31 +12,40 @@ import {
 	ContextActionName,
 	ContextActionNameConfig,
 	ContextKeyList,
-} from '../types/index.types'
-import contextsExtractType from '../transformers/contexts-extract-type'
-import contextsExtractPath from '../transformers/contexts-extract-path'
-import contextsDecideData from '..//transformers/contexts-decide-data'
-import contextsDecideActs from '..//transformers/contexts-decide-acts'
-import contextsMenu from '../transformers/contexts-decide-menu'
-import contextsDecideKeys from '../transformers/contexts-decide-keys'
-import menuApplyKeys from '../transformers/menu-apply-keys'
-import menuApplyConditions from '../transformers/menu-apply-conditions'
-import CONTEXT_CLASS from '../constants/context-class'
-import { contextTriggerAction } from '../handle/action'
-import contextHandleGlobalEvent from '../handle/global'
-import contextHandleLocalEvent from '../handle/local'
-import provideEnvironment from './render-environment'
-import { inactiveLog as log } from '../side-effects/debug-log'
-import keyDown from '../dom-events/key-down'
-import keyUp from '../dom-events/key-up'
-import click from '../dom-events/click'
-import doubleClick from '../dom-events/double-click'
-import mouseDown from '../dom-events/mouse-down'
-import mouseUp from '../dom-events/mouse-up'
-import { EventHandler, EVENT_NAMES } from '../types/dom-events.types'
-import { ContextSystemApi } from '../types/system.types'
-import { UNHANDLED } from '../constants/handled'
+} from 'types/index.types'
+import contextsExtractType from 'transformers/contexts-extract-type'
+import contextsExtractPath from 'transformers/contexts-extract-path'
+import contextsDecideData from 'transformers/contexts-decide-data'
+import contextsDecideActs from 'transformers/contexts-decide-acts'
+import contextsMenu from 'transformers/contexts-decide-menu'
+import contextsDecideKeys from 'transformers/contexts-decide-keys'
+import menuApplyKeys from 'transformers/menu-apply-keys'
+import menuApplyConditions from 'transformers/menu-apply-conditions'
+import CONTEXT_CLASS from 'constants/context-class'
+import { contextTriggerAction } from 'handle/action'
+import contextHandleGlobalEvent from 'handle/global'
+import contextHandleLocalEvent from 'handle/local'
+import provideEnvironment from 'system/render-environment'
+import { inactiveLog as log } from 'side-effects/debug-log'
+import keyDown from 'dom-events/key-down'
+import keyUp from 'dom-events/key-up'
+import click from 'dom-events/click'
+import doubleClick from 'dom-events/double-click'
+import mouseDown from 'dom-events/mouse-down'
+import mouseUp from 'dom-events/mouse-up'
+import { EventHandler, EVENT_NAMES } from 'types/dom-events.types'
+import { ContextSystemApi } from 'types/system.types'
+import { UNHANDLED } from 'constants/handled'
 
+/**
+ * BUSSINESS LOGIC
+ * This IS the App
+ * 
+ * All globals and side-effects should be configured through here
+ * 
+ * @param rootElement the root element to be interacted with
+ * @returns An API for creating context menus, triggering actions, and handling events
+ */
 const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => {
 	let focussedContext: ContextId | null = null
 	let _contextId: number = 0
@@ -70,6 +79,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	const removeContext = (contextId: ContextId): void => {
 		contextMetas[contextId] = undefined // { id, parent }
 	}
+
 	/**
 	 * Add a context to the context system store
 	 * @param param0 

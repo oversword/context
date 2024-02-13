@@ -3,8 +3,8 @@ import {
 	ContextData,
 	ContextDataGenerator,
 	StoreMetaList,
-} from '../../types/index.types'
-import PartialOmit from '../../types/partial-omit'
+} from 'types/index.types'
+import PartialOmit from 'types/partial-omit'
 
 const dataMerge =
 	(action: PartialOmit<ContextAction, 'data' | 'action'>) =>

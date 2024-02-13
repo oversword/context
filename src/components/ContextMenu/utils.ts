@@ -1,4 +1,4 @@
-import { ContextActionName, ContextMenuItemFilled } from '../../types/index.types'
+import { ContextActionName, ContextMenuItemFilled } from 'types/index.types'
 
 /**
  * Converts a dash (-), or underscore (_) separated, lowercase string

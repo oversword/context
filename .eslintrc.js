@@ -31,6 +31,11 @@ module.exports = {
 		'react': {
 			'version': 'detect',
 		},
+		"import/resolver": {
+			"node": {
+				"paths": ["node_modules", "src"]
+			}
+		}
 	},
 	'parser': '@typescript-eslint/parser',
 	'parserOptions': {

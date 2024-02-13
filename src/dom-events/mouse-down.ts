@@ -1,5 +1,5 @@
-import getButtons from '../generic/event/transformers/event-buttons'
-import { HandleConfig } from '../types/dom-events.types'
+import getButtons from 'generic/event/transformers/event-buttons'
+import { HandleConfig } from 'types/dom-events.types'
 
 const mouseDown: HandleConfig<MouseEvent> = {
 	before: (event: MouseEvent) =>

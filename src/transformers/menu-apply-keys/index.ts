@@ -3,14 +3,18 @@ import {
 	ContextMenuItemFilled,
 	ContextMenuItemListFilled,
 	ContextKeyListGroup,
-} from '../../types/index.types'
-import PartialOmit from '../../types/partial-omit'
+} from 'types/index.types'
+import PartialOmit from 'types/partial-omit'
+
 /**
+ * Attaches related key bindings to menu items recursively
  * 
- * @param menu 
- * @param keys 
- * @param action 
- * @returns 
+ * @param menu The menu to be filled with keys
+ * @param keys The keys to fill in the menu with, indexed by ContextActionName
+ * 
+ * @param action contextual info for generative execution (TODO: unused??)
+ * 
+ * @returns filled menu items
  */
 const menuApplyKeys = (
 	menu: ContextMenuItemListFilled,

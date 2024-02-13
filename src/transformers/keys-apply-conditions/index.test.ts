@@ -1,6 +1,6 @@
 import keysApplyConditions from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction } from '../../types/index.types'
+import { ContextAction } from 'types/index.types'
 
 describe('keysApplyConditions', () => {
 	test('filters for keys that have a correlated action', () => {

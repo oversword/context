@@ -1,20 +1,20 @@
 import React from 'react'
 
-import Context from '../Context'
+import Context from 'components/Context'
 import {
 	ContextApi,
 	ContextConfig,
 	ContextMenuItemMode,
 	ContextIntercept,
-} from '../../types/index.types'
-import ContextMenuItem from '../ContextMenuItem'
-import DataContext from '../DataContext'
+} from 'types/index.types'
+import ContextMenuItem from 'components/ContextMenuItem'
+import DataContext from 'components/DataContext'
 import classes from './classes'
-import itemClasses from '../ContextMenuItem/classes'
+import itemClasses from 'components/ContextMenuItem/classes'
 import { ContextMenuProps } from './index.types'
 import { getKey, getLabel } from './utils'
-import SystemContext from '../../constants/system-context'
-import { ContextMenuResult } from '../../types/system.types'
+import SystemContext from 'constants/system-context'
+import { ContextMenuResult } from 'types/system.types'
 
 import useStyles from './style'
 

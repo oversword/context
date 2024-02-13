@@ -7,13 +7,13 @@ import {
 	ContextTypeList,
 	ContextSelector,
 	StoreMetaList,
-} from '../types/index.types'
-import selectorMatch from '../selector'
-import filterTruthy from '../generic/array/iterators/filter-truthy'
-import contextsExtractPath from '../transformers/contexts-extract-path'
-import { ActionDefinition, InterceptDefinition } from '../types/intercept.types'
-import evaluateCondition from '../conditions/evaluate-condition'
-import evaluateAction from '../conditions/evaluate-action'
+} from 'types/index.types'
+import selectorMatch from 'selector'
+import filterTruthy from 'generic/array/iterators/filter-truthy'
+import contextsExtractPath from 'transformers/contexts-extract-path'
+import { ActionDefinition, InterceptDefinition } from 'types/intercept.types'
+import evaluateCondition from 'conditions/evaluate-condition'
+import evaluateAction from 'conditions/evaluate-action'
 
 const findIntercept =
 	(action: ContextAction) =>

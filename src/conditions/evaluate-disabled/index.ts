@@ -1,4 +1,4 @@
-import { ContextAction, ContextCondition } from '../../types/index.types'
+import { ContextAction, ContextCondition } from 'types/index.types'
 
 const evaluateDisabled = <TAction extends Partial<ContextAction> = ContextAction>(
 	conditonal: { disabled?: ContextCondition<TAction> | boolean } | undefined | false | null,

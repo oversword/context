@@ -3,7 +3,7 @@ import {
 	ContextData,
 	ContextKeyList,
 	ContextDataGenerator,
-} from '../../types/index.types'
+} from 'types/index.types'
 
 export interface ContextMenuItemProps {
   keys?: ContextKeyList;

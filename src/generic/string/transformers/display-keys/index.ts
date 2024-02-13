@@ -1,4 +1,4 @@
-import splitCombination from '../split-combination'
+import splitCombination from 'generic/string/transformers/split-combination'
 
 /**
  * Render keys from the format: [ 'Key+Other+9', 'Some+Key++' ]

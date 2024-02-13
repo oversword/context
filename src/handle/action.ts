@@ -1,5 +1,5 @@
-import evaluateCondition from '../conditions/evaluate-condition'
-import evaluateDisabled from '../conditions/evaluate-disabled'
+import evaluateCondition from 'conditions/evaluate-condition'
+import evaluateDisabled from 'conditions/evaluate-disabled'
 import {
 	StoreMeta,
 	ContextAction,
@@ -10,17 +10,17 @@ import {
 	ContextIntercept,
 	ContextId,
 	StoreMetaList,
-} from '../types/index.types'
-import contextsExtractType from '../transformers/contexts-extract-type'
-import contextsExtractPath from '../transformers/contexts-extract-path'
-import contextsDecideData from '../transformers/contexts-decide-data'
-import contextsDecideActs from '../transformers/contexts-decide-acts'
-import PartialOmit from '../types/partial-omit'
+} from 'types/index.types'
+import contextsExtractType from 'transformers/contexts-extract-type'
+import contextsExtractPath from 'transformers/contexts-extract-path'
+import contextsDecideData from 'transformers/contexts-decide-data'
+import contextsDecideActs from 'transformers/contexts-decide-acts'
+import PartialOmit from 'types/partial-omit'
 import getIntercept from './intercept'
-import { ActionDefinition } from '../types/intercept.types'
-import { inactiveLog as log } from '../side-effects/debug-log'
-import { ContextSystemApi } from '../types/system.types'
-import { HANDLED, UNHANDLED } from '../constants/handled'
+import { ActionDefinition } from 'types/intercept.types'
+import { inactiveLog as log } from 'side-effects/debug-log'
+import { ContextSystemApi } from 'types/system.types'
+import { HANDLED, UNHANDLED } from 'constants/handled'
 
 // TODO: Why was this required?
 // let curryHandle = Promise.resolve();

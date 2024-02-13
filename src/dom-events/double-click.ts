@@ -1,4 +1,4 @@
-import { HandleConfig } from '../types/dom-events.types'
+import { HandleConfig } from 'types/dom-events.types'
 
 const doubleClick: HandleConfig<MouseEvent> = {
 	before: () => ({

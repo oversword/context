@@ -3,14 +3,14 @@ import {
 	ContextActionName,
 	StoreMetaList,
 	ContextKeyList,
-} from '../../types/index.types'
-import shallowMatch from '../../generic/array/conditions/shallow-match'
-import keysApplyConditions from '../keys-apply-conditions'
-import contextsDecideActs from '../contexts-decide-acts'
-import contextsDecideKeys from '../contexts-decide-keys'
-import splitCombination from '../../generic/string/transformers/split-combination'
-import PartialOmit from '../../types/partial-omit'
-import { inactiveLog as log } from '../../side-effects/debug-log'
+} from 'types/index.types'
+import shallowMatch from 'generic/array/conditions/shallow-match'
+import keysApplyConditions from 'transformers/keys-apply-conditions'
+import contextsDecideActs from 'transformers/contexts-decide-acts'
+import contextsDecideKeys from 'transformers/contexts-decide-keys'
+import splitCombination from 'generic/string/transformers/split-combination'
+import PartialOmit from 'types/partial-omit'
+import { inactiveLog as log } from 'side-effects/debug-log'
 
 /**
  * 

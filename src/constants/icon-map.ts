@@ -1,6 +1,6 @@
 /**
- * Special display glyphs (see ../display-keys),
- * indexed by their symbol name (result of ../get-symbol, see ./symbol-map)
+ * Special display glyphs (see generic/string/transformers/display-keys),
+ * indexed by their symbol name (result of generic/event/transformers/event-symbol, see ./symbol-map)
  */
 const iconMap = {
 	Shift: '⇧',

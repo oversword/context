@@ -1,12 +1,12 @@
-import { ContextKeyEvent } from '../types/index.types'
-import contextsExtractType from '../transformers/contexts-extract-type'
-import contextsExtractPath from '../transformers/contexts-extract-path'
-import contextsDecideData from '../transformers/contexts-decide-data'
-import contextsDecideKeysAction from '../transformers/contexts-decide-keys-action'
+import { ContextKeyEvent } from 'types/index.types'
+import contextsExtractType from 'transformers/contexts-extract-type'
+import contextsExtractPath from 'transformers/contexts-extract-path'
+import contextsDecideData from 'transformers/contexts-decide-data'
+import contextsDecideKeysAction from 'transformers/contexts-decide-keys-action'
 import { handleNamedAction } from './action'
-import { inactiveLog as log } from '../side-effects/debug-log'
-import { ContextSystemApi } from '../types/system.types'
-import { UNHANDLED } from '../constants/handled'
+import { inactiveLog as log } from 'side-effects/debug-log'
+import { ContextSystemApi } from 'types/system.types'
+import { UNHANDLED } from 'constants/handled'
 
 const contextHandleGlobalEvent = (
 	contextSystemApi: ContextSystemApi,

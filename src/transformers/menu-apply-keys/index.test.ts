@@ -1,6 +1,6 @@
 import menuApplyKeys from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction } from '../../types/index.types'
+import { ContextAction } from 'types/index.types'
 
 describe('menuApplyKeys', () => {
 	test('filters for menu that have a correlated action', () => {
