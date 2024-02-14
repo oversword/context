@@ -606,6 +606,7 @@ This feature is redundant, and not recomended. You should configure mouse events
 
 These properties can be used to bind actions directly to the rendered element events. When the event occurs, the action will be triggered.
 ```
+onChangeAction
 onClickAction
 onDoubleClickAction
 onMouseDownAction
