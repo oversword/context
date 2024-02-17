@@ -15,7 +15,7 @@ describe('shallowMatch', () => {
 		const u2 = []
 		const u3 = () => {}
 		const u4 = Symbol('unique')
-    
+
 		const result = shallowMatch([u1,u2,u3,u4], [u3, u1, u4, u2])
 		expect(result).toBe(true)
 	})

@@ -1,5 +1,5 @@
-import { ContextAction, ContextKeyListGroup, StoreMetaList } from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
+import { ContextAction, ContextKeyListGroup, StoreMetaList } from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
 
 /**
  * 

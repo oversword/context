@@ -1,6 +1,6 @@
 import contextsDecideActs from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction, StoreMeta } from 'types/index.types'
+import { ContextAction, StoreMeta } from '@/types/index.types'
 
 const defaultStoreContext = {
 	outercept: {},

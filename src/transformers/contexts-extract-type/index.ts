@@ -1,4 +1,4 @@
-import { ContextType, StoreMetaList } from 'types/index.types'
+import { ContextType, StoreMetaList } from '@/types/index.types'
 
 const _CONTEXTS_GETTYPE_GENERIC = { config: { type: 'generic' } }
 

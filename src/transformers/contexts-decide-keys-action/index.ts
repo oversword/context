@@ -3,14 +3,14 @@ import {
 	ContextActionName,
 	StoreMetaList,
 	ContextKeyList,
-} from 'types/index.types'
-import shallowMatch from 'generic/array/conditions/shallow-match'
-import keysApplyConditions from 'transformers/keys-apply-conditions'
-import contextsDecideActs from 'transformers/contexts-decide-acts'
-import contextsDecideKeys from 'transformers/contexts-decide-keys'
-import splitCombination from 'generic/string/transformers/split-combination'
-import PartialOmit from 'types/partial-omit'
-import { inactiveLog as log } from 'side-effects/debug-log'
+} from '@/types/index.types'
+import shallowMatch from '@/generic/array/conditions/shallow-match'
+import keysApplyConditions from '@/transformers/keys-apply-conditions'
+import contextsDecideActs from '@/transformers/contexts-decide-acts'
+import contextsDecideKeys from '@/transformers/contexts-decide-keys'
+import splitCombination from '@/generic/string/transformers/split-combination'
+import PartialOmit from '@/types/partial-omit'
+import { inactiveLog as log } from '@/side-effects/debug-log'
 
 /**
  * 
@@ -33,7 +33,7 @@ const contextsDecideKeysAction = (
 		const { event } = action
 		if (event && 'combination' in event) {
 			const transposedKeys = (
-        [] as Array<{ combination: ContextKeyList; action: ContextActionName }>
+				[] as Array<{ combination: ContextKeyList; action: ContextActionName }>
 			).concat(
 				...Object.entries(filteredKeys).map(
 					([action, keys]): Array<{ combination: ContextKeyList; action: ContextActionName }> =>

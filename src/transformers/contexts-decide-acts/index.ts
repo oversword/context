@@ -1,6 +1,6 @@
-import { ContextAction, ContextActsGroup, StoreMetaList } from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
-import selectorMatch from 'selector'
+import { ContextAction, ContextActsGroup, StoreMetaList } from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
+import selectorMatch from '@/selector'
 
 const contextsDecideActs = (
 	contexts: StoreMetaList,

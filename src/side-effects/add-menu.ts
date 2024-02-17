@@ -7,14 +7,14 @@ import {
 	ContextMenuOptionsPosition,
 	ContextMenuOptionsSize,
 	ContextMenuResult,
-} from 'types/system.types'
-import ContextMenu from 'components/ContextMenu'
-import { ContextData, ContextInterceptGroup } from 'types/index.types'
-import closeLevel from 'side-effects/close-level'
-import MENU_CLASS from 'constants/menu-class'
-import ROOT_ID from 'constants/root-id'
-import SystemContext from 'constants/system-context'
-import { EnvironmentApi } from 'types/environment.types'
+} from '@/types/system.types'
+import ContextMenu from '@/components/ContextMenu'
+import { ContextData, ContextInterceptGroup } from '@/types/index.types'
+import closeLevel from '@/side-effects/close-level'
+import MENU_CLASS from '@/constants/menu-class'
+import ROOT_ID from '@/constants/root-id'
+import SystemContext from '@/constants/system-context'
+import { EnvironmentApi } from '@/types/environment.types'
 
 /**
  * Positions a box of size `box` within `withinBox`, around the point `position`

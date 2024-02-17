@@ -12,28 +12,28 @@ export type ContextKey = string; // 'CONTEXT_KEY'
 export type ContextData = Record<string, unknown>;
 
 export type ContextCondition<A extends Partial<ContextAction> = ContextAction> = (
-  action: A,
+	action: A,
 ) => boolean;
 export interface ContextAct {
-  disabled?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
-  condition?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
+	disabled?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
+	condition?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
 }
 
 export interface ContextActionNameObject {
-  condition: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
-  action: ContextActionName | ContextActionNameGenerator;
+	condition: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
+	action: ContextActionName | ContextActionNameGenerator;
 }
 
 export interface ContextInterceptObject {
-  condition: ContextCondition;
-  method: ContextIntercept;
+	condition: ContextCondition;
+	method: ContextIntercept;
 }
 export interface ContextAction {
-  action: ContextActionName;
-  event: ContextEvent;
-  type: ContextType;
-  path: ContextTypeList;
-  data: ContextData;
+	action: ContextActionName;
+	event: ContextEvent;
+	type: ContextType;
+	path: ContextTypeList;
+	data: ContextData;
 }
 
 export type ContextEvent = ContextKeyEvent | object | undefined | Event;
@@ -41,33 +41,33 @@ export type ContextEvent = ContextKeyEvent | object | undefined | Event;
 export type ContextIntercept = (action: ContextAction) => void | symbol | Promise<unknown>;
 
 export enum ContextMenuItemMode {
-  section = 'section',
-  branch = 'branch',
+	section = 'section',
+	branch = 'branch',
 }
 export interface BasicContextMenuItem {
-  key?: string;
-  id?: string;
-  title?: string;
-  label: string;
+	key?: string;
+	id?: string;
+	title?: string;
+	label: string;
 
-  action: ContextActionName;
-  data?: ContextData | ContextDataGenerator;
+	action: ContextActionName;
+	data?: ContextData | ContextDataGenerator;
 }
 export interface BranchContextMenuItem extends Omit<BasicContextMenuItem, 'action'> {
-  children: ContextMenuItemList;
-  mode: ContextMenuItemMode.branch;
+	children: ContextMenuItemList;
+	mode: ContextMenuItemMode.branch;
 }
 export interface SectionContextMenuItem extends Omit<BasicContextMenuItem, 'action'> {
-  children: ContextMenuItemList;
-  mode: ContextMenuItemMode.section;
+	children: ContextMenuItemList;
+	mode: ContextMenuItemMode.section;
 }
 
 export type ContextMenuItem = BasicContextMenuItem | BranchContextMenuItem | SectionContextMenuItem;
 export interface ContextMenuItemFilled extends PartialOmit<BasicContextMenuItem, 'action'> {
-  keys?: ContextKeyList;
-  disabled?: boolean;
-  children?: ContextMenuItemListFilled;
-  mode?: ContextMenuItemMode;
+	keys?: ContextKeyList;
+	disabled?: boolean;
+	children?: ContextMenuItemListFilled;
+	mode?: ContextMenuItemMode;
 }
 
 /**
@@ -84,95 +84,95 @@ export type ContextActsGroup = Record<ContextActionName, ContextAct>;
  * Generators
  */
 export type ContextActionNameGenerator = (
-  action: PartialOmit<ContextAction, 'action'>,
+	action: PartialOmit<ContextAction, 'action'>,
 ) => ContextActionName;
 
 export type ContextDataGenerator = (
-  action: PartialOmit<ContextAction, 'data' | 'action'>,
-  current: ContextData,
+	action: PartialOmit<ContextAction, 'data' | 'action'>,
+	current: ContextData,
 ) => ContextData;
 
 export type ContextActsGroupGenerator = (
-  action: PartialOmit<ContextAction, 'action'>,
-  current: ContextActsGroup,
+	action: PartialOmit<ContextAction, 'action'>,
+	current: ContextActsGroup,
 ) => ContextActsGroup;
 
 export type ContextMenuListGenerator = (
-  action: PartialOmit<ContextAction, 'action'>,
-  current: ContextMenuItemList,
+	action: PartialOmit<ContextAction, 'action'>,
+	current: ContextMenuItemList,
 ) => ContextMenuItemList;
 
 /**
  * INPUT
  */
 export interface ContextConfig {
-  type?: ContextType;
-  acts?: ContextActGroupGroup;
-  data?: ContextData | ContextDataGenerator;
-  menu?: ContextMenuListGroup;
-  keys?: ContextKeyListGroup;
+	type?: ContextType;
+	acts?: ContextActGroupGroup;
+	data?: ContextData | ContextDataGenerator;
+	menu?: ContextMenuListGroup;
+	keys?: ContextKeyListGroup;
 }
 export interface DataContextProps {
-  children: null | ReactElement | Array<ReactElement>;
-  DataContext?: ContextConfig | null;
-  context?: ContextConfig | null;
-  data?: ContextData | ContextDataGenerator | null;
-  intercept?: ContextInterceptGroup | null;
-  outercept?: ContextInterceptGroup | null;
-  root?: boolean;
+	children: null | ReactElement | Array<ReactElement>;
+	DataContext?: ContextConfig | null;
+	context?: ContextConfig | null;
+	data?: ContextData | ContextDataGenerator | null;
+	intercept?: ContextInterceptGroup | null;
+	outercept?: ContextInterceptGroup | null;
+	root?: boolean;
 }
 
 export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
-  Context?: ContextConfig | null;
-  focus?: boolean;
-  onFocus?: ((event?: FocusEvent) => void) | null;
-  element?: /* React.FunctionComponent | */ string | null;
-  tabIndex?: number;
-  onClickAction?: ContextActionNameConfig | null;
-  onDoubleClickAction?: ContextActionNameConfig | null;
-  onMouseDownAction?: ContextActionNameConfig | null;
-  onMouseUpAction?: ContextActionNameConfig | null;
-  onMouseMoveAction?: ContextActionNameConfig | null;
-  onChangeAction?: ContextActionNameConfig | null;
-  [attr: string]: unknown;
+	Context?: ContextConfig | null;
+	focus?: boolean;
+	onFocus?: ((event?: FocusEvent) => void) | null;
+	element?: /* React.FunctionComponent | */ string | null;
+	tabIndex?: number;
+	onClickAction?: ContextActionNameConfig | null;
+	onDoubleClickAction?: ContextActionNameConfig | null;
+	onMouseDownAction?: ContextActionNameConfig | null;
+	onMouseUpAction?: ContextActionNameConfig | null;
+	onMouseMoveAction?: ContextActionNameConfig | null;
+	onChangeAction?: ContextActionNameConfig | null;
+	[attr: string]: unknown;
 }
 
 export type ContextKeyListGroup = Record<ContextActionName, ContextKeyList>;
 export type ContextMenuListGroup = Record<
-  ContextSelector,
-  ContextMenuItemList | ContextMenuListGenerator
+	ContextSelector,
+	ContextMenuItemList | ContextMenuListGenerator
 >;
 export type ContextActGroupGroup = Record<
-  ContextSelector,
-  ContextActsGroup | ContextActsGroupGenerator
+	ContextSelector,
+	ContextActsGroup | ContextActsGroupGenerator
 >;
 export type ContextInterceptGroup = Record<ContextSelector, ContextInterceptConfig>;
 
 export type ContextInterceptConfig =
-  | ContextIntercept
-  | ContextInterceptObject
-  | ContextActionName
-  | ContextActionNameObject;
+	| ContextIntercept
+	| ContextInterceptObject
+	| ContextActionName
+	| ContextActionNameObject;
 
 export type ContextActionNameConfig =
-  | ContextActionName
-  | ContextActionNameGenerator
-  | ContextActionNameObject;
+	| ContextActionName
+	| ContextActionNameGenerator
+	| ContextActionNameObject;
 
 /**
  * STORE
  */
 export interface StoreContext extends ContextConfig {
-  moreData?: ContextData | ContextDataGenerator;
+	moreData?: ContextData | ContextDataGenerator;
 }
 
 export interface StoreMeta {
-  id: ContextId;
-  root: boolean;
-  parent: ContextId | null;
-  intercept: ContextInterceptGroup | null;
-  outercept: ContextInterceptGroup | null;
-  config: StoreContext;
+	id: ContextId;
+	root: boolean;
+	parent: ContextId | null;
+	intercept: ContextInterceptGroup | null;
+	outercept: ContextInterceptGroup | null;
+	config: StoreContext;
 }
 
 export type StoreMetaList = Array<StoreMeta>;
@@ -183,26 +183,26 @@ export type StoreMetaGroup = Record<ContextId, StoreMeta | undefined>;
  * USAGE
  */
 export interface ContextApi {
-  element?: HTMLElement;
-  trigger: (
-    action: ContextActionName,
-    event?: ContextEvent,
-    data?: ContextData | ContextDataGenerator,
-  ) => symbol | Promise<unknown>;
-  triggerAction?: (
-    action: ContextActionName,
-    event?: ContextEvent,
-    data?: ContextData | ContextDataGenerator,
-  ) => symbol | Promise<unknown>;
+	element?: HTMLElement;
+	trigger: (
+		action: ContextActionName,
+		event?: ContextEvent,
+		data?: ContextData | ContextDataGenerator,
+	) => symbol | Promise<unknown>;
+	triggerAction?: (
+		action: ContextActionName,
+		event?: ContextEvent,
+		data?: ContextData | ContextDataGenerator,
+	) => symbol | Promise<unknown>;
 }
 
 export interface KeyInfo {
-  pos: string;
-  char: string;
-  symbol: string;
+	pos: string;
+	char: string;
+	symbol: string;
 }
 
 export interface ContextKeyEvent extends KeyInfo {
-  combination: ContextKeyList;
-  target: EventTarget | null;
+	combination: ContextKeyList;
+	target: EventTarget | null;
 }

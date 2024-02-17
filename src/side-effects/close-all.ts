@@ -1,4 +1,4 @@
-import { EnvironmentApi } from 'types/environment.types'
+import { EnvironmentApi } from '@/types/environment.types'
 
 const closeAll = (environment: EnvironmentApi): void => {
 	if (!environment.exists())

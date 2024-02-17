@@ -3,8 +3,8 @@ import {
 	ContextActionName,
 	ContextActionNameObject,
 	ContextActionNameGenerator,
-} from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
+} from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
 
 const evaluateAction = (
 	conditonal: ContextActionNameObject | ContextActionNameGenerator,

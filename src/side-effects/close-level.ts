@@ -1,6 +1,6 @@
-import partition from 'generic/array/iterators/partition'
-import { EnvironmentApi } from 'types/environment.types'
-import closeAll from 'side-effects/close-all'
+import partition from '@/generic/array/iterators/partition'
+import { EnvironmentApi } from '@/types/environment.types'
+import closeAll from '@/side-effects/close-all'
 
 const closeLevel = (environment: EnvironmentApi, level: number): void => {
 	if (!environment.exists())

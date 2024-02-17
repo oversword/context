@@ -1,19 +1,19 @@
-import evaluateCondition from 'conditions/evaluate-condition'
-import evaluateAction from 'conditions/evaluate-action'
+import evaluateCondition from '@/conditions/evaluate-condition'
+import evaluateAction from '@/conditions/evaluate-action'
 import {
 	ContextAction,
 	ContextActionName,
 	ContextEvent,
 	ContextId,
 	ContextActionNameConfig,
-} from 'types/index.types'
-import contextsExtractType from 'transformers/contexts-extract-type'
-import contextsExtractPath from 'transformers/contexts-extract-path'
-import contextsDecideData from 'transformers/contexts-decide-data'
+} from '@/types/index.types'
+import contextsExtractType from '@/transformers/contexts-extract-type'
+import contextsExtractPath from '@/transformers/contexts-extract-path'
+import contextsDecideData from '@/transformers/contexts-decide-data'
 import { handleNamedAction } from './action'
-import PartialOmit from 'types/partial-omit'
-import { inactiveLog as log } from 'side-effects/debug-log'
-import { ContextSystemApi } from 'types/system.types'
+import PartialOmit from '@/types/partial-omit'
+import { inactiveLog as log } from '@/side-effects/debug-log'
+import { ContextSystemApi } from '@/types/system.types'
 
 const getActionName = (
 	onAction: ContextActionNameConfig,

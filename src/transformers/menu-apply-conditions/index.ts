@@ -3,11 +3,11 @@ import {
 	ContextMenuItemFilled,
 	ContextMenuItemListFilled,
 	ContextActsGroup,
-} from 'types/index.types'
-import filterTruthy from 'generic/array/iterators/filter-truthy'
-import PartialOmit from 'types/partial-omit'
-import evaluateCondition from 'conditions/evaluate-condition'
-import evaluateDisabled from 'conditions/evaluate-disabled'
+} from '@/types/index.types'
+import filterTruthy from '@/generic/array/iterators/filter-truthy'
+import PartialOmit from '@/types/partial-omit'
+import evaluateCondition from '@/conditions/evaluate-condition'
+import evaluateDisabled from '@/conditions/evaluate-disabled'
 /**
  * Filter menus so that only those with allowed actions exist
  * The action condition will be evaluated, if false the item will be removed

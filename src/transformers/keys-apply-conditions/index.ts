@@ -1,6 +1,6 @@
-import { ContextAction, ContextActsGroup, ContextKeyListGroup } from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
-import evaluateCondition from 'conditions/evaluate-condition'
+import { ContextAction, ContextActsGroup, ContextKeyListGroup } from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
+import evaluateCondition from '@/conditions/evaluate-condition'
 /**
  * Filters keys so that only those with allowed actions exist
  * The action condition will be evaluated, if false the item will be removed

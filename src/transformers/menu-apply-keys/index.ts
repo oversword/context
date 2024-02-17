@@ -3,8 +3,8 @@ import {
 	ContextMenuItemFilled,
 	ContextMenuItemListFilled,
 	ContextKeyListGroup,
-} from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
+} from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
 
 /**
  * Attaches related key bindings to menu items recursively

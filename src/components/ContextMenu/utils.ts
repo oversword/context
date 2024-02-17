@@ -1,4 +1,4 @@
-import { ContextActionName, ContextMenuItemFilled } from 'types/index.types'
+import { ContextActionName, ContextMenuItemFilled } from '@/types/index.types'
 
 /**
  * Converts a dash (-), or underscore (_) separated, lowercase string
@@ -23,11 +23,11 @@ const humaniseAction = (action: ContextActionName): string =>
  */
 export const getKey = (menuItem: ContextMenuItemFilled): string =>
 	menuItem.key ||
-  menuItem.id ||
-  menuItem.label ||
-  menuItem.title ||
-  menuItem.action ||
-  String(menuItem)
+	menuItem.id ||
+	menuItem.label ||
+	menuItem.title ||
+	menuItem.action ||
+	String(menuItem)
 
 /**
  * Extracts the most human readable identifier avilable for a the ContextMenuItem `menuItem`

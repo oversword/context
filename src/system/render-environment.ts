@@ -1,7 +1,7 @@
-import addMenu from 'side-effects/add-menu'
-import cancel from 'side-effects/cancel'
-import { ContextSystemApi, ContextMenuOptions, ContextMenuResult } from 'types/system.types'
-import { Environment, EnvironmentApi, EnvironmentMenus } from 'types/environment.types'
+import addMenu from '@/side-effects/add-menu'
+import cancel from '@/side-effects/cancel'
+import { ContextSystemApi, ContextMenuOptions, ContextMenuResult } from '@/types/system.types'
+import { Environment, EnvironmentApi, EnvironmentMenus } from '@/types/environment.types'
 
 /**
  * Create a scoped environment and returns an api for updating it
