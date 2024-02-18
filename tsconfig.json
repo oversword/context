@@ -5,8 +5,13 @@
 		"target": "ES6",
 		"module": "ESNext",
 		"moduleResolution": "Node",
+		"baseUrl": "./src/",
+		"noEmitOnError": true,
+		"removeComments": true,
+		"sourceMap": true,
+		"outDir": "dist",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./*"]
 		}
 	}
 }
