@@ -5,13 +5,18 @@
 		"target": "ES6",
 		"module": "ESNext",
 		"moduleResolution": "Node",
-		"baseUrl": "./src/",
 		"noEmitOnError": true,
 		"removeComments": true,
 		"sourceMap": true,
 		"outDir": "dist",
+		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./src/*"]
 		}
-	}
+	},
+	"files": ["node_modules/jest-expect-message/types/index.d.ts"],
+	"exclude": [
+		"src/**/*.test.ts",
+		"src/**/*.test.tsx"
+	]
 }

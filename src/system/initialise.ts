@@ -1,4 +1,3 @@
-import bindEvent from '@/side-effects/bind-event'
 import {
 	ContextId,
 	StoreMetaGroup,
@@ -13,6 +12,14 @@ import {
 	ContextActionNameConfig,
 	ContextKeyList,
 } from '@/types/index.types'
+import { HandleConfig } from '@/types/dom-events.types'
+import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
+import { ContextSystemApi } from '@/types/system.types'
+import { UNHANDLED } from '@/constants/handled'
+
+import { inactiveLog as log } from '@/side-effects/debug-log'
+import bindEvent from '@/side-effects/bind-event'
+
 import contextsExtractType from '@/transformers/contexts-extract-type'
 import contextsExtractPath from '@/transformers/contexts-extract-path'
 import contextsDecideData from '@/transformers/contexts-decide-data'
@@ -21,21 +28,19 @@ import contextsMenu from '@/transformers/contexts-decide-menu'
 import contextsDecideKeys from '@/transformers/contexts-decide-keys'
 import menuApplyKeys from '@/transformers/menu-apply-keys'
 import menuApplyConditions from '@/transformers/menu-apply-conditions'
+
 import CONTEXT_CLASS from '@/constants/context-class'
 import { contextTriggerAction } from '@/handle/action'
 import contextHandleGlobalEvent from '@/handle/global'
 import contextHandleLocalEvent from '@/handle/local'
 import provideEnvironment from '@/system/render-environment'
-import { inactiveLog as log } from '@/side-effects/debug-log'
+
 import keyDown from '@/dom-events/key-down'
 import keyUp from '@/dom-events/key-up'
 import click from '@/dom-events/click'
 import doubleClick from '@/dom-events/double-click'
 import mouseDown from '@/dom-events/mouse-down'
 import mouseUp from '@/dom-events/mouse-up'
-import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
-import { ContextSystemApi } from '@/types/system.types'
-import { UNHANDLED } from '@/constants/handled'
 
 /**
  * BUSSINESS LOGIC
@@ -201,7 +206,8 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	 * @param handleConfig A config determining the handling process
 	 * @returns
 	 */
-	const handleGlobalEvent: EventHandler = handleConfig => event => {
+	const handleGlobalEvent: EventHandler = <E extends Event = Event>(handleConfig: HandleConfig<E>) => (event: E) => {
+
 		let ret: undefined | false
 		if (handleConfig.before) {
 			const keySet = handleConfig.before(event)
