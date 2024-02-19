@@ -24,7 +24,6 @@ describe('contextsDecideKeys', () => {
 
 		expect(result).toEqual(dataObject)
 	})
-	// TODO: This behaviour differs from transformer to transformer, should be standardised or reasoned
 	test('Parent overrides Child: merges and overrides keys configs when defined in both the parent and child', () => {
 		const result = contextsDecideKeys([{
 			...defaultStoreContext,

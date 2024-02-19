@@ -7,7 +7,7 @@ import {
 import PartialOmit from '@/types/partial-omit'
 
 const evaluateAction = (
-	conditonal: ContextActionNameObject | ContextActionNameGenerator,
+	conditonal: Omit<ContextActionNameObject, 'condition'> | ContextActionNameGenerator,
 	action: PartialOmit<ContextAction, 'action'>,
 ): ContextActionName | null => {
 	if (typeof conditonal === 'function') return conditonal(action)

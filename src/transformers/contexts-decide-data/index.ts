@@ -27,7 +27,6 @@ const contextsDecideData = (
 ): ContextData => {
 	const merger = dataMerge(action)
 	return [...contexts]
-		.reverse()
 		.reduce(
 			(current: ContextData, { config }): ContextData =>
 				([config.data, config.moreData]).reduce<ContextData>(merger, current),

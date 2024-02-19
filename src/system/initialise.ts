@@ -155,10 +155,10 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	}
 
 	/**
-   * Trigger named actions from a specific context
-   * @param id
-   * @returns
-   */
+	 * Trigger named actions from a specific context
+	 * @param id
+	 * @returns
+	 */
 	const triggerAction =
 		(id: ContextId) =>
 			(

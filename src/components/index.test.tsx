@@ -173,6 +173,67 @@ describe('Context Component', () => {
 				})
 			})
 		})
+		test('Actions can be triggered by pressing the configured key', async () => {
+			const contextSystem = initialiseContextSystem(container)
+			const context = {
+				type: 'test-type',
+				acts: {
+					'test-type': {
+						'test-act': {}
+					}
+				},
+				menu: {
+					'test-type': [
+						{label:'Item Label',action:'test-act'}
+					]
+				},
+				keys: {
+					'test-act': ['Click']
+				}
+			}
+			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
+			const intercept: ContextInterceptGroup = {
+				'test-type.test-act': mockIntercept
+			}
+			act(() => {
+				reactRoot.render(
+					<SystemContext.Provider value={contextSystem}>
+						<Context context={context} intercept={intercept} >
+							<div className="test-div">
+								Test
+							</div>
+						</Context>
+					</SystemContext.Provider>
+				)
+			})
+
+			const testDiv = container.querySelector('.test-div')
+			expect(testDiv).toBeInstanceOf(HTMLElement)
+			if (!testDiv) { return }
+			expect(testDiv.parentElement).toBeInstanceOf(HTMLElement)
+			if (!testDiv.parentElement) { return }
+
+			fireEvent.focus(testDiv.parentElement)
+			fireEvent.click(testDiv)
+			await timeout()
+
+			expect(mockIntercept).toHaveBeenCalledTimes(1)
+			expect(mockIntercept).toHaveBeenCalledWith({
+				data: {},
+				action: 'test-act',
+				type: 'test-type',
+				path: ['test-type'],
+				event: expect.objectContaining({
+					'char': '',
+					'combination': [
+						'Click',
+					],
+					'pos': 'MouseClick',
+					'symbol': 'Click',
+					target: testDiv
+				})
+			})
+		})
 		test('Actions can be triggered by another context forwarding an action', async () => {
 			const contextSystem = initialiseContextSystem(container)
 			const context = {
@@ -209,67 +270,6 @@ describe('Context Component', () => {
 								</div>
 							</Context>
 						</DataContext>
-					</SystemContext.Provider>
-				)
-			})
-
-			const testDiv = container.querySelector('.test-div')
-			expect(testDiv).toBeInstanceOf(HTMLElement)
-			if (!testDiv) { return }
-			expect(testDiv.parentElement).toBeInstanceOf(HTMLElement)
-			if (!testDiv.parentElement) { return }
-
-			fireEvent.focus(testDiv.parentElement)
-			fireEvent.click(testDiv)
-			await timeout()
-
-			expect(mockIntercept).toHaveBeenCalledTimes(1)
-			expect(mockIntercept).toHaveBeenCalledWith({
-				data: {},
-				action: 'test-act',
-				type: 'test-type',
-				path: ['test-type'],
-				event: expect.objectContaining({
-					'char': '',
-					'combination': [
-						'Click',
-					],
-					'pos': 'MouseClick',
-					'symbol': 'Click',
-					target: testDiv
-				})
-			})
-		})
-		test('Actions can be triggered by pressing the configured key', async () => {
-			const contextSystem = initialiseContextSystem(container)
-			const context = {
-				type: 'test-type',
-				acts: {
-					'test-type': {
-						'test-act': {}
-					}
-				},
-				menu: {
-					'test-type': [
-						{label:'Item Label',action:'test-act'}
-					]
-				},
-				keys: {
-					'test-act': ['Click']
-				}
-			}
-			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
-			const intercept: ContextInterceptGroup = {
-				'test-type.test-act': mockIntercept
-			}
-			act(() => {
-				reactRoot.render(
-					<SystemContext.Provider value={contextSystem}>
-						<Context context={context} intercept={intercept} >
-							<div className="test-div">
-								Test
-							</div>
-						</Context>
 					</SystemContext.Provider>
 				)
 			})

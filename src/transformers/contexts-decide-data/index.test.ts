@@ -24,8 +24,7 @@ describe('contextsDecideData', () => {
 
 		expect(result).toEqual(dataObject)
 	})
-	// TODO: This behaviour differs from transformer to transformer, should be standardised or reasoned
-	test('Child overrides Parent: merges and overrides data configs when defined in both the parent and child', () => {
+	test('Parent overrides Child: merges and overrides data configs when defined in both the parent and child', () => {
 		const result = contextsDecideData([{
 			...defaultStoreContext,
 			id: '1',
@@ -34,14 +33,14 @@ describe('contextsDecideData', () => {
 			config: {
 				type: 'contextType',
 				data: {
-					childKey: 'override'
+					childKey: 'test',
 				}
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				data: {
-					childKey: 'test',
+					childKey: 'override',
 					parentKey: 'merge',
 				}
 			},
@@ -52,7 +51,7 @@ describe('contextsDecideData', () => {
 			parentKey: 'merge',
 		})
 	})
-	test('Child overrides Parent: calls data generation methods, parent first when provided', () => {
+	test('Parent overrides Child: calls data generation methods, parent first when provided', () => {
 		const parentData = {
 			parentKey: 'test',
 		}
@@ -79,10 +78,10 @@ describe('contextsDecideData', () => {
 			},
 		} as StoreMeta], action)
 
-		expect(result).toEqual(childData)
+		expect(result).toEqual(parentData)
 		expect(parentDataGen).toHaveBeenCalledTimes(1)
 		expect(contextDataGen).toHaveBeenCalledTimes(1)
-		expect(contextDataGen).toBeCalledWith(action, parentData)
-		expect(parentDataGen).toBeCalledWith(action, {})
+		expect(parentDataGen).toBeCalledWith(action, childData)
+		expect(contextDataGen).toBeCalledWith(action, {})
 	})
 })

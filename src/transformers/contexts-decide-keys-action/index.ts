@@ -13,6 +13,8 @@ import PartialOmit from '@/types/partial-omit'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 
 /**
+ * Find an action in the contexts that is triggered by a
+ * key combination matching the key combination that initiated the action
  * 
  * @param contexts 
  * @param action 
