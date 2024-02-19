@@ -9,7 +9,7 @@
 		"check": "npx tsc --noEmit --project tsconfig.build.json",
 		"lint-check": "npx eslint src",
 		"pre-commit": "npm run lint && npm run check && npm run test",
-		"build": "rm dist -R && npx tsc --build --project tsconfig.build.json && npx tsc --declaration --project tsconfig.build.json && npx tsc-alias",
+		"build": "rm -Rf dist && npx tsc --project tsconfig.build.json && npx tsc --declaration --project tsconfig.build.json && npx tsc-alias",
 		"build-meta": "cp PUBLIC.md dist/README.md && node scripts/fix-build-meta.js > dist/package.json",
 		"do-release": "cd dist && npm publish --access public && cd ../",
 		"release": "npm run build && npm run build-meta && npm run do-release"
