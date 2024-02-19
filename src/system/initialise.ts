@@ -24,7 +24,7 @@ import contextsExtractType from '@/transformers/contexts-extract-type'
 import contextsExtractPath from '@/transformers/contexts-extract-path'
 import contextsDecideData from '@/transformers/contexts-decide-data'
 import contextsDecideActs from '@/transformers/contexts-decide-acts'
-import contextsMenu from '@/transformers/contexts-decide-menu'
+import contextsDecideMenu from '@/transformers/contexts-decide-menu'
 import contextsDecideKeys from '@/transformers/contexts-decide-keys'
 import menuApplyKeys from '@/transformers/menu-apply-keys'
 import menuApplyConditions from '@/transformers/menu-apply-conditions'
@@ -128,7 +128,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		const type = contextsExtractType(contexts)
 		const path = contextsExtractPath(contexts)
 		const data = contextsDecideData(contexts, { path, type, event })
-		const menu = contextsMenu(contexts, { path, type, data, event })
+		const menu = contextsDecideMenu(contexts, { path, type, data, event })
 		const acts = contextsDecideActs(contexts, { path, type, data, event })
 		const keys = contextsDecideKeys(contexts, { path, type, data, event })
 
