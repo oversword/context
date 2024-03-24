@@ -3,16 +3,17 @@ import {
 	ContextId,
 	StoreMetaList,
 	ContextEvent,
-	ContextMenuItemListFilled,
 	ContextConfig,
 	ContextData,
 	ContextDataGenerator,
 	ContextInterceptGroup,
 	ContextActionName,
 	ContextActionNameConfig,
+	ContextMetaMenuItemList,
 } from './index.types'
 
 export interface ContextMenuResult {
+	id: ContextId;
 	data: ContextData;
 	action: ContextActionName;
 }
@@ -27,7 +28,7 @@ export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' |
 
 export interface ContextMenuOptions {
 	pos: ContextMenuOptionsPosition;
-	menu: ContextMenuItemListFilled;
+	menu: ContextMetaMenuItemList;
 	level?: number;
 }
 
@@ -40,7 +41,7 @@ export interface ContextSystemApi {
 	focussedContext: ContextId | null;
 	newId: () => ContextId;
 	getContexts: (id: ContextId | null) => StoreMetaList;
-	decideMenuConfig: (id: ContextId, event: ContextEvent) => ContextMenuItemListFilled;
+	// decideMenuConfig: (id: ContextId, event: ContextEvent) => ContextMetaMenuItemList;
 	isFocus: (id: ContextId, event: Event) => boolean;
 	addContext: ({
 		id,
@@ -61,10 +62,14 @@ export interface ContextSystemApi {
 	}) => void;
 	removeContext: (contextId: ContextId) => void;
 
-	contextMenu: (
+	addMenu: (
 		pos: ContextMenuOptionsPosition,
-		menu: ContextMenuItemListFilled,
+		menu: ContextMetaMenuItemList,
 		level?: number,
+	) => Promise<ContextMenuResult | null>;
+	addContextMenu: (
+		id: ContextId,
+		event: MouseEvent,
 	) => Promise<ContextMenuResult | null>;
 
 	triggerAction: (

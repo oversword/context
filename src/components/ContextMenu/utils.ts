@@ -1,4 +1,4 @@
-import { ContextActionName, ContextMenuItemFilled } from '@/types/index.types'
+import { ContextActionName, ContextMenuItem } from '@/types/index.types'
 
 /**
  * Converts a dash (-), or underscore (_) separated, lowercase string
@@ -21,12 +21,12 @@ const humaniseAction = (action: ContextActionName): string =>
  * @param menuItem
  * @returns A pseud-unique key
  */
-export const getKey = (menuItem: ContextMenuItemFilled): string =>
+export const getKey = (menuItem: ContextMenuItem): string =>
 	menuItem.key ||
 	menuItem.id ||
 	menuItem.label ||
 	menuItem.title ||
-	menuItem.action ||
+	('action' in menuItem && menuItem.action) ||
 	String(menuItem)
 
 /**
@@ -35,5 +35,5 @@ export const getKey = (menuItem: ContextMenuItemFilled): string =>
  * @param menuItem
  * @returns A human-readable label
  */
-export const getLabel = (menuItem: ContextMenuItemFilled): string =>
-	menuItem.label || menuItem.title || (menuItem.action && humaniseAction(menuItem.action)) || ''
+export const getLabel = (menuItem: ContextMenuItem): string =>
+	menuItem.label || menuItem.title || ('action' in menuItem && menuItem.action && humaniseAction(menuItem.action)) || ''

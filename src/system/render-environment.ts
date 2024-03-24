@@ -25,7 +25,7 @@ const provideEnvironment = (rootElement: HTMLElement): EnvironmentApi => {
 			return environment !== null
 		},
 		cancel: (event: Event): void => cancel(api, event),
-		render: (
+		addMenu: (
 			contextSystemApi: ContextSystemApi,
 			options: ContextMenuOptions,
 		): Promise<ContextMenuResult | null> => addMenu(contextSystemApi, api, options),

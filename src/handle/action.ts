@@ -106,17 +106,20 @@ export const handleNamedAction = (
 	action: string | null,
 	actionObj: PartialOmit<ContextAction, 'action'>,
 ): symbol | Promise<unknown> => {
-	log('handling named action:', { contexts, action, actionObj })
+	log('handleNamedAction', { contexts, action, actionObj })
 	if (!action) return UNHANDLED
 	if (typeof action !== 'string') return UNHANDLED
 
 	const acts = contextsDecideActs(contexts, { action, ...actionObj })
 	const act = acts[action]
+	log('handleNamedAction:', { act, acts, action, condition: evaluateCondition(act, { action, ...actionObj }) })
 	if (!evaluateCondition(act, { action, ...actionObj })) {
+		log('handleNamedAction: UNHANDLED - bad condition')
 		return UNHANDLED
 	}
 	if (evaluateDisabled(act, { action, ...actionObj })) {
-		log(`${action} action not triggered for ${actionObj.type} because action is disabled`)
+		log('handleNamedAction: UNHANDLED - bad condition')
+		log(`handleNamedAction: HANDLED - ${action} action not triggered for ${actionObj.type} because action is disabled`)
 		return HANDLED
 	}
 
@@ -132,6 +135,7 @@ export const contextTriggerAction = (
 ): symbol | Promise<unknown> => {
 	log('triggering action:', { id, action, event, overrideData })
 	const contexts = contextSystemApi.getContexts(id)
+	log({contexts})
 
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)

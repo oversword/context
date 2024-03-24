@@ -109,26 +109,18 @@ const Context = React.forwardRef(function Context(
 		log('Context Menu', { id, event })
 		if (!contextSystem.isFocus(id, event)) return log('Context Menu: Not Focus', { id })
 
-		const menu = contextSystem.decideMenuConfig(id, event)
-		if (!menu.length) return log('Context Menu: No Menu', { id })
-
-		event.preventDefault()
-		const pos = {
-			x: event.pageX,
-			y: event.pageY,
-		}
 		const persistentEvent = { ...event }
 		contextSystem
-			.contextMenu(pos, menu)
+			.addContextMenu(id, event)
 			.catch(() => ({}) as ContextMenuResult)
 			.then(result => {
 				if (!result) return log('Context Menu: No Result', { result })
 
-				const { action, data: overrideData } = result
+				const { action, data: overrideData, id: actionContextId } = result
 				if (!action) return log('Context Menu: No Action', { action, data, result })
 
-				log('Context Menu Done', { action, overrideData, id })
-				return contextSystem.triggerAction(id)(action, persistentEvent, overrideData)
+				log('Context Menu Done', { action, overrideData, id: actionContextId })
+				return contextSystem.triggerAction(actionContextId)(action, persistentEvent, overrideData)
 			})
 			.then(() => {
 				// Re-focus this element
@@ -137,7 +129,7 @@ const Context = React.forwardRef(function Context(
 
 				contextSystem.focussedContext = id
 			})
-		return log('Context Menu Success', { menu, pos })
+		return log('Context Menu Success', { id, event })
 	}
 
 	return (

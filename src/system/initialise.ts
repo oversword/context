@@ -6,11 +6,11 @@ import {
 	ContextData,
 	ContextInterceptGroup,
 	StoreMetaList,
-	ContextMenuItemListFilled,
 	ContextEvent,
 	ContextActionName,
 	ContextActionNameConfig,
 	ContextKeyList,
+	ContextMetaMenuItemList,
 } from '@/types/index.types'
 import { HandleConfig } from '@/types/dom-events.types'
 import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
@@ -19,15 +19,6 @@ import { UNHANDLED } from '@/constants/handled'
 
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import bindEvent from '@/side-effects/bind-event'
-
-import contextsExtractType from '@/transformers/contexts-extract-type'
-import contextsExtractPath from '@/transformers/contexts-extract-path'
-import contextsDecideData from '@/transformers/contexts-decide-data'
-import contextsDecideActs from '@/transformers/contexts-decide-acts'
-import contextsDecideMenu from '@/transformers/contexts-decide-menu'
-import contextsDecideKeys from '@/transformers/contexts-decide-keys'
-import menuApplyKeys from '@/transformers/menu-apply-keys'
-import menuApplyConditions from '@/transformers/menu-apply-conditions'
 
 import CONTEXT_CLASS from '@/constants/context-class'
 import { contextTriggerAction } from '@/handle/action'
@@ -41,6 +32,9 @@ import click from '@/dom-events/click'
 import doubleClick from '@/dom-events/double-click'
 import mouseDown from '@/dom-events/mouse-down'
 import mouseUp from '@/dom-events/mouse-up'
+import contextsDecideMetaMenu from '../transformers/contexts-decide-meta-menu'
+import {metaMenuApplyData} from '@/transformers/menu-apply-metadata'
+import { MENU_ITEM_ID } from '@/constants/menu-item'
 
 /**
  * BUSSINESS LOGIC
@@ -119,25 +113,6 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 			intercept,
 			outercept,
 		}
-	}
-
-	// TODO: test and jsdoc
-	const decideMenuConfig = (id: ContextId, event: ContextEvent): ContextMenuItemListFilled => {
-		const contexts = getContexts(id)
-
-		const type = contextsExtractType(contexts)
-		const path = contextsExtractPath(contexts)
-		const data = contextsDecideData(contexts, { path, type, event })
-		const menu = contextsDecideMenu(contexts, { path, type, data, event })
-		const acts = contextsDecideActs(contexts, { path, type, data, event })
-		const keys = contextsDecideKeys(contexts, { path, type, data, event })
-
-		return menuApplyKeys(menuApplyConditions(menu, acts, { path, type, data, event }), keys, {
-			path,
-			type,
-			data,
-			event,
-		})
 	}
 
 	/**
@@ -262,12 +237,35 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		addContext,
 		removeContext,
 		getContexts,
-		decideMenuConfig,
 		isFocus,
 		triggerAction,
 		handleLocalEvent,
-		contextMenu: (pos, menu, level = 0) =>
-			environment.render(contextSystemApi, { pos, menu, level }),
+		addContextMenu: async (id, event) => {
+			const contexts = getContexts(id)
+			const menu = contexts
+				.reverse().filter(({ config }) => config.type)
+				.reduce((parentMenu: ContextMetaMenuItemList, { id: currentId }): ContextMetaMenuItemList => {
+					const currentContexts = getContexts(currentId)
+					const metaMenu = contextsDecideMetaMenu(currentContexts, event, parentMenu)
+					return metaMenuApplyData(
+						metaMenu,
+						{
+							[MENU_ITEM_ID]: currentId,
+						}
+					)
+				}, [])
+			if (!menu.length)
+				throw new Error('No menu items')
+
+			event.preventDefault()
+			const pos = {
+				x: event.pageX,
+				y: event.pageY,
+			}
+			return environment.addMenu(contextSystemApi, { pos, menu, level: 0 })
+		},
+		addMenu: (pos, menu, level = 0) =>
+			environment.addMenu(contextSystemApi, { pos, menu, level }),
 	}
 
 	return contextSystemApi

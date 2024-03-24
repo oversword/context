@@ -20,6 +20,7 @@ const context: ContextConfig = {
 }
 
 function ContextMenuItem({
+	id,
 	keys = [],
 	action = 'error',
 	data = null,
@@ -32,8 +33,9 @@ function ContextMenuItem({
 		<Context
 			context={context}
 			data={{
-				ContextMenuItem_action: action,
+				ContextMenuItem_id: id,
 				ContextMenuItem_data: data,
+				ContextMenuItem_action: action,
 			}}
 			className={classes.ContextMenuItem + ' ' + (disabled ? styles[classes.ContextMenuItemDisabled] : styles[classes.ContextMenuItem])}
 			{...passedProps}

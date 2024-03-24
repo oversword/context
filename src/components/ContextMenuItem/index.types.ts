@@ -3,6 +3,7 @@ import {
 	ContextData,
 	ContextKeyList,
 	ContextDataGenerator,
+	ContextId,
 } from '@/types/index.types'
 
 export interface ContextMenuItemProps {
@@ -12,4 +13,5 @@ export interface ContextMenuItemProps {
 	label?: string | null;
 	disabled?: boolean;
 	title?: string | null;
+	id: ContextId
 }

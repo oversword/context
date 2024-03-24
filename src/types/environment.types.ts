@@ -21,5 +21,5 @@ export interface EnvironmentApi {
 	container: HTMLElement | null;
 	root: HTMLElement;
 	cancel: (event: Event) => void;
-	render: ContextMenuRenderer;
+	addMenu: ContextMenuRenderer;
 }
