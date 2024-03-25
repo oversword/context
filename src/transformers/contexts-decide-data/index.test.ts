@@ -1,6 +1,7 @@
 import contextsDecideData from '.'
 import {expect, describe, test} from '@jest/globals'
 import { ContextAction, StoreMeta } from '@/types/index.types'
+import defaultConfiguration from '@/system/default-config'
 
 const defaultStoreContext = {
 	outercept: {},
@@ -14,7 +15,7 @@ describe('contextsDecideData', () => {
 		const dataObject = {
 			uniqueKey: 'test'
 		}
-		const result = contextsDecideData([{
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
@@ -25,7 +26,7 @@ describe('contextsDecideData', () => {
 		expect(result).toEqual(dataObject)
 	})
 	test('Parent overrides Child: merges and overrides data configs when defined in both the parent and child', () => {
-		const result = contextsDecideData([{
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -61,7 +62,7 @@ describe('contextsDecideData', () => {
 		const contextDataGen = jest.fn().mockReturnValue(childData)
 		const parentDataGen = jest.fn().mockReturnValue(parentData)
 		const action = {path:['parentType', 'contextType']} as ContextAction
-		const result = contextsDecideData([{
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,

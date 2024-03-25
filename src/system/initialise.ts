@@ -14,7 +14,7 @@ import {
 } from '@/types/index.types'
 import { HandleConfig } from '@/types/dom-events.types'
 import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
-import { ContextSystemApi } from '@/types/system.types'
+import { ContextSystemApi, ContextSystemConfig } from '@/types/system.types'
 import { UNHANDLED } from '@/constants/handled'
 
 import { inactiveLog as log } from '@/side-effects/debug-log'
@@ -37,6 +37,7 @@ import {actMenuApplyData} from '@/transformers/menu-apply-metadata'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import humanise from '@/generic/string/transformers/humanise'
 import storeMetaHasType from '../transformers/store-meta-has-type'
+import defaultConfiguration from './default-config'
 
 /**
  * BUSSINESS LOGIC
@@ -47,7 +48,8 @@ import storeMetaHasType from '../transformers/store-meta-has-type'
  * @param rootElement the root element to be interacted with
  * @returns An API for creating context menus, triggering actions, and handling events
  */
-const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => {
+const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partial<ContextSystemConfig> = {}): ContextSystemApi => {
+	const fullConfiguration = Object.assign({}, defaultConfiguration, configuration)
 	let focussedContext: ContextId | null = null
 	let _contextId: number = 0
 	const contextMetas: StoreMetaGroup = {}
@@ -235,6 +237,9 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		get focussedContext(): ContextId | null {
 			return focussedContext
 		},
+		get configuration() {
+			return fullConfiguration
+		},
 		newId: (): ContextId => String(++_contextId),
 		addContext,
 		removeContext,
@@ -254,7 +259,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 						menu: parentMenu,
 					} : null
 					const currentContexts = getContexts(currentId)
-					const actMenu = contextsDecideActMenu(currentContexts, event, parentInfo)
+					const actMenu = contextsDecideActMenu(fullConfiguration, currentContexts, event, parentInfo)
 					return actMenuApplyData(
 						actMenu,
 						{

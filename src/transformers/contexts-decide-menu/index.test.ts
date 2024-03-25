@@ -1,6 +1,7 @@
 import contextsDecideMenu from '.'
 import {expect, describe, test} from '@jest/globals'
 import { ContextAction, StoreMeta } from '@/types/index.types'
+import defaultConfiguration from '@/system/default-config'
 
 const defaultStoreContext = {
 	outercept: {},
@@ -14,7 +15,7 @@ describe('contextsDecideMenu', () => {
 		const menuObject = [
 			{action:'actionName',label:'test'}
 		]
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
@@ -25,7 +26,7 @@ describe('contextsDecideMenu', () => {
 		expect(result).toEqual(menuObject)
 	})
 	test('Parent overrides Child: merges and overrides menu configs when defined in both the parent and child', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -56,7 +57,7 @@ describe('contextsDecideMenu', () => {
 		])
 	})
 	test('merges and overrides menu configs when defined in both the parent and child, with a strict relationship that is met', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -87,7 +88,7 @@ describe('contextsDecideMenu', () => {
 		])
 	})
 	test('does not merge menu configs when defined in both the parent and child, with a strict relationship that is not met', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -134,7 +135,7 @@ describe('contextsDecideMenu', () => {
 		const contextMenuGen = jest.fn().mockReturnValue(childMenu)
 		const parentMenuGen = jest.fn().mockReturnValue(parentMenu)
 		const action = {path:['parentType', 'contextType']} as ContextAction
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,

@@ -80,7 +80,7 @@ const contextHandleAction = (
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)
 
-	const data = contextsDecideData([{ config: { data: overrideData } } as StoreMeta, ...contexts], {
+	const data = contextsDecideData(contextSystemApi.configuration, [{ config: { data: overrideData } } as StoreMeta, ...contexts], {
 		action,
 		path,
 		type,
@@ -110,7 +110,7 @@ export const handleNamedAction = (
 	if (!action) return UNHANDLED
 	if (typeof action !== 'string') return UNHANDLED
 
-	const acts = contextsDecideActs(contexts, { action, ...actionObj })
+	const acts = contextsDecideActs(contextSystemApi.configuration, contexts, { action, ...actionObj })
 	const act = acts[action]
 	log('handleNamedAction:', { act, acts, action, condition: evaluateCondition(act, { action, ...actionObj }) })
 	if (!evaluateCondition(act, { action, ...actionObj })) {
@@ -139,7 +139,7 @@ export const contextTriggerAction = (
 
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)
-	const data = contextsDecideData([{ config: { data: overrideData } } as StoreMeta, ...contexts], {
+	const data = contextsDecideData(contextSystemApi.configuration, [{ config: { data: overrideData } } as StoreMeta, ...contexts], {
 		action,
 		path,
 		type,

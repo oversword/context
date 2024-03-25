@@ -22,9 +22,9 @@ const contextHandleGlobalEvent = (
 
 		const type = contextsExtractType(contexts)
 		const path = contextsExtractPath(contexts)
-		const data = contextsDecideData(contexts, { path, type, event })
+		const data = contextsDecideData(contextSystemApi.configuration, contexts, { path, type, event })
 
-		const combinationAction = contextsDecideKeysAction(contexts, { path, type, data, event })
+		const combinationAction = contextsDecideKeysAction(contextSystemApi.configuration, contexts, { path, type, data, event })
 		log('contextHandleGlobalEvent', { id, combinationAction })
 
 		const inputHandled = handleNamedAction(contextSystemApi, contexts, 'input', {

@@ -1,10 +1,12 @@
-import { ContextAction, ContextActsGroup, ContextConfig, ContextSelector, StoreMetaList } from '@/types/index.types'
+import { ContextAction, ContextActsGroup, ContextActsGroupGenerator, ContextConfig, ContextSelector, StoreMetaList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 import selectorMatch from '@/selector'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import storeMetaHasType from '../store-meta-has-type'
+import { ContextSystemConfig } from '@/types/system.types'
 
 const contextsDecideActs = (
+	configuration: Pick<ContextSystemConfig, 'strategy_mergeActs'>,
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
 ): ContextActsGroup => {
@@ -23,17 +25,14 @@ const contextsDecideActs = (
 		return selfActs.concat(matchingOverrides).reduce(
 			(current: ContextActsGroup, [, config]): ContextActsGroup => {
 				if (!(config && config.acts)) return current
-				if (typeof config.acts === 'function') return config.acts(action, current)
-				Object.entries(config.acts).forEach(([actionName, options]) => {
-					if (actionName in current) {
-						current[actionName] = {
-							...current[actionName],
-							...options,
-						}
-					} else {
-						current[actionName] = options
-					}
-				})
+				let actsGen: ContextActsGroupGenerator
+
+				if (typeof config.acts === 'function') 
+					actsGen = config.acts
+				else actsGen = configuration.strategy_mergeActs(config.acts)
+				
+				if (actsGen)
+					return actsGen(action, current)
 				return current
 			},
 			current,

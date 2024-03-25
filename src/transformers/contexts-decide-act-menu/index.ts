@@ -9,6 +9,7 @@ import contextsExtractType from '@/transformers/contexts-extract-type'
 import menuFilter from '@/transformers/menu-filter'
 import menuApplyActData, {actMenuApplyData} from '@/transformers/menu-apply-metadata'
 import { ContextEvent, ContextActMenuItemList, StoreMetaList, ContextParentMenuMeta } from '@/types/index.types'
+import { ContextSystemConfig } from '@/types/system.types'
 
 /**
  * 
@@ -17,13 +18,13 @@ import { ContextEvent, ContextActMenuItemList, StoreMetaList, ContextParentMenuM
  * @param parentMenu 
  * @returns 
  */
-const contextsDecideActMenu = (contexts: StoreMetaList, event: ContextEvent, parentInfo: ContextParentMenuMeta | null): ContextActMenuItemList => {
+const contextsDecideActMenu = (configuration: ContextSystemConfig, contexts: StoreMetaList, event: ContextEvent, parentInfo: ContextParentMenuMeta | null): ContextActMenuItemList => {
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)
-	const data = contextsDecideData(contexts, { path, type, event })
-	const menu = contextsDecideMenu(contexts, { path, type, data, event }, parentInfo)
+	const data = contextsDecideData(configuration, contexts, { path, type, event })
+	const menu = contextsDecideMenu(configuration, contexts, { path, type, data, event }, parentInfo)
 
-	const acts = contextsDecideActs(contexts, { path, type, data, event })
+	const acts = contextsDecideActs(configuration, contexts, { path, type, data, event })
 
 	const filteredMenu = menuFilter(menu,
 		{ path, type, data, event },

@@ -11,6 +11,7 @@ import splitCombination from '@/generic/string/transformers/split-combination'
 import PartialOmit from '@/types/partial-omit'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import evaluateCondition from '@/conditions/evaluate-condition'
+import { ContextSystemConfig } from '@/types/system.types'
 
 
 type ActCombination = { combination: ContextKeyList; actionName: ContextActionName }
@@ -36,10 +37,11 @@ const find_combination = (searchCombination: ContextKeyList) =>
  * @returns ContextActionName (if matched) OR null (if not matched)
  */
 const contextsDecideKeysAction = (
+	configuration: ContextSystemConfig,
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
 ): ContextActionName | null => {
-	const acts = contextsDecideActs(contexts, action)
+	const acts = contextsDecideActs(configuration, contexts, action)
 	log('contextsDecideKeysAction', {acts})
 	const actsEntries = Object.entries(acts)
 	const possibleActs = actsEntries.filter(([,actDefinition]) => evaluateCondition(actDefinition, action))

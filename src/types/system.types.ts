@@ -10,8 +10,18 @@ import {
 	ContextActionName,
 	ContextActionNameConfig,
 	ContextActMenuItemList,
+	ContextMenuItemList,
+	ContextMenuListGenerator,
+	ContextActsGroup,
+	ContextActsGroupGenerator,
 } from './index.types'
 
+
+export interface ContextSystemConfig {
+	strategy_mergeMenu: (staticMenu: ContextMenuItemList) => ContextMenuListGenerator,
+	strategy_mergeActs: (staticActs: ContextActsGroup) => ContextActsGroupGenerator,
+	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator
+}
 export interface ContextMenuResult {
 	id: ContextId;
 	data: ContextData;
@@ -39,6 +49,7 @@ export type ContextMenuRenderer = (
 
 export interface ContextSystemApi {
 	focussedContext: ContextId | null;
+	configuration: ContextSystemConfig;
 	newId: () => ContextId;
 	getContexts: (id: ContextId | null) => StoreMetaList;
 	// decideMenuConfig: (id: ContextId, event: ContextEvent) => ContextMetaMenuItemList;

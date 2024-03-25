@@ -37,52 +37,6 @@ const intercept: ContextInterceptGroup = {
 		// alert('Button Action!')
 	},
 }
-// const context = {
-// 	type: 'test-type',
-// 	acts: {
-// 		'test-type': {
-// 			'test-act': {}
-// 		}
-// 	},
-// 	menu: {
-// 		'test-type': [
-// 			{action:'test-act', label: 'Parent Action'}
-// 		]
-// 	}
-// }
-// const childContext: ContextConfig = {
-// 	type: 'child-type',
-// 	acts: {
-// 		'child-type': {
-// 			'child-act': {
-// 				keys: ['DoubleClick']
-// 			}
-// 		}
-// 	},
-// 	menu: {
-// 		'child-type': [
-// 			{action:'child-act', label: 'Child Action'}
-// 		]
-// 	}
-// }
-// const buttonContext = {
-// 	type: 'test-button',
-// 	acts: {
-// 		'test-button': {
-// 			'test-button-activate': {
-// 				keys: ['Click']
-// 			},
-// 		},
-// 	},
-// 	menu: {
-// 		'test-button': [
-// 			{
-// 				label: 'Activate',
-// 				action: 'test-button-activate'
-// 			}
-// 		]
-// 	}
-// }
 const context: ContextConfig = {
 	type: 'test-type',
 	acts: {

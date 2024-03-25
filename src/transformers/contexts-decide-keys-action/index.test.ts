@@ -1,3 +1,4 @@
+import defaultConfiguration from '@/system/default-config'
 import contextsDecideKeysAction from '.'
 import {expect, describe, test} from '@jest/globals'
 
@@ -10,7 +11,7 @@ const defaultStoreContext = {
 }
 describe('contextsDecideKeysAction', () => {
 	test('matches key combinations on the triggered context', () => {
-		const result = contextsDecideKeysAction([
+		const result = contextsDecideKeysAction(defaultConfiguration, [
 			{
 				...defaultStoreContext,
 				config: {
