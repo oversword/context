@@ -15,6 +15,7 @@ export type ContextCondition<A extends Partial<ContextAction> = ContextAction> =
 	action: A,
 ) => boolean;
 export interface ContextAct {
+	keys?: ContextKeyList;
 	disabled?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
 	condition?: boolean | ContextCondition<PartialOmit<ContextAction, 'action'>>;
 }
@@ -65,18 +66,18 @@ export interface SectionContextMenuItem extends Omit<BasicContextMenuItem, 'acti
 export type ContextMenuItem = BasicContextMenuItem | BranchContextMenuItem | SectionContextMenuItem;
 
 
-type MetaMenuItem<T extends ContextMenuItem> = T & {
+type ActMenuItem<T extends ContextMenuItem> = T & {
 	keys: Array<string>;
 	disabled: boolean;
 }
-type MetaMenuItem_with_Children<T extends ContextMenuItem> = Omit<MetaMenuItem<T>, 'children'> & {
-	children: ContextMetaMenuItemList;
+type ActMenuItem_with_Children<T extends ContextMenuItem> = Omit<ActMenuItem<T>, 'children'> & {
+	children: ContextActMenuItemList;
 }
-export type BasicContextMetaMenuItem = MetaMenuItem<BasicContextMenuItem>
-export type BranchContextMetaMenuItem = MetaMenuItem_with_Children<BranchContextMenuItem>
-export type SectionContextMetaMenuItem = MetaMenuItem_with_Children<SectionContextMenuItem>
+export type BasicContextActMenuItem = ActMenuItem<BasicContextMenuItem>
+export type BranchContextActMenuItem = ActMenuItem_with_Children<BranchContextMenuItem>
+export type SectionContextActMenuItem = ActMenuItem_with_Children<SectionContextMenuItem>
 
-export type ContextMetaMenuItem = BasicContextMetaMenuItem | BranchContextMetaMenuItem | SectionContextMetaMenuItem;
+export type ContextActMenuItem = BasicContextActMenuItem | BranchContextActMenuItem | SectionContextActMenuItem;
 
 /**
  * Lists & Groups
@@ -84,7 +85,7 @@ export type ContextMetaMenuItem = BasicContextMetaMenuItem | BranchContextMetaMe
 
 export type ContextTypeList = Array<ContextType>;
 export type ContextKeyList = Array<ContextKey>;
-export type ContextMetaMenuItemList = Array<ContextMetaMenuItem>;
+export type ContextActMenuItemList = Array<ContextActMenuItem>;
 export type ContextMenuItemList = Array<ContextMenuItem>;
 export type ContextActsGroup = Record<ContextActionName, ContextAct>;
 
@@ -119,7 +120,7 @@ export interface ContextConfig {
 	acts?: ContextActGroupGroup;
 	data?: ContextData | ContextDataGenerator;
 	menu?: ContextMenuListGroup;
-	keys?: ContextKeyListGroup;
+	// keys?: ContextKeyListGroup;
 }
 export interface DataContextProps {
 	children: null | ReactElement | Array<ReactElement>;
@@ -146,7 +147,7 @@ export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
 	[attr: string]: unknown;
 }
 
-export type ContextKeyListGroup = Record<ContextActionName, ContextKeyList>;
+// export type ContextKeyListGroup = Record<ContextActionName, ContextKeyList>;
 export type ContextMenuListGroup = Record<
 	ContextSelector,
 	ContextMenuItemList | ContextMenuListGenerator

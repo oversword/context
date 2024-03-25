@@ -10,7 +10,7 @@ import {
 	ContextActionName,
 	ContextActionNameConfig,
 	ContextKeyList,
-	ContextMetaMenuItemList,
+	ContextActMenuItemList,
 } from '@/types/index.types'
 import { HandleConfig } from '@/types/dom-events.types'
 import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
@@ -182,7 +182,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	 * @returns
 	 */
 	const handleGlobalEvent: EventHandler = <E extends Event = Event>(handleConfig: HandleConfig<E>) => (event: E) => {
-
+		log('handleGlobalEvent', handleConfig)
 		let ret: undefined | false
 		if (handleConfig.before) {
 			const keySet = handleConfig.before(event)
@@ -218,8 +218,8 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	bindEvent(rootElement, EVENT_NAMES.KEY_DOWN, handleGlobalEvent(keyDown))
 	bindEvent(rootElement, EVENT_NAMES.KEY_UP, handleGlobalEvent(keyUp))
 
-	bindEvent(rootElement, EVENT_NAMES.MOUSE_UP, handleGlobalEvent(mouseUp))
 	bindEvent(rootElement, EVENT_NAMES.MOUSE_DOWN, handleGlobalEvent(mouseDown))
+	bindEvent(rootElement, EVENT_NAMES.MOUSE_UP, handleGlobalEvent(mouseUp))
 
 	bindEvent(rootElement, EVENT_NAMES.CLICK, handleGlobalEvent(click))
 	bindEvent(rootElement, EVENT_NAMES.DOUBLE_CLICK, handleGlobalEvent(doubleClick))
@@ -244,7 +244,7 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 			const contexts = getContexts(id)
 			const menu = contexts
 				.reverse().filter(({ config }) => config.type)
-				.reduce((parentMenu: ContextMetaMenuItemList, { id: currentId }): ContextMetaMenuItemList => {
+				.reduce((parentMenu: ContextActMenuItemList, { id: currentId }): ContextActMenuItemList => {
 					const currentContexts = getContexts(currentId)
 					const metaMenu = contextsDecideMetaMenu(currentContexts, event, parentMenu)
 					return metaMenuApplyData(

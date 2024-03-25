@@ -6,8 +6,8 @@ import {
 	ContextConfig,
 	ContextMenuItemMode,
 	ContextIntercept,
-	ContextMetaMenuItem as ContextMenuItemType,
-	BasicContextMetaMenuItem,
+	ContextActMenuItem as ContextMenuItemType,
+	BasicContextActMenuItem,
 } from '@/types/index.types'
 import ContextMenuItem from '@/components/ContextMenuItem'
 import DataContext from '@/components/DataContext'
@@ -26,12 +26,13 @@ const MENU_ERROR = Symbol('menu-error')
 
 const context: ContextConfig = {
 	type: 'context-menu',
-	keys: { close: ['Escape'] },
 	acts: {
 		'context-menu': (_action, acts) => ({
 			load: {},
 			action: {},
-			close: {},
+			close: {
+				keys: ['Escape']
+			},
 			...acts,
 		}),
 	},
@@ -85,7 +86,7 @@ const renderMenuItem = (menuItem: ContextMenuItemType, styles: Record<string, st
 }
 
 function ContextMenu({
-	menu = [{ label: 'No Actions', mode: ContextMenuItemMode.section, action: '', keys: [], disabled: true } as BasicContextMetaMenuItem],
+	menu = [{ label: 'No Actions', mode: ContextMenuItemMode.section, action: '', keys: [], disabled: true } as BasicContextActMenuItem],
 	level = 0,
 	intercept = {},
 	...passedProps

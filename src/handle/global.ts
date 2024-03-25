@@ -12,20 +12,20 @@ const contextHandleGlobalEvent = (
 	contextSystemApi: ContextSystemApi,
 	event: ContextKeyEvent,
 ): symbol | Promise<unknown> => {
-	log('hadling global event', event)
+	log('contextHandleGlobalEvent', event)
 	const allContexts = contextSystemApi.getContexts(contextSystemApi.focussedContext)
-
+	log('contextHandleGlobalEvent', allContexts)
 	for (let c = 0; c < allContexts.length; c++) {
 		const contexts = allContexts.slice(c)
 		const { id } = contexts[0]
-		log('hadling global event contexts', { id, contexts })
+		log('contextHandleGlobalEvent', { id, contexts })
 
 		const type = contextsExtractType(contexts)
 		const path = contextsExtractPath(contexts)
 		const data = contextsDecideData(contexts, { path, type, event })
 
 		const combinationAction = contextsDecideKeysAction(contexts, { path, type, data, event })
-		log('hadling global event combinationAction', { id, combinationAction })
+		log('contextHandleGlobalEvent', { id, combinationAction })
 
 		const inputHandled = handleNamedAction(contextSystemApi, contexts, 'input', {
 			path,

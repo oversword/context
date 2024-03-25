@@ -1,69 +1,73 @@
-import menuApplyMetaData from '.'
+import menuApplyActData from '.'
 import {expect, describe, test} from '@jest/globals'
 import { ContextAction, ContextMenuItemMode } from '@/types/index.types'
 
 describe('menuApplyMetaData', () => {
-  test('applies keys recursively', () => {
-    const action = { type: 'uniqeAction' } as ContextAction
-    const result = menuApplyMetaData([
-      {action: 'goodAction', label: 'Keys'},
-      {action: 'badAction', label: 'No Keys'},
-      {mode: ContextMenuItemMode.section,label: 'Parent', children: [
-        {action: 'goodAction2', label: 'Keys'},
-        {action: 'badAction2', label: 'No Keys'},
-      ]},
-    ], action, {
-      goodAction: ['a','b'],
-      goodAction2: ['c','d']
-    }, {})
-    expect(result).toEqual([
-      {action: 'goodAction', label: 'Keys',keys:['a','b'],disabled: false},
-      {action: 'badAction', label: 'No Keys',keys:[],disabled: false},
-      {label: 'Parent', keys: [], disabled: false, mode: ContextMenuItemMode.section, children: [
-        {action: 'goodAction2', label: 'Keys', keys:['c','d'],disabled: false},
-        {action: 'badAction2', label: 'No Keys',keys:[],disabled: false},
-      ]},
-    ])
-  })
-  test('applied disabled flags if they exist', () => {
-    const action = { type: 'uniqeAction' } as ContextAction
-    const conditionMock = jest.fn().mockReturnValue(true)
-    const result = menuApplyMetaData([
-      {action: 'goodAction', label: 'Valid'},
-      {action: 'conditionalAction', label: 'Maybe'},
-    ], action, {}, {
-      goodAction: {},
-      conditionalAction: {
-        disabled: conditionMock
-      }
-    })
-    expect(result).toEqual([
-      {action: 'goodAction', label: 'Valid', disabled: false, keys: []},
-      {action: 'conditionalAction', label: 'Maybe', disabled: true, keys: []},
-    ])
-    expect(conditionMock).toHaveBeenCalledTimes(1)
-    expect(conditionMock).toHaveBeenCalledWith(action)
-  })
-  test('applies conditions recursively', () => {
-    const action = { type: 'uniqeAction' } as ContextAction
-    const result = menuApplyMetaData([
-      {action: 'goodAction', label: 'Valid'},
-      {label: 'Parent', mode: ContextMenuItemMode.section, children: [
-        {action: 'goodAction2', label: 'Valid'},
-      ]},
-    ], action, {}, {
-      goodAction: {},
-      goodAction2: {
-        disabled: true
-      },
-    })
-    expect(result).toEqual([
-      {action: 'goodAction', label: 'Valid', keys: [], disabled: false, },
-      {label: 'Parent', mode: ContextMenuItemMode.section, keys: [], disabled: false, children: [
-        {action: 'goodAction2', label: 'Valid', disabled: true,  keys: []},
-      ]},
-    ])
-  })
+	test('applies keys recursively', () => {
+		const action = { type: 'uniqeAction' } as ContextAction
+		const result = menuApplyActData([
+			{action: 'goodAction', label: 'Keys'},
+			{action: 'badAction', label: 'No Keys'},
+			{mode: ContextMenuItemMode.section,label: 'Parent', children: [
+				{action: 'goodAction2', label: 'Keys'},
+				{action: 'badAction2', label: 'No Keys'},
+			]},
+		], action, {
+			goodAction: {
+				keys: ['a','b']
+			},
+			goodAction2: {
+				keys: ['c','d']
+			}
+		})
+		expect(result).toEqual([
+			{action: 'goodAction', label: 'Keys',keys:['a','b'],disabled: false},
+			{action: 'badAction', label: 'No Keys',keys:[],disabled: false},
+			{label: 'Parent', keys: [], disabled: false, mode: ContextMenuItemMode.section, children: [
+				{action: 'goodAction2', label: 'Keys', keys:['c','d'],disabled: false},
+				{action: 'badAction2', label: 'No Keys',keys:[],disabled: false},
+			]},
+		])
+	})
+	test('applied disabled flags if they exist', () => {
+		const action = { type: 'uniqeAction' } as ContextAction
+		const conditionMock = jest.fn().mockReturnValue(true)
+		const result = menuApplyActData([
+			{action: 'goodAction', label: 'Valid'},
+			{action: 'conditionalAction', label: 'Maybe'},
+		], action, {
+			goodAction: {},
+			conditionalAction: {
+				disabled: conditionMock
+			}
+		})
+		expect(result).toEqual([
+			{action: 'goodAction', label: 'Valid', disabled: false, keys: []},
+			{action: 'conditionalAction', label: 'Maybe', disabled: true, keys: []},
+		])
+		expect(conditionMock).toHaveBeenCalledTimes(1)
+		expect(conditionMock).toHaveBeenCalledWith(action)
+	})
+	test('applies conditions recursively', () => {
+		const action = { type: 'uniqeAction' } as ContextAction
+		const result = menuApplyActData([
+			{action: 'goodAction', label: 'Valid'},
+			{label: 'Parent', mode: ContextMenuItemMode.section, children: [
+				{action: 'goodAction2', label: 'Valid'},
+			]},
+		], action, {
+			goodAction: {},
+			goodAction2: {
+				disabled: true
+			},
+		})
+		expect(result).toEqual([
+			{action: 'goodAction', label: 'Valid', keys: [], disabled: false, },
+			{label: 'Parent', mode: ContextMenuItemMode.section, keys: [], disabled: false, children: [
+				{action: 'goodAction2', label: 'Valid', disabled: true,  keys: []},
+			]},
+		])
+	})
 })
 // })
 // import menuApplyConditions from '.'

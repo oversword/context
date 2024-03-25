@@ -9,7 +9,7 @@ import {
 	ContextInterceptGroup,
 	ContextActionName,
 	ContextActionNameConfig,
-	ContextMetaMenuItemList,
+	ContextActMenuItemList,
 } from './index.types'
 
 export interface ContextMenuResult {
@@ -28,7 +28,7 @@ export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' |
 
 export interface ContextMenuOptions {
 	pos: ContextMenuOptionsPosition;
-	menu: ContextMetaMenuItemList;
+	menu: ContextActMenuItemList;
 	level?: number;
 }
 
@@ -64,7 +64,7 @@ export interface ContextSystemApi {
 
 	addMenu: (
 		pos: ContextMenuOptionsPosition,
-		menu: ContextMetaMenuItemList,
+		menu: ContextActMenuItemList,
 		level?: number,
 	) => Promise<ContextMenuResult | null>;
 	addContextMenu: (

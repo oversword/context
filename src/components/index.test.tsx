@@ -16,7 +16,7 @@ import CONTEXT_CLASS from '@/constants/context-class'
 import ROOT_ID from '@/constants/root-id'
 import initialiseContextSystem from '@/system/initialise'
 import menuItemClasses from '@/components/ContextMenuItem/classes'
-import { ContextInterceptGroup } from '@/types/index.types'
+import { ContextConfig, ContextInterceptGroup } from '@/types/index.types'
 
 const timeout = (n = 0) => new Promise<void>((resolve) => {
 	setTimeout(resolve, n)
@@ -82,7 +82,7 @@ describe('Context Component', () => {
 		})
 		test('Displays a menu when using the onContextMenu on a wrapped item', () => {
 			const contextSystem = initialiseContextSystem(container)
-			const context = {
+			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
 					'test-type': {
@@ -119,7 +119,7 @@ describe('Context Component', () => {
 		})
 		test('Actions can be triggered from the menu by clicking the items', async () => {
 			const contextSystem = initialiseContextSystem(container)
-			const context = {
+			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
 					'test-type': {
@@ -175,11 +175,13 @@ describe('Context Component', () => {
 		})
 		test('Actions can be triggered by pressing the configured key', async () => {
 			const contextSystem = initialiseContextSystem(container)
-			const context = {
+			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
 					'test-type': {
-						'test-act': {}
+						'test-act': {
+							keys: ['Click']
+						}
 					}
 				},
 				menu: {
@@ -187,9 +189,7 @@ describe('Context Component', () => {
 						{label:'Item Label',action:'test-act'}
 					]
 				},
-				keys: {
-					'test-act': ['Click']
-				}
+				
 			}
 			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
 			const intercept: ContextInterceptGroup = {
@@ -236,7 +236,7 @@ describe('Context Component', () => {
 		})
 		test('Actions can be triggered by another context forwarding an action', async () => {
 			const contextSystem = initialiseContextSystem(container)
-			const context = {
+			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
 					'test-type': {
@@ -249,15 +249,14 @@ describe('Context Component', () => {
 				'test-type.test-act': mockIntercept,
 				'child-type.child-act': 'test-act'
 			}
-			const childContext = {
+			const childContext: ContextConfig = {
 				type: 'child-type',
 				acts: {
 					'child-type': {
-						'child-act': {}
+						'child-act': {
+							keys: ['Click']
+						}
 					}
-				},
-				keys: {
-					'child-act': ['Click']
 				}
 			}
 			act(() => {

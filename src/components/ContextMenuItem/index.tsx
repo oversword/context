@@ -10,10 +10,11 @@ import iconMap from '@/constants/icon-map'
 
 const context: ContextConfig = {
 	type: 'context-menu-item',
-	keys: { select: ['Click', 'Enter', 'Space'] },
 	acts: {
 		'context-menu-item': (_action, acts) => ({
-			select: {},
+			select: {
+				keys: ['Click', 'Enter', 'Space'],
+			},
 			...acts,
 		}),
 	},

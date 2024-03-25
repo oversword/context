@@ -24,12 +24,12 @@ const contextsDecideMenu = (
 					...menuGen,
 					...current,
 					...(parentMenu.length
-							? [{
-								mode: ContextMenuItemMode.branch,
-								label: 'Parent Actions',
-								children: parentMenu
-							}]
-							: [])
+						? [{
+							mode: ContextMenuItemMode.branch,
+							label: 'Parent Actions',
+							children: parentMenu
+						}]
+						: [])
 				]
 				console.error(`Unknown menu type: ${typeof menuGen}`)
 				return current

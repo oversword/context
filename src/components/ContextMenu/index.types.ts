@@ -1,6 +1,6 @@
 import {
 	ContextInterceptGroup,
-	ContextMetaMenuItem as ContextMenuItemType,
+	ContextActMenuItem as ContextMenuItemType,
 } from '@/types/index.types'
 
 export interface ContextMenuProps {

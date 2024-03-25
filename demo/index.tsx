@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from "react-dom/client"
-import { Context, ContextInterceptGroup, SystemContext, initialiseContextSystem } from "../src"
+import { Context, ContextConfig, ContextInterceptGroup, SystemContext, initialiseContextSystem } from "../src"
 
 const style = document.createElement('style')
 style.innerHTML = `
@@ -24,18 +24,18 @@ const reactRoot = createRoot(container)
 
 const contextSystem = initialiseContextSystem(container)
 const intercept: ContextInterceptGroup = {
-  'test-type.test-act': (action) => {
+	'test-type.test-act': (action) => {
 		console.log('Parent Action:', action)
 		// alert('Parent Action!')
-  },
-  'child-type.child-act': (action) => {
+	},
+	'child-type.child-act': (action) => {
 		console.log('Child Action:', action)
 		// alert('Child Action!')
-  },
-  'test-button.test-button-activate': (action) => {
+	},
+	'test-button.test-button-activate': (action) => {
 		console.log('Button Action:', action)
 		// alert('Button Action!')
-  },
+	},
 }
 const context = {
 	type: 'test-type',
@@ -50,16 +50,13 @@ const context = {
 		]
 	}
 }
-const childContext = {
+const childContext: ContextConfig = {
 	type: 'child-type',
 	acts: {
 		'child-type': {
-			'child-act': {}
-		}
-	},
-	keys: {
-		'child-type': {
-			'child-act': ['DoubleClick']
+			'child-act': {
+				keys: ['DoubleClick']
+			}
 		}
 	},
 	menu: {
@@ -70,14 +67,11 @@ const childContext = {
 }
 const buttonContext = {
 	type: 'test-button',
-	keys: {
-		'test-button': {
-			'test-button-activate': ['Click']
-		}
-	},
 	acts: {
 		'test-button': {
-			'test-button-activate': {},
+			'test-button-activate': {
+				keys: ['Click']
+			},
 		},
 	},
 	menu: {
@@ -90,51 +84,39 @@ const buttonContext = {
 	}
 }
 /* self
-const context = {
+const context: ContextConfig = {
 	type: 'test-type',
-	self: {
-		acts: {
-			'test-act': {}
-		},
-		menu: [
-			{action:'test-act', label: 'Parent Action'}
-		]
+	acts: {
+		'test-act': {}
 	},
+	menu: [
+		{action:'test-act', label: 'Parent Action'}
+	]
 }
-const childContext = {
+const childContext: ContextConfig = {
 	type: 'child-type',
-	self: {
-		acts: {
-			'child-act': {}
-		},
-		keys: {
-			'child-act': ['DoubleClick']
-		},
-		menu: [
-			{action:'child-act', label: 'Child Action'}
-		]
-	}
-}
-const buttonContext = {
-	type: 'test-button',
-	keys: {
-		'test-button': {
-			'test-button-activate': ['Click']
+	acts: {
+		'child-act': {
+			keys: ['DoubleClick']
 		}
 	},
+	menu: [
+		{action:'child-act', label: 'Child Action'}
+	]
+}
+const buttonContext: ContextConfig = {
+	type: 'test-button',
 	acts: {
-		'test-button': {
-			'test-button-activate': {},
+		'test-button-activate': {
+			keys: ['Click']
 		},
 	},
-	menu: {
-		'test-button': [
-			{
-				label: 'Activate',
-				action: 'test-button-activate'
-			}
-		]
-	}
+	menu: [
+		{
+			label: 'Activate',
+			action: 'test-button-activate'
+		}
+	]
 }
 */
 reactRoot.render(
