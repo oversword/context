@@ -1,19 +1,5 @@
-import { ContextActionName, ContextMenuItem } from '@/types/index.types'
-
-/**
- * Converts a dash (-), or underscore (_) separated, lowercase string
- * into a space separated, capitalised string.
- *
- * e.g. "this-action_name" => "This Action Name"
- *
- * @param action The machine name of a context action
- * @returns The human version of the name
- */
-const humaniseAction = (action: ContextActionName): string =>
-	action
-		.split(/[_-]+/g)
-		.map(s => s[0].toUpperCase() + s.slice(1))
-		.join(' ')
+import humanise from '@/generic/string/transformers/humanise'
+import { ContextMenuItem } from '@/types/index.types'
 
 /**
  * Extracts the most unique idetifier available for a the ContextMenuItem `menuItem`
@@ -36,4 +22,4 @@ export const getKey = (menuItem: ContextMenuItem): string =>
  * @returns A human-readable label
  */
 export const getLabel = (menuItem: ContextMenuItem): string =>
-	menuItem.label || menuItem.title || ('action' in menuItem && menuItem.action && humaniseAction(menuItem.action)) || ''
+	menuItem.label || menuItem.title || ('action' in menuItem && menuItem.action && humanise(menuItem.action)) || ''

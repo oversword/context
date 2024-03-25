@@ -32,9 +32,11 @@ import click from '@/dom-events/click'
 import doubleClick from '@/dom-events/double-click'
 import mouseDown from '@/dom-events/mouse-down'
 import mouseUp from '@/dom-events/mouse-up'
-import contextsDecideMetaMenu from '../transformers/contexts-decide-meta-menu'
-import {metaMenuApplyData} from '@/transformers/menu-apply-metadata'
+import contextsDecideActMenu from '../transformers/contexts-decide-act-menu'
+import {actMenuApplyData} from '@/transformers/menu-apply-metadata'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
+import humanise from '@/generic/string/transformers/humanise'
+import storeMetaHasType from '../transformers/store-meta-has-type'
 
 /**
  * BUSSINESS LOGIC
@@ -243,12 +245,18 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		addContextMenu: async (id, event) => {
 			const contexts = getContexts(id)
 			const menu = contexts
-				.reverse().filter(({ config }) => config.type)
-				.reduce((parentMenu: ContextActMenuItemList, { id: currentId }): ContextActMenuItemList => {
+				.reverse().filter(storeMetaHasType)
+				.reduce((parentMenu: ContextActMenuItemList, { id: currentId }, index, list): ContextActMenuItemList => {
+					const parentMeta = index === 0 ? null : list[index - 1]
+					const parentInfo = parentMeta ? {
+						label: parentMeta.config.label || humanise(parentMeta.config.type),
+						type: parentMeta.config.type,
+						menu: parentMenu,
+					} : null
 					const currentContexts = getContexts(currentId)
-					const metaMenu = contextsDecideMetaMenu(currentContexts, event, parentMenu)
-					return metaMenuApplyData(
-						metaMenu,
+					const actMenu = contextsDecideActMenu(currentContexts, event, parentInfo)
+					return actMenuApplyData(
+						actMenu,
 						{
 							[MENU_ITEM_ID]: currentId,
 						}

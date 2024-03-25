@@ -3,13 +3,13 @@ import { MENU_ITEM_ID } from '@/constants/menu-item'
 import { ContextAction, ContextActsGroup, ContextMenuItem, ContextMenuItemList, ContextActMenuItem, ContextActMenuItemList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 
-export const metaMenuApplyData = (menu: ContextActMenuItemList, additionalProperties: object): ContextActMenuItemList =>
+export const actMenuApplyData = (menu: ContextActMenuItemList, additionalProperties: object): ContextActMenuItemList =>
 	menu.map((menuItem) => {
 		if (menuItem[MENU_ITEM_ID])
 			return menuItem
 		return {
 			...menuItem,
-			...('children' in menuItem ? { children: metaMenuApplyData(menuItem.children, additionalProperties) } : {}),
+			...('children' in menuItem ? { children: actMenuApplyData(menuItem.children, additionalProperties) } : {}),
 			...additionalProperties,
 		}
 	})

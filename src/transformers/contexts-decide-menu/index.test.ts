@@ -18,9 +18,7 @@ describe('contextsDecideMenu', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: menuObject
-				}
+				menu: menuObject
 			},
 		} as StoreMeta], {path:['contextType']} as ContextAction)
 
@@ -34,20 +32,20 @@ describe('contextsDecideMenu', () => {
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					contextType: [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					contextType: {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'contextType']} as ContextAction)
@@ -65,20 +63,20 @@ describe('contextsDecideMenu', () => {
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType > contextType': [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					'parentType > contextType': {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'contextType']} as ContextAction)
@@ -96,11 +94,9 @@ describe('contextsDecideMenu', () => {
 			parent: '2',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
@@ -114,10 +110,12 @@ describe('contextsDecideMenu', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType > contextType': [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					'parentType > contextType': {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'indirectType', 'contextType']} as ContextAction)
@@ -143,16 +141,14 @@ describe('contextsDecideMenu', () => {
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: contextMenuGen
-				}
+				menu: contextMenuGen
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType contextType': parentMenuGen
+				overrides: {
+					'parentType contextType': {menu: parentMenuGen}
 				}
 			},
 		} as StoreMeta], action)
@@ -160,7 +156,7 @@ describe('contextsDecideMenu', () => {
 		expect(result).toEqual(parentMenu)
 		expect(parentMenuGen).toHaveBeenCalledTimes(1)
 		expect(contextMenuGen).toHaveBeenCalledTimes(1)
-		expect(contextMenuGen).toBeCalledWith(action, [], [])
-		expect(parentMenuGen).toBeCalledWith(action, childMenu,[])
+		expect(contextMenuGen).toBeCalledWith(action, [], null)
+		expect(parentMenuGen).toBeCalledWith(action, childMenu, null)
 	})
 })

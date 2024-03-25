@@ -85,15 +85,11 @@ describe('Context Component', () => {
 			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
-					'test-type': {
-						'test-act': {}
-					}
+					'test-act': {}
 				},
-				menu: {
-					'test-type': [
-						{label:'Item Label',action:'test-act'}
-					]
-				}
+				menu: [
+					{label:'Item Label',action:'test-act'}
+				]
 			}
 			act(() => {
 				reactRoot.render(
@@ -122,15 +118,11 @@ describe('Context Component', () => {
 			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
-					'test-type': {
-						'test-act': {}
-					}
+					'test-act': {}
 				},
-				menu: {
-					'test-type': [
-						{label:'Item Label',action:'test-act'}
-					]
-				}
+				menu: [
+					{label:'Item Label',action:'test-act'}
+				]
 			}
 			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
 			const intercept: ContextInterceptGroup = {
@@ -178,18 +170,13 @@ describe('Context Component', () => {
 			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
-					'test-type': {
-						'test-act': {
-							keys: ['Click']
-						}
+					'test-act': {
+						keys: ['Click']
 					}
 				},
-				menu: {
-					'test-type': [
-						{label:'Item Label',action:'test-act'}
-					]
-				},
-				
+				menu: [
+					{label:'Item Label',action:'test-act'}
+				]
 			}
 			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
 			const intercept: ContextInterceptGroup = {
@@ -239,9 +226,7 @@ describe('Context Component', () => {
 			const context: ContextConfig = {
 				type: 'test-type',
 				acts: {
-					'test-type': {
-						'test-act': {}
-					}
+					'test-act': {}
 				},
 			}
 			const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
@@ -252,10 +237,8 @@ describe('Context Component', () => {
 			const childContext: ContextConfig = {
 				type: 'child-type',
 				acts: {
-					'child-type': {
-						'child-act': {
-							keys: ['Click']
-						}
+					'child-act': {
+						keys: ['Click']
 					}
 				}
 			}

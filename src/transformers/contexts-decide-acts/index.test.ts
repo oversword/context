@@ -19,9 +19,7 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: actionObject
-					}
+					actionName: actionObject
 				}
 			},
 		} as StoreMeta], {path:['contextType']} as ContextAction)
@@ -39,10 +37,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -50,11 +46,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					contextType: {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -77,10 +75,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -88,11 +84,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					'parentType > contextType': {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -115,10 +113,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -134,11 +130,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					'parentType > contextType': {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -172,16 +170,14 @@ describe('contextsDecideActs', () => {
 			parent: '0',
 			config: {
 				type: 'contextType',
-				acts: {
-					contextType: contextActsGen
-				}
+				acts: contextActsGen
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
-					'parentType contextType': parentActsGen
+				overrides: {
+					'parentType contextType': {acts: parentActsGen}
 				}
 			},
 		} as StoreMeta], action)

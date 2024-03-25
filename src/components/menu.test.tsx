@@ -14,6 +14,7 @@ import Context from './Context'
 import DataContext from './DataContext'
 import SystemContext from '@/constants/system-context'
 import initialiseContextSystem from '@/system/initialise'
+import { ContextConfig, ContextMenuItemMode } from '..'
 // import { ContextInterceptGroup } from '@/types/index.types'
 
 const timeout = (n = 0) => new Promise<void>((resolve) => {
@@ -105,39 +106,30 @@ describe('Context Component', () => {
 
 	test('Inheritance from parent', async () => {
 		const contextSystem = initialiseContextSystem(container)
-		const context = {
+		const context: ContextConfig = {
 			type: 'test-type',
-			menu: {
-				'test-type': [
-					{ label: 'Parent Action', action: 'test-act'}
-				]
-			},
+			menu: [
+				{ label: 'Parent Action', action: 'test-act'}
+			],
 			acts: {
-				'test-type': {
-					'test-act': {}
-				}
+				'test-act': {}
 			},
 		}
-		const childContext = {
+		const childContext: ContextConfig = {
 			type: 'child-type',
-			menu: {
-				'child-type': (action, current, parent) => [
-					...current,
-					{ label: 'Child Action', action: 'child-act' },
-					{
-						label: 'Parent Actions', mode: 'section',
-						children: parent
-					}
-				]
-			},
+			menu: (_action, current, parent) => [
+				...current,
+				{ label: 'Child Action', action: 'child-act' },
+				{
+					label: 'Parent Actions', mode: ContextMenuItemMode.section,
+					children: parent.menu
+				}
+			],
 			acts: {
-				'child-type': {
-					'child-act': {}
+				'child-act': {
+					keys: ['Click']
 				}
 			},
-			keys: {
-				'child-act': ['Click']
-			}
 		}
 		const parentAction = jest.fn()
 		const childAction = jest.fn()

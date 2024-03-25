@@ -1,6 +1,7 @@
-import { ContextAction, ContextMenuItemList, ContextMenuItemMode, StoreMetaList } from '@/types/index.types'
+import { ContextAction, ContextConfig, ContextMenuItemList, ContextMenuItemMode, ContextParentMenuMeta, ContextSelector, StoreMetaList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 import selectorMatch from '@/selector'
+import storeMetaHasType from '../store-meta-has-type'
 
 /**
  * 
@@ -11,27 +12,34 @@ import selectorMatch from '@/selector'
 const contextsDecideMenu = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
-	parentMenu: ContextMenuItemList = []
+	parentInfo: ContextParentMenuMeta | null = null
 ): ContextMenuItemList =>
-	contexts.reduce((current: ContextMenuItemList, { config }): ContextMenuItemList => {
-		const { menu } = config
-		if (!menu) return current
-		const matchingMenus = Object.entries(menu).filter(selectorMatch(action.path))
-		return matchingMenus.reduce(
-			(current: ContextMenuItemList, [,menuGen]): ContextMenuItemList => {
-				if (typeof menuGen === 'function') return menuGen(action, current, parentMenu)
-				if (Array.isArray(menuGen)) return [
-					...menuGen,
+	contexts.reduce((current: ContextMenuItemList, { config }, index, list): ContextMenuItemList => {
+		const selfConfig = config && (index === 0 || index < 1 + list.slice(1).findIndex(storeMetaHasType))
+		const { overrides } = config
+		if (!(selfConfig || overrides)) return current
+
+		const selfMenu: Array<[ContextSelector,ContextConfig]> = selfConfig && config
+			? [['self',config]]
+			: []
+		const matchingOverrides = Object.entries(overrides || {}).filter(selectorMatch(action.path))
+		
+		return selfMenu.concat(matchingOverrides).reduce(
+			(current: ContextMenuItemList, [,config]): ContextMenuItemList => {
+				if (!(config && config.menu)) return current
+				if (typeof config.menu === 'function') return config.menu(action, current, parentInfo)
+				if (Array.isArray(config.menu)) return [
+					...config.menu,
 					...current,
-					...(parentMenu.length
+					...(parentInfo && parentInfo.menu.length
 						? [{
-							mode: ContextMenuItemMode.branch,
-							label: 'Parent Actions',
-							children: parentMenu
+							mode: ContextMenuItemMode.section,
+							label: parentInfo.label,
+							children: parentInfo.menu
 						}]
 						: [])
 				]
-				console.error(`Unknown menu type: ${typeof menuGen}`)
+				console.error(`Unknown menu type: ${typeof config.menu}`)
 				return current
 			},
 			current,

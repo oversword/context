@@ -1,6 +1,5 @@
 import contextsDecideKeysAction from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction, StoreMeta } from '@/types/index.types'
 
 const defaultStoreContext = {
 	outercept: {},
@@ -17,14 +16,12 @@ describe('contextsDecideKeysAction', () => {
 				config: {
 					type: 'test-context',
 					acts: {
-						'test-context': {
-							'test-action': {
-								keys: ['Ctrl+U'],
-							},
-							'conditonal-action': {
-								condition: () => false,
-								keys: ['Ctrl+U']
-							}
+						'test-action': {
+							keys: ['Ctrl+U'],
+						},
+						'conditonal-action': {
+							condition: () => false,
+							keys: ['Ctrl+U']
 						}
 					},
 				}

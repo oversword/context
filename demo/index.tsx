@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from "react-dom/client"
-import { Context, ContextConfig, ContextInterceptGroup, SystemContext, initialiseContextSystem } from "../src"
+import { Context, ContextConfig, ContextInterceptGroup, DataContext, SystemContext, initialiseContextSystem } from "../src"
 
 const style = document.createElement('style')
 style.innerHTML = `
@@ -37,53 +37,52 @@ const intercept: ContextInterceptGroup = {
 		// alert('Button Action!')
 	},
 }
-const context = {
-	type: 'test-type',
-	acts: {
-		'test-type': {
-			'test-act': {}
-		}
-	},
-	menu: {
-		'test-type': [
-			{action:'test-act', label: 'Parent Action'}
-		]
-	}
-}
-const childContext: ContextConfig = {
-	type: 'child-type',
-	acts: {
-		'child-type': {
-			'child-act': {
-				keys: ['DoubleClick']
-			}
-		}
-	},
-	menu: {
-		'child-type': [
-			{action:'child-act', label: 'Child Action'}
-		]
-	}
-}
-const buttonContext = {
-	type: 'test-button',
-	acts: {
-		'test-button': {
-			'test-button-activate': {
-				keys: ['Click']
-			},
-		},
-	},
-	menu: {
-		'test-button': [
-			{
-				label: 'Activate',
-				action: 'test-button-activate'
-			}
-		]
-	}
-}
-/* self
+// const context = {
+// 	type: 'test-type',
+// 	acts: {
+// 		'test-type': {
+// 			'test-act': {}
+// 		}
+// 	},
+// 	menu: {
+// 		'test-type': [
+// 			{action:'test-act', label: 'Parent Action'}
+// 		]
+// 	}
+// }
+// const childContext: ContextConfig = {
+// 	type: 'child-type',
+// 	acts: {
+// 		'child-type': {
+// 			'child-act': {
+// 				keys: ['DoubleClick']
+// 			}
+// 		}
+// 	},
+// 	menu: {
+// 		'child-type': [
+// 			{action:'child-act', label: 'Child Action'}
+// 		]
+// 	}
+// }
+// const buttonContext = {
+// 	type: 'test-button',
+// 	acts: {
+// 		'test-button': {
+// 			'test-button-activate': {
+// 				keys: ['Click']
+// 			},
+// 		},
+// 	},
+// 	menu: {
+// 		'test-button': [
+// 			{
+// 				label: 'Activate',
+// 				action: 'test-button-activate'
+// 			}
+// 		]
+// 	}
+// }
 const context: ContextConfig = {
 	type: 'test-type',
 	acts: {
@@ -118,7 +117,6 @@ const buttonContext: ContextConfig = {
 		}
 	]
 }
-*/
 reactRoot.render(
   <SystemContext.Provider value={contextSystem}>
 	<Context context={context} intercept={intercept} >
@@ -140,12 +138,18 @@ reactRoot.render(
 			<br/>
 			<br/>
 			<hr/>
-			<Context
-				context={buttonContext}
-				element="button"
-			>
-				Test Button
-			</Context>
+			<DataContext data={{extraDataGoesWhere3: 457467}} >
+				<DataContext data={{extraDataGoesWhere2: 457467}} >
+					<Context
+						context={buttonContext}
+						element="button"
+					>
+						<DataContext data={{extraDataGoesWhere: 457467}} >
+							Test Button
+						</DataContext>
+					</Context>
+				</DataContext>
+			</DataContext>
 		</Context>
 	</Context>
   </SystemContext.Provider>

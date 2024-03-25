@@ -1,20 +1,30 @@
-import { ContextAction, ContextActsGroup, StoreMetaList } from '@/types/index.types'
+import { ContextAction, ContextActsGroup, ContextConfig, ContextSelector, StoreMetaList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 import selectorMatch from '@/selector'
+import { inactiveLog as log } from '@/side-effects/debug-log'
+import storeMetaHasType from '../store-meta-has-type'
 
 const contextsDecideActs = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
-): ContextActsGroup =>
-	contexts.reduce((current: ContextActsGroup, { config }): ContextActsGroup => {
-		const { acts } = config
-		if (!acts) return current
+): ContextActsGroup => {
+	log('contextsDecideActs')
+	return contexts.reduce((current: ContextActsGroup, { config }, index, list): ContextActsGroup => {
+		log('contextsDecideActs', { index, list, config, current })
+		const selfConfig = config && (index === 0 || index < 1 + list.slice(1).findIndex(storeMetaHasType))
+		const { overrides } = config
+		if (!(selfConfig || overrides)) return current
 
-		const matchingActs = Object.entries(acts).filter(selectorMatch(action.path))
-		return matchingActs.reduce(
-			(current: ContextActsGroup, [, actsGen]): ContextActsGroup => {
-				if (typeof actsGen === 'function') return actsGen(action, current)
-				Object.entries(actsGen).forEach(([actionName, options]) => {
+		const selfActs: Array<[ContextSelector,ContextConfig]> = selfConfig && config
+			? [['self',config]]
+			: []
+		const matchingOverrides = Object.entries(overrides || {}).filter(selectorMatch(action.path))
+		
+		return selfActs.concat(matchingOverrides).reduce(
+			(current: ContextActsGroup, [, config]): ContextActsGroup => {
+				if (!(config && config.acts)) return current
+				if (typeof config.acts === 'function') return config.acts(action, current)
+				Object.entries(config.acts).forEach(([actionName, options]) => {
 					if (actionName in current) {
 						current[actionName] = {
 							...current[actionName],
@@ -29,5 +39,6 @@ const contextsDecideActs = (
 			current,
 		)
 	}, {})
+}
 
 export default contextsDecideActs

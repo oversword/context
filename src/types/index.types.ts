@@ -65,6 +65,11 @@ export interface SectionContextMenuItem extends Omit<BasicContextMenuItem, 'acti
 
 export type ContextMenuItem = BasicContextMenuItem | BranchContextMenuItem | SectionContextMenuItem;
 
+export interface ContextParentMenuMeta {
+	label: string,
+	type: ContextType,
+	menu: ContextActMenuItemList
+}
 
 type ActMenuItem<T extends ContextMenuItem> = T & {
 	keys: Array<string>;
@@ -109,7 +114,7 @@ export type ContextActsGroupGenerator = (
 export type ContextMenuListGenerator = (
 	action: PartialOmit<ContextAction, 'action'>,
 	current: ContextMenuItemList,
-	parent: ContextMenuItemList,
+	parent: ContextParentMenuMeta,
 ) => ContextMenuItemList;
 
 /**
@@ -117,13 +122,16 @@ export type ContextMenuListGenerator = (
  */
 export interface ContextConfig {
 	type?: ContextType;
-	acts?: ContextActGroupGroup;
+	acts?: ContextActsGroup | ContextActsGroupGenerator;
+	menu?: ContextMenuItemList | ContextMenuListGenerator;
 	data?: ContextData | ContextDataGenerator;
-	menu?: ContextMenuListGroup;
-	// keys?: ContextKeyListGroup;
+	label?: string;
+	overrides?: Record<ContextSelector, ContextOverride>
 }
+export type ContextOverride = Omit<ContextConfig, 'type' | 'overrides' | 'data'>
+
 export interface DataContextProps {
-	children: null | ReactElement | Array<ReactElement>;
+	children: null | string | ReactElement | Array<ReactElement | string | null>;
 	DataContext?: ContextConfig | null;
 	context?: ContextConfig | null;
 	data?: ContextData | ContextDataGenerator | null;

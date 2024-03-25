@@ -26,16 +26,14 @@ const MENU_ERROR = Symbol('menu-error')
 
 const context: ContextConfig = {
 	type: 'context-menu',
-	acts: {
-		'context-menu': (_action, acts) => ({
-			load: {},
-			action: {},
-			close: {
-				keys: ['Escape']
-			},
-			...acts,
-		}),
-	},
+	acts: (_action, acts) => ({
+		load: {},
+		action: {},
+		close: {
+			keys: ['Escape']
+		},
+		...acts,
+	}),
 }
 
 const renderMenuItem = (menuItem: ContextMenuItemType, styles: Record<string, string>) => {
