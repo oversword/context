@@ -52,7 +52,6 @@ export interface ContextSystemApi {
 	configuration: ContextSystemConfig;
 	newId: () => ContextId;
 	getContexts: (id: ContextId | null) => StoreMetaList;
-	// decideMenuConfig: (id: ContextId, event: ContextEvent) => ContextMetaMenuItemList;
 	isFocus: (id: ContextId, event: Event) => boolean;
 	addContext: ({
 		id,

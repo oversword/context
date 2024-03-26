@@ -11,7 +11,6 @@ import { act } from 'react-dom/test-utils'
 import { fireEvent } from '@testing-library/react'
 
 import Context from './Context'
-import DataContext from './DataContext'
 import SystemContext from '@/constants/system-context'
 import initialiseContextSystem from '@/system/initialise'
 import { ContextConfig, ContextMenuItemMode } from '..'
@@ -139,18 +138,16 @@ describe('Context Component', () => {
 					<Context context={context} intercept={{
 						'test-type.test-act': parentAction
 					}} data={{ parent_key: 'test' }}>
-						<DataContext context={{}}>
-							<div className="parent-div">
+						<div className="parent-div">
 								Outside
-							</div>
-							<Context context={childContext} intercept={{
-								'child-type.child-act': childAction
-							}} data={{ child_key: 'test' }}>
-								<div className="test-div">
+						</div>
+						<Context context={childContext} intercept={{
+							'child-type.child-act': childAction
+						}} data={{ child_key: 'test' }}>
+							<div className="test-div">
 									Test
-								</div>
-							</Context>
-						</DataContext>
+							</div>
+						</Context>
 					</Context>
 				</SystemContext.Provider>
 			)
@@ -174,6 +171,6 @@ describe('Context Component', () => {
 		fireEvent.click(childItem)
 		await timeout()
 		expect(childAction).toHaveBeenCalledTimes(1)
-		expect(childAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'child-act', data: { parent_key: 'test', child_key: 'test' }, type: 'child-type', path: ['test-type', 'child-type'] }))
+		expect(childAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'child-act', data: { child_key: 'test' }, type: 'child-type', path: ['test-type', 'child-type'] }))
 	})
 })

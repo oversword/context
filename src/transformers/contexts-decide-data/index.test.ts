@@ -9,6 +9,7 @@ const defaultStoreContext = {
 	id: '0',
 	root: true,
 	parent: null,
+	data: null,
 }
 describe('contextsDecideData', () => {
 	test('returns the data options when defined in a context', () => {
@@ -40,11 +41,15 @@ describe('contextsDecideData', () => {
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
-				data: {
-					childKey: 'override',
-					parentKey: 'merge',
-				}
-			},
+				overrides: {
+					contextType: {
+						data: {
+							childKey: 'override',
+							parentKey: 'merge',
+						}
+					}
+				},
+			}
 		} as StoreMeta], {path:['contextType']} as ContextAction)
 
 		expect(result).toEqual({
@@ -75,7 +80,11 @@ describe('contextsDecideData', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				data: parentDataGen
+				overrides: {
+					contextType: {
+						data: parentDataGen
+					}
+				}
 			},
 		} as StoreMeta], action)
 

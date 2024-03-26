@@ -11,9 +11,12 @@ const contextsDecideActs = (
 	action: PartialOmit<ContextAction, 'action'>,
 ): ContextActsGroup => {
 	log('contextsDecideActs')
-	return contexts.reduce((current: ContextActsGroup, { config }, index, list): ContextActsGroup => {
-		log('contextsDecideActs', { index, list, config, current })
-		const selfConfig = config && (index === 0 || index < 1 + list.slice(1).findIndex(storeMetaHasType))
+	const firstType = contexts.findIndex(storeMetaHasType)
+	const typeAfter = firstType === -1 ? contexts.length : contexts.slice(firstType + 1).findIndex(storeMetaHasType)
+	const nextType = typeAfter === -1 ? contexts.length : firstType + 1 + typeAfter
+	return contexts.reduce((current: ContextActsGroup, { config }, index): ContextActsGroup => {
+		log('contextsDecideActs', { index, config, current })
+		const selfConfig = config && (index < nextType)
 		const { overrides } = config
 		if (!(selfConfig || overrides)) return current
 

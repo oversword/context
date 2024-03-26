@@ -8,6 +8,7 @@ const defaultStoreContext = {
 	id: '0',
 	root: true,
 	parent: null,
+	data: null,
 }
 describe('contextsDecideKeysAction', () => {
 	test('matches key combinations on the triggered context', () => {

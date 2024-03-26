@@ -108,12 +108,8 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 			id,
 			parent,
 			root,
-			config: data
-				? {
-					...(context || {}),
-					moreData: data,
-				}
-				: context || {},
+			data,
+			config: context || {},
 			intercept,
 			outercept,
 		}

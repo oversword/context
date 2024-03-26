@@ -15,9 +15,12 @@ const contextsDecideMenu = (
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'action'>,
 	parentInfo: ContextParentMenuMeta | null = null
-): ContextMenuItemList =>
-	contexts.reduce((current: ContextMenuItemList, { config }, index, list): ContextMenuItemList => {
-		const selfConfig = config && (index === 0 || index < 1 + list.slice(1).findIndex(storeMetaHasType))
+): ContextMenuItemList => {
+	const firstType = contexts.findIndex(storeMetaHasType)
+	const typeAfter = firstType === -1 ? contexts.length : contexts.slice(firstType + 1).findIndex(storeMetaHasType)
+	const nextType = typeAfter === -1 ? contexts.length : firstType + 1 + typeAfter
+	return contexts.reduce((current: ContextMenuItemList, { config }, index): ContextMenuItemList => {
+		const selfConfig = config && (index < nextType)
 		const { overrides } = config
 		if (!(selfConfig || overrides)) return current
 
@@ -43,5 +46,6 @@ const contextsDecideMenu = (
 			current,
 		)
 	}, [])
+}
 
 export default contextsDecideMenu

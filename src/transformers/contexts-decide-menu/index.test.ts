@@ -6,6 +6,7 @@ import defaultConfiguration from '@/system/default-config'
 const defaultStoreContext = {
 	outercept: {},
 	intercept: {},
+	data: null,
 	id: '0',
 	root: true,
 	parent: null,

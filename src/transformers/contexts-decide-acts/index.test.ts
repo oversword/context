@@ -9,6 +9,7 @@ const defaultStoreContext = {
 	id: '0',
 	root: true,
 	parent: null,
+	data: null,
 }
 describe('contextsDecideActs', () => {
 	test('returns the acts options when defined in a context', () => {

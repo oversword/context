@@ -128,7 +128,7 @@ export interface ContextConfig {
 	label?: string;
 	overrides?: Record<ContextSelector, ContextOverride>
 }
-export type ContextOverride = Omit<ContextConfig, 'type' | 'overrides' | 'data'>
+export type ContextOverride = Omit<ContextConfig, 'type' | 'overrides' | 'label'>
 
 export interface DataContextProps {
 	children: null | string | ReactElement | Array<ReactElement | string | null>;
@@ -180,9 +180,6 @@ export type ContextActionNameConfig =
 /**
  * STORE
  */
-export interface StoreContext extends ContextConfig {
-	moreData?: ContextData | ContextDataGenerator;
-}
 
 export interface StoreMeta {
 	id: ContextId;
@@ -190,7 +187,8 @@ export interface StoreMeta {
 	parent: ContextId | null;
 	intercept: ContextInterceptGroup | null;
 	outercept: ContextInterceptGroup | null;
-	config: StoreContext;
+	data: ContextData | ContextDataGenerator | null,
+	config: ContextConfig;
 }
 
 export type StoreMetaList = Array<StoreMeta>;
