@@ -11,4 +11,4 @@ import filterTruthy from '@/generic/array/iterators/filter-truthy'
 const contextsExtractPath = (contexts: StoreMetaList): ContextTypeList =>
 	(contexts.map(({ config }) => config.type).filter(filterTruthy) as Array<string>).reverse()
 
-	export default contextsExtractPath
+export default contextsExtractPath
