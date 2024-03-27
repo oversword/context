@@ -3,7 +3,15 @@ import { MENU_ITEM_ID } from '@/constants/menu-item'
 import { ContextAction, ContextActsGroup, ContextMenuItem, ContextMenuItemList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 
-
+/**
+ * Filters a menu to only contain menu items relating to enabled acts
+ * 
+ * @param menu The menu to filter
+ * @param action The current data available for the action
+ * @param acts The acts available for the given context type
+ * 
+ * @returns the menu, filtered recursively
+ */
 const menuFilter = (menu: ContextMenuItemList, action: PartialOmit<ContextAction, 'action'>, acts: ContextActsGroup): ContextMenuItemList => {
 	return menu.filter((menuItem: ContextMenuItem): boolean => {
 		if (menuItem[MENU_ITEM_ID])

@@ -5,10 +5,14 @@ import storeMetaHasType from '../store-meta-has-type'
 import { ContextSystemConfig } from '@/types/system.types'
 
 /**
+ * Decides the menu for a given list of StoreMetas
  * 
- * @param contexts 
- * @param action 
- * @returns 
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param action The current data available for the action
+ * @param parentInfo Information about the parent menu
+ * 
+ * @returns The full menu for the given action
  */
 const contextsDecideMenu = (
 	configuration: Pick<ContextSystemConfig, 'strategy_mergeMenu'>,

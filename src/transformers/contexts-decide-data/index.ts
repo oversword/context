@@ -26,11 +26,15 @@ const dataMerge = (configuration: Pick<ContextSystemConfig, 'strategy_mergeData'
 		return current
 	}
 type ContextEntry = [ContextSelector,ContextConfig]
+
 /**
+ * Merges data from all given StoreMetas relating to the action
  * 
- * @param contexts 
- * @param action 
- * @returns 
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param action The current data available for the action
+ * 
+ * @returns The full data for the given action
  */
 const contextsDecideData = (
 	configuration: Pick<ContextSystemConfig, 'strategy_mergeData'>,

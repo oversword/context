@@ -5,6 +5,15 @@ import { inactiveLog as log } from '@/side-effects/debug-log'
 import storeMetaHasType from '../store-meta-has-type'
 import { ContextSystemConfig } from '@/types/system.types'
 
+/**
+ * Merge acts definitions for the given StoreMetas relating to the action
+ * 
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param action The current data available for the action
+ * 
+ * @returns The full set of acts for the given action
+ */
 const contextsDecideActs = (
 	configuration: Pick<ContextSystemConfig, 'strategy_mergeActs'>,
 	contexts: StoreMetaList,

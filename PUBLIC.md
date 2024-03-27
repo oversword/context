@@ -87,15 +87,13 @@ const context = {
 ```
 
 #### <a name="config-context-acts"></a>Context Acts
-You can provide the `acts` property, which will define which actions are possible for which type.
+You can provide the `acts` property, which will define which actions are possible for this type.
 ```jsx
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
+    'some-action': {},
+    'another-action': {},
   }
 }
 <Context context={context} >
@@ -110,21 +108,21 @@ const context = {
 You can override `acts` in parent contexts
 ```jsx
 const wrapperContext = {
-  acts: {
+  overrides: {
     'my-label-type': {
-      'override-action': {}
+      acts: {
+        'override-action': {}
+      }
     }
   }
 }
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {
-        disabled: () => Boolean(Math.round(Math.random()))
-      },
-    }
+    'some-action': {},
+    'another-action': {
+      disabled: () => Boolean(Math.round(Math.random()))
+    },
   }
 }
 <DataContext context={wrappercontext} >
@@ -134,6 +132,7 @@ const context = {
 </DataContext>
 ```
 
+##### <a name="config-context-acts-conditions"></a>Context Acts Conditions
 Acts can have conditions configured, which will determine whether or not they are allowed to fire.
 
 * If the `condition` property is `false`, or returns `false` on evaluation, the action will not exist on the context, and will not be triggerable. Any attempt to trigger this action will result in the `UNHANDLED` Symbol.
@@ -142,16 +141,14 @@ Acts can have conditions configured, which will determine whether or not they ar
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {
-        condition: ({ type, action, path, data, event }) =>
-          Boolean(Math.round(Math.random()))
-      },
-      'another-action': {
-        disabled: ({ type, action, path, data, event }) =>
-          Boolean(Math.round(Math.random()))
-      },
-    }
+    'some-action': {
+      condition: ({ type, action, path, data, event }) =>
+        Boolean(Math.round(Math.random()))
+    },
+    'another-action': {
+      disabled: ({ type, action, path, data, event }) =>
+        Boolean(Math.round(Math.random()))
+    },
   }
 }
 <Context context={context} >
@@ -163,6 +160,61 @@ const context = {
 </DataContext>
 ```
 
+##### <a name="config-context-acts-keys"></a>Context Acts Keys
+```jsx
+const context = {
+  type: 'my-label-type',
+  acts: {
+    'some-action': {
+      keys: ['Click']
+    },
+    'another-action': {},
+  },
+}
+<Context context={context} >
+  Contents
+</Context>
+```
+
+You can also override `keys` in parent contexts
+```jsx
+const wrapperContext = {
+  overrides: {
+    'my-label-type': {
+      acts: {
+        'some-action': {
+          keys: ['Click','Enter']
+        }
+      }
+    }
+  }
+}
+const context = {
+  type: 'my-label-type',
+  acts: {
+    'some-action': {
+      keys: ['Ctrl+L']
+    },
+    'another-action': {},
+  },
+  menu: [
+    {
+      action: 'some-action',
+      label: 'Trigger Some Action',
+    },
+    {
+      action: 'another-action',
+      label: 'Do Another Action',
+    }
+  ],
+}
+<DataContext context={wrappercontext} >
+  <Context context={context} >
+    Contents
+  </Context>
+</DataContext>
+```
+
 #### <a name="config-context-menus"></a>Context Menus
 You can provide the `menu` property, which will define the display of the context menu.
 * The acts each menu item references must be configured for the specific type. If the action referenced does not exist, the menu item will not display in the menu at all.
@@ -171,23 +223,19 @@ You can provide the `menu` property, which will define the display of the contex
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
+    'some-action': {},
+    'another-action': {},
   },
-  menu: {
-    'my-label-type': [
-      {
-        action: 'some-action',
-        label: 'Trigger Some Action',
-      },
-      {
-        action: 'another-action',
-        label: 'Do Another Action',
-      }
-    ]
-  }
+  menu: [
+    {
+      action: 'some-action',
+      label: 'Trigger Some Action',
+    },
+    {
+      action: 'another-action',
+      label: 'Do Another Action',
+    }
+  ]
 }
 <Context context={context} >
   Contents
@@ -197,35 +245,33 @@ const context = {
 You can override `menu` in parent contexts
 ```jsx
 const wrapperContext = {
-  menu: {
-    'my-label-type': [
-      {
-        action: 'override-action',
-        label: 'Overriding Menu Item'
-      }
-    ]
+  overrides: {
+    'my-label-type': {
+      menu: [
+        {
+          action: 'override-action',
+          label: 'Overriding Menu Item'
+        }
+      ]
+    }
   }
 }
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
+    'some-action': {},
+    'another-action': {},
   },
-  menu: {
-    'my-label-type': [
-      {
-        action: 'some-action',
-        label: 'Trigger Some Action',
-      },
-      {
-        action: 'another-action',
-        label: 'Do Another Action',
-      }
-    ]
-  }
+  menu: [
+    {
+      action: 'some-action',
+      label: 'Trigger Some Action',
+    },
+    {
+      action: 'another-action',
+      label: 'Do Another Action',
+    }
+  ]
 }
 <DataContext context={wrappercontext} >
   <Context context={context} >
@@ -239,29 +285,25 @@ Menu items can be grouped by using the "section" mode, and providing children
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
+    'some-action': {},
+    'another-action': {},
   },
-  menu: {
-    'my-label-type': [
-      {
-        action: 'some-action',
-        label: 'Trigger Some Action',
-      },
-      {
-        label: 'Action List',
-        mode: 'section',
-        children: [
-          {
-            action: 'another-action',
-            label: 'Do Another Action',
-          }
-        ]
-      }
-    ]
-  }
+  menu: [
+    {
+      action: 'some-action',
+      label: 'Trigger Some Action',
+    },
+    {
+      label: 'Action List',
+      mode: 'section',
+      children: [
+        {
+          action: 'another-action',
+          label: 'Do Another Action',
+        }
+      ]
+    }
+  ]
 }
 <Context context={context} >
   Contents
@@ -273,90 +315,29 @@ Menus can be nested by using the "branch" mode, and providing children
 const context = {
   type: 'my-label-type',
   acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
+    'some-action': {},
+    'another-action': {},
   },
-  menu: {
-    'my-label-type': [
-      {
-        action: 'some-action',
-        label: 'Trigger Some Action',
-      },
-      {
-        label: 'Additional Actions...',
-        mode: 'branch',
-        children: [
-          {
-            action: 'another-action',
-            label: 'Do Another Action',
-          }
-        ]
-      }
-    ]
-  }
+  menu: [
+    {
+      action: 'some-action',
+      label: 'Trigger Some Action',
+    },
+    {
+      label: 'Additional Actions...',
+      mode: 'branch',
+      children: [
+        {
+          action: 'another-action',
+          label: 'Do Another Action',
+        }
+      ]
+    }
+  ]
 }
 <Context context={context} >
   Contents
 </Context>
-```
-
-#### <a name="config-context-keys"></a>Context Keys
-```jsx
-const context = {
-  type: 'my-label-type',
-  acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
-  },
-  keys: {
-    'some-action': ['Click']
-  }
-}
-<Context context={context} >
-  Contents
-</Context>
-```
-
-You can also override `keys` in parent contexts
-```jsx
-const wrapperContext = {
-  keys: {
-    'some-action': ['Click','Enter']
-  }
-}
-const context = {
-  type: 'my-label-type',
-  acts: {
-    'my-label-type': {
-      'some-action': {},
-      'another-action': {},
-    }
-  },
-  menu: {
-    'my-label-type': [
-      {
-        action: 'some-action',
-        label: 'Trigger Some Action',
-      },
-      {
-        action: 'another-action',
-        label: 'Do Another Action',
-      }
-    ]
-  },
-  keys: {
-    'some-action': ['Ctrl+L']
-  }
-}
-<DataContext context={wrappercontext} >
-  <Context context={context} >
-    Contents
-  </Context>
-</DataContext>
 ```
 
 ### <a name="config-data"></a>Data Configuration
@@ -407,13 +388,10 @@ An `intercept` property can be provided to the context in order to catch and han
 const subComponentContext = {
   type: 'sub-component',
   acts: {
-    'sub-component': {
-      'some-action': {}
+    'some-action': {
+      keys: ['Click','Enter']
     }
   },
-  keys: {
-    'some-action': ['Click','Enter']
-  }
 }
 const SubComponent = ({ name }) => (
   <Context context={subComponentContext}>
@@ -451,13 +429,10 @@ Intercepts can also be defined as other actions, triggering them from the interc
 const subComponentContext = {
   type: 'sub-component',
   acts: {
-    'sub-component': {
-      'some-action': {}
+    'some-action': {
+      keys: ['Click','Enter']
     }
   },
-  keys: {
-    'some-action': ['Click','Enter']
-  }
 }
 const SubComponent = ({ name }) => (
   <Context context={subComponentContext}>
@@ -468,9 +443,7 @@ const SubComponent = ({ name }) => (
 const parentContext = {
   type: 'parent-component',
   acts: {
-    'parent-component': {
-      'parent-action': {}
-    }
+    'parent-action': {}
   },
 }
 const parentIntercept = {
@@ -498,13 +471,10 @@ Outercepts will always be prioritised over intercepts unless the outercepts go u
 const subComponentContext = {
   type: 'sub-component',
   acts: {
-    'sub-component': {
-      'some-action': {}
+    'some-action': {
+      keys: ['Click','Enter']
     }
   },
-  keys: {
-    'some-action': ['Click','Enter']
-  }
 }
 const subComponentIntercept = {
   'sub-component.some-action': ({ type, path, action, data, event }) => {

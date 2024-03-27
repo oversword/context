@@ -14,7 +14,7 @@ import {
 } from '@/types/index.types'
 import { HandleConfig } from '@/types/dom-events.types'
 import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
-import { ContextSystemApi, ContextSystemConfig } from '@/types/system.types'
+import { ContextMenuResult, ContextSystemApi, ContextSystemConfig } from '@/types/system.types'
 import { UNHANDLED } from '@/constants/handled'
 
 import { inactiveLog as log } from '@/side-effects/debug-log'
@@ -127,6 +127,47 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 	const isFocus = (id: ContextId, event: Event): boolean => {
 		const focus = (event.target as HTMLElement).closest<HTMLElement>(`.${CONTEXT_CLASS}`)
 		return id === focus?.dataset.contextid
+	}
+
+	/**
+	 * Adds a context menu to the page,
+	 *  sourced from the context of the given ID
+	 *  positioned with the event data
+	 * 
+	 * @param id The ID of the context to build a menu for
+	 * @param event The source mouse event, to position the menu
+	 * 
+	 * @returns A promise which will resolve in the action to be triggered
+	 */
+	const addContextMenu = async (id: ContextId, event: MouseEvent): Promise<ContextMenuResult> => {
+		const contexts = getContexts(id)
+		const menu = contexts
+			.reverse().filter(storeMetaHasType)
+			.reduce((parentMenu: ContextActMenuItemList, { id: currentId }, index, list): ContextActMenuItemList => {
+				const parentMeta = index === 0 ? null : list[index - 1]
+				const parentInfo = parentMeta ? {
+					label: parentMeta.config.label || humanise(parentMeta.config.type),
+					type: parentMeta.config.type,
+					menu: parentMenu,
+				} : null
+				const currentContexts = getContexts(currentId)
+				const actMenu = contextsDecideActMenu(fullConfiguration, currentContexts, event, parentInfo)
+				return actMenuApplyData(
+					actMenu,
+					{
+						[MENU_ITEM_ID]: currentId,
+					}
+				)
+			}, [])
+		if (!menu.length)
+			throw new Error('No menu items')
+
+		event.preventDefault()
+		const pos = {
+			x: event.pageX,
+			y: event.pageY,
+		}
+		return environment.addMenu(contextSystemApi, { pos, menu, level: 0 })
 	}
 
 	/**
@@ -243,36 +284,7 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 		isFocus,
 		triggerAction,
 		handleLocalEvent,
-		addContextMenu: async (id, event) => {
-			const contexts = getContexts(id)
-			const menu = contexts
-				.reverse().filter(storeMetaHasType)
-				.reduce((parentMenu: ContextActMenuItemList, { id: currentId }, index, list): ContextActMenuItemList => {
-					const parentMeta = index === 0 ? null : list[index - 1]
-					const parentInfo = parentMeta ? {
-						label: parentMeta.config.label || humanise(parentMeta.config.type),
-						type: parentMeta.config.type,
-						menu: parentMenu,
-					} : null
-					const currentContexts = getContexts(currentId)
-					const actMenu = contextsDecideActMenu(fullConfiguration, currentContexts, event, parentInfo)
-					return actMenuApplyData(
-						actMenu,
-						{
-							[MENU_ITEM_ID]: currentId,
-						}
-					)
-				}, [])
-			if (!menu.length)
-				throw new Error('No menu items')
-
-			event.preventDefault()
-			const pos = {
-				x: event.pageX,
-				y: event.pageY,
-			}
-			return environment.addMenu(contextSystemApi, { pos, menu, level: 0 })
-		},
+		addContextMenu,
 		addMenu: (pos, menu, level = 0) =>
 			environment.addMenu(contextSystemApi, { pos, menu, level }),
 	}

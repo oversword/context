@@ -1,5 +1,3 @@
-
-// TODO: test and jsdoc
 import { MENU_ITEM_DATA } from '@/constants/menu-item'
 import contextsDecideActs from '@/transformers/contexts-decide-acts'
 import contextsDecideData from '@/transformers/contexts-decide-data'
@@ -12,11 +10,14 @@ import { ContextEvent, ContextActMenuItemList, StoreMetaList, ContextParentMenuM
 import { ContextSystemConfig } from '@/types/system.types'
 
 /**
+ * Decides the menu for a given list of StoreMetas
  * 
- * @param contexts 
- * @param event 
- * @param parentMenu 
- * @returns 
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param event The triggering event
+ * @param parentInfo Information about the parent menu
+ * 
+ * @returns The full menu for the given contexts
  */
 const contextsDecideActMenu = (configuration: ContextSystemConfig, contexts: StoreMetaList, event: ContextEvent, parentInfo: ContextParentMenuMeta | null): ContextActMenuItemList => {
 	const type = contextsExtractType(contexts)

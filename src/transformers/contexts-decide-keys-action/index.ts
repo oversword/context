@@ -32,8 +32,10 @@ const find_combination = (searchCombination: ContextKeyList) =>
  * Find an action in the contexts that is triggered by a
  * key combination matching the key combination that initiated the action
  * 
- * @param contexts List of StoreMeta Contexts
- * @param action The current action data
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param action The current data available for the action
+ * 
  * @returns ContextActionName (if matched) OR null (if not matched)
  */
 const contextsDecideKeysAction = (
