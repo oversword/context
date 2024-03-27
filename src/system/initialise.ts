@@ -149,6 +149,7 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 					label: parentMeta.config.label || humanise(parentMeta.config.type),
 					type: parentMeta.config.type,
 					menu: parentMenu,
+					[MENU_ITEM_ID]: parentMeta.id,
 				} : null
 				const currentContexts = getContexts(currentId)
 				const actMenu = contextsDecideActMenu(fullConfiguration, currentContexts, event, parentInfo)

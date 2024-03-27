@@ -23,57 +23,81 @@ document.body.appendChild(container)
 const reactRoot = createRoot(container)
 
 const contextSystem = initialiseContextSystem(container)
-const intercept: ContextInterceptGroup = {
-	'test-type.test-act': (action) => {
+const parentIntercept: ContextInterceptGroup = {
+	'parent-context-type.parent-act': (action) => {
 		console.log('Parent Action:', action)
-		// alert('Parent Action!')
+		alert('Parent Action!')
 	},
-	'child-type.child-act': (action) => {
+	'child-context-type.child-act': (action) => {
 		console.log('Child Action:', action)
-		// alert('Child Action!')
+		alert('Child Action!')
 	},
-	'test-button.test-button-activate': (action) => {
+	'button-context-type.button-activate': (action) => {
 		console.log('Button Action:', action)
-		// alert('Button Action!')
+		alert('Button Action!')
 	},
 }
-const context: ContextConfig = {
-	type: 'test-type',
+const parentContext: ContextConfig = {
+	type: 'parent-context-type',
 	acts: {
-		'test-act': {}
+		'parent-act': {}
 	},
 	menu: [
-		{action:'test-act', label: 'Parent Action'}
-	]
+		{
+			action: 'parent-act',
+			label: 'Parent Action'
+		}
+	],
+	overrides: {
+		'child-context-type': {
+			acts: {
+				'child-act': {
+					keys: ['DoubleClick','Meta+Click']
+				},
+				'additional-child-act': {
+					keys: ['Meta+J']
+				}
+			},
+			menu: [
+				{
+					action: 'additional-child-act',
+					label: 'Extra Child Action'
+				}
+			]
+		}
+	}
 }
 const childContext: ContextConfig = {
-	type: 'child-type',
+	type: 'child-context-type',
 	acts: {
 		'child-act': {
 			keys: ['DoubleClick']
 		}
 	},
 	menu: [
-		{action:'child-act', label: 'Child Action'}
+		{
+			action: 'child-act',
+			label: 'Child Action'
+		}
 	]
 }
 const buttonContext: ContextConfig = {
-	type: 'test-button',
+	type: 'button-context-type',
 	acts: {
-		'test-button-activate': {
+		'button-activate': {
 			keys: ['Click']
 		},
 	},
 	menu: [
 		{
 			label: 'Activate',
-			action: 'test-button-activate'
+			action: 'button-activate'
 		}
 	]
 }
 reactRoot.render(
   <SystemContext.Provider value={contextSystem}>
-	<Context context={context} intercept={intercept} >
+	<Context context={parentContext} intercept={parentIntercept} >
 		Parent Context
 		<br/>
 		<br/>
