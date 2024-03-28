@@ -8,7 +8,7 @@ describe('eventSymbol', () => {
 			const result = eventSymbol({
 				code: `Key${key}`
 			} as KeyboardEvent)
-  
+
 			expect(result).toBe(key)
 		})
 	})
@@ -21,7 +21,7 @@ describe('eventSymbol', () => {
 			const result2 = eventSymbol({
 				code: `Numpad${key}`
 			} as KeyboardEvent)
-  
+
 			expect(result1).toBe(key)
 			expect(result2).toBe(key)
 		})
@@ -32,7 +32,7 @@ describe('eventSymbol', () => {
 			const result = eventSymbol({
 				code: key
 			} as KeyboardEvent)
-  
+
 			expect(result).toBe(key)
 		})
 	})
@@ -47,7 +47,7 @@ describe('eventSymbol', () => {
 			const result = eventSymbol({
 				code: key
 			} as KeyboardEvent, symbolMap)
-  
+
 			expect(result).toBe(symbolMap[key])
 		})
 	})

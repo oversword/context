@@ -1,5 +1,5 @@
-import evaluateCondition from 'conditions/evaluate-condition'
-import evaluateDisabled from 'conditions/evaluate-disabled'
+import evaluateCondition from '@/conditions/evaluate-condition'
+import evaluateDisabled from '@/conditions/evaluate-disabled'
 import {
 	StoreMeta,
 	ContextAction,
@@ -10,17 +10,17 @@ import {
 	ContextIntercept,
 	ContextId,
 	StoreMetaList,
-} from 'types/index.types'
-import contextsExtractType from 'transformers/contexts-extract-type'
-import contextsExtractPath from 'transformers/contexts-extract-path'
-import contextsDecideData from 'transformers/contexts-decide-data'
-import contextsDecideActs from 'transformers/contexts-decide-acts'
-import PartialOmit from 'types/partial-omit'
+} from '@/types/index.types'
+import contextsExtractType from '@/transformers/contexts-extract-type'
+import contextsExtractPath from '@/transformers/contexts-extract-path'
+import contextsDecideData from '@/transformers/contexts-decide-data'
+import contextsDecideActs from '@/transformers/contexts-decide-acts'
+import PartialOmit from '@/types/partial-omit'
 import getIntercept from './intercept'
-import { ActionDefinition } from 'types/intercept.types'
-import { inactiveLog as log } from 'side-effects/debug-log'
-import { ContextSystemApi } from 'types/system.types'
-import { HANDLED, UNHANDLED } from 'constants/handled'
+import { ActionDefinition } from '@/types/intercept.types'
+import { inactiveLog as log } from '@/side-effects/debug-log'
+import { ContextSystemApi } from '@/types/system.types'
+import { HANDLED, UNHANDLED } from '@/constants/handled'
 
 // TODO: Why was this required?
 // let curryHandle = Promise.resolve();
@@ -80,7 +80,7 @@ const contextHandleAction = (
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)
 
-	const data = contextsDecideData([{ config: { data: overrideData } } as StoreMeta, ...contexts], {
+	const data = contextsDecideData(contextSystemApi.configuration, [{ config: { data: overrideData } } as StoreMeta, ...contexts], {
 		action,
 		path,
 		type,
@@ -106,17 +106,20 @@ export const handleNamedAction = (
 	action: string | null,
 	actionObj: PartialOmit<ContextAction, 'action'>,
 ): symbol | Promise<unknown> => {
-	log('handling named action:', { contexts, action, actionObj })
+	log('handleNamedAction', { contexts, action, actionObj })
 	if (!action) return UNHANDLED
 	if (typeof action !== 'string') return UNHANDLED
 
-	const acts = contextsDecideActs(contexts, { action, ...actionObj })
+	const acts = contextsDecideActs(contextSystemApi.configuration, contexts, { action, ...actionObj })
 	const act = acts[action]
+	log('handleNamedAction:', { act, acts, action, condition: evaluateCondition(act, { action, ...actionObj }) })
 	if (!evaluateCondition(act, { action, ...actionObj })) {
+		log('handleNamedAction: UNHANDLED - bad condition')
 		return UNHANDLED
 	}
 	if (evaluateDisabled(act, { action, ...actionObj })) {
-		log(`${action} action not triggered for ${actionObj.type} because action is disabled`)
+		log('handleNamedAction: UNHANDLED - bad condition')
+		log(`handleNamedAction: HANDLED - ${action} action not triggered for ${actionObj.type} because action is disabled`)
 		return HANDLED
 	}
 
@@ -132,10 +135,11 @@ export const contextTriggerAction = (
 ): symbol | Promise<unknown> => {
 	log('triggering action:', { id, action, event, overrideData })
 	const contexts = contextSystemApi.getContexts(id)
+	log({contexts})
 
 	const type = contextsExtractType(contexts)
 	const path = contextsExtractPath(contexts)
-	const data = contextsDecideData([{ config: { data: overrideData } } as StoreMeta, ...contexts], {
+	const data = contextsDecideData(contextSystemApi.configuration, [{ config: { data: overrideData } } as StoreMeta, ...contexts], {
 		action,
 		path,
 		type,

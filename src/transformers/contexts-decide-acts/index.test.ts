@@ -1,6 +1,7 @@
 import contextsDecideActs from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction, StoreMeta } from 'types/index.types'
+import { ContextAction, StoreMeta } from '@/types/index.types'
+import defaultConfiguration from '@/system/default-config'
 
 const defaultStoreContext = {
 	outercept: {},
@@ -8,20 +9,19 @@ const defaultStoreContext = {
 	id: '0',
 	root: true,
 	parent: null,
+	data: null,
 }
 describe('contextsDecideActs', () => {
 	test('returns the acts options when defined in a context', () => {
 		const actionObject = {
 			uniqueKey: 'test'
 		}
-		const result = contextsDecideActs([{
+		const result = contextsDecideActs(defaultConfiguration, [{
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: actionObject
-					}
+					actionName: actionObject
 				}
 			},
 		} as StoreMeta], {path:['contextType']} as ContextAction)
@@ -31,7 +31,7 @@ describe('contextsDecideActs', () => {
 		})
 	})
 	test('Parent overrides Child: merges and overrides acts configs when defined in both the parent and child', () => {
-		const result = contextsDecideActs([{
+		const result = contextsDecideActs(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -39,10 +39,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -50,11 +48,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					contextType: {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -69,7 +69,7 @@ describe('contextsDecideActs', () => {
 		})
 	})
 	test('merges and overrides acts configs when defined in both the parent and child, with a strict relationship that is met', () => {
-		const result = contextsDecideActs([{
+		const result = contextsDecideActs(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -77,10 +77,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -88,11 +86,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					'parentType > contextType': {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -107,7 +107,7 @@ describe('contextsDecideActs', () => {
 		})
 	})
 	test('does not merge acts configs when defined in both the parent and child, with a strict relationship that is not met', () => {
-		const result = contextsDecideActs([{
+		const result = contextsDecideActs(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -115,10 +115,8 @@ describe('contextsDecideActs', () => {
 			config: {
 				type: 'contextType',
 				acts: {
-					contextType: {
-						actionName: {
-							childKey: 'test'
-						}
+					actionName: {
+						childKey: 'test'
 					}
 				}
 			},
@@ -134,11 +132,13 @@ describe('contextsDecideActs', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
+				overrides: {
 					'parentType > contextType': {
-						actionName: {
-							childKey: 'override',
-							parentKey: 'merge',
+						acts: {
+							actionName: {
+								childKey: 'override',
+								parentKey: 'merge',
+							}
 						}
 					}
 				}
@@ -165,23 +165,21 @@ describe('contextsDecideActs', () => {
 		const contextActsGen = jest.fn().mockReturnValue(childActs)
 		const parentActsGen = jest.fn().mockReturnValue(parentActs)
 		const action = {path:['parentType', 'contextType']} as ContextAction
-		const result = contextsDecideActs([{
+		const result = contextsDecideActs(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
 			parent: '0',
 			config: {
 				type: 'contextType',
-				acts: {
-					contextType: contextActsGen
-				}
+				acts: contextActsGen
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				acts: {
-					'parentType contextType': parentActsGen
+				overrides: {
+					'parentType contextType': {acts: parentActsGen}
 				}
 			},
 		} as StoreMeta], action)

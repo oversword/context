@@ -49,7 +49,7 @@ describe('selector', () => {
 		const result1 = selector(['parent', 'my-item'])(['parent *'])
 		expect(typeof result1).toBe('number')
 		expect(Number(result1) > 0).toBe(true)
-    
+
 		const result2 = selector(['parent', 'indirect', 'my-item'])(['parent *'])
 		expect(typeof result2).toBe('number')
 		expect(Number(result2) > 0).toBe(true)

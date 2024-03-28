@@ -1,38 +1,71 @@
 import {
 	ContextAction,
+	ContextConfig,
 	ContextData,
 	ContextDataGenerator,
+	ContextSelector,
 	StoreMetaList,
-} from 'types/index.types'
-import PartialOmit from 'types/partial-omit'
+} from '@/types/index.types'
+import PartialOmit from '@/types/partial-omit'
+import { ContextSystemConfig } from '@/types/system.types'
+import storeMetaHasType from '../store-meta-has-type'
+import selectorMatch from '@/selector'
+import { inactiveLog as log } from '@/side-effects/debug-log'
 
-const dataMerge =
-	(action: PartialOmit<ContextAction, 'data' | 'action'>) =>
-		(current: ContextData, data: undefined | ContextData | ContextDataGenerator): ContextData => {
-			if (!data) return current
-			if (typeof data === 'function') return data(action, current)
-			Object.assign(current, data)
-			return current
-		}
+const dataMerge = (configuration: Pick<ContextSystemConfig, 'strategy_mergeData'>, action: PartialOmit<ContextAction, 'data' | 'action'>) =>
+	(current: ContextData, [,config]: ContextEntry): ContextData => {
+		if (!(config && config.data)) return current
+		let dataGen: ContextDataGenerator
+
+		if (typeof config.data === 'function') 
+			dataGen = config.data
+		else dataGen = configuration.strategy_mergeData(config.data)
+	
+		if (dataGen)
+			return dataGen(action, current)
+		return current
+	}
+type ContextEntry = [ContextSelector,ContextConfig]
 
 /**
+ * Merges data from all given StoreMetas relating to the action
  * 
- * @param contexts 
- * @param action 
- * @returns 
+ * @param configuration The system configuration
+ * @param contexts The contexts to extract data from
+ * @param action The current data available for the action
+ * 
+ * @returns The full data for the given action
  */
 const contextsDecideData = (
+	configuration: Pick<ContextSystemConfig, 'strategy_mergeData'>,
 	contexts: StoreMetaList,
 	action: PartialOmit<ContextAction, 'data' | 'action'>,
 ): ContextData => {
-	const merger = dataMerge(action)
-	return [...contexts]
-		.reverse()
-		.reduce(
-			(current: ContextData, { config }): ContextData =>
-				([config.data, config.moreData]).reduce<ContextData>(merger, current),
-			{},
-		)
+	log('contextsDecideData', {contexts,action})
+	const merger = dataMerge(configuration, action)
+	const firstType = contexts.findIndex(storeMetaHasType)
+	const typeAfter = firstType === -1 ? contexts.length : contexts.slice(firstType + 1).findIndex(storeMetaHasType)
+	const nextType = typeAfter === -1 ? contexts.length : firstType + 1 + typeAfter
+	return contexts.reduce((current: ContextData, { config, data }, index): ContextData => {
+		const selfConfig = (data || config) && (index < nextType)
+		const { overrides } = config
+		log('contextsDecideData:', {selfConfig,overrides,data,config})
+		if (!(selfConfig || overrides)) return current
+
+		const selfMenu: Array<ContextEntry> = selfConfig
+			? [
+				...(config? [
+					['self',config] as ContextEntry
+				] : []),
+				...(data? [
+					['self',{data}] as ContextEntry
+				] : []),
+			]
+			: []
+		const matchingOverrides = Object.entries(overrides || {}).filter(selectorMatch(action.path))
+		
+		return selfMenu.concat(matchingOverrides).reduce(merger, current)
+	}, {})
 }
 
 export default contextsDecideData

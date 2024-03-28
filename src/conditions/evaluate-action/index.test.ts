@@ -1,29 +1,30 @@
-// import evaluateAction from '.'
-// import {expect, describe, test, jest} from '@jest/globals'
+import evaluateAction from '.'
+import {expect, describe, test, jest} from '@jest/globals'
 
-// describe('evaluateAction', () => {
-// 	// TODO: Usage needs to be checked
-// 	// test('returns the string if the "action" property is a string', () => {
-// 	//   const result = evaluateAction({ action: 'string' }, {})
-// 	//   expect(result).toBe(false)
-// 	// })
-// 	// test('returns true if the "action" property is true', () => {
-// 	//   const result = evaluateAction({ action: true }, {})
-// 	//   expect(result).toBe(true)
-// 	// })
-// 	// test('returns false if the "action" property evaluates to false', () => {
-// 	//   const result = evaluateAction({ action: () => false }, {})
-// 	//   expect(result).toBe(false)
-// 	// })
-// 	// test('returns true if the "action" property evaluates to true', () => {
-// 	//   const result = evaluateAction({ action: () => true }, {})
-// 	//   expect(result).toBe(true)
-// 	// })
-// 	// test('the evaluator function is called with the action as the argument', () => {
-// 	//   const fakeEvaluator = jest.fn<() => boolean>().mockReturnValue(true)
-// 	//   const uniqueArgument = {type: 'ContextAction'}
-// 	//   const result = evaluateAction({ action: fakeEvaluator }, uniqueArgument)
-// 	//   expect(fakeEvaluator).toHaveBeenCalledTimes(1)
-// 	//   expect(fakeEvaluator).toHaveBeenCalledWith(uniqueArgument)
-// 	// })
-// })
+const testAction = { type: '', event: {}, data: {}, action: '', path: [] }
+describe('evaluateAction', () => {
+	test('returns the string if the "action" property is a string', () => {
+		const result = evaluateAction({ action: 'string1' }, testAction)
+		expect(result).toBe('string1')
+	})
+	test('returns the string if "action" property returns a string', () => {
+		const result = evaluateAction({ action: () => 'string2' }, testAction)
+		expect(result).toBe('string2')
+	})
+	test('returns the string if method returns a string', () => {
+		const result = evaluateAction(() => 'string3', testAction)
+		expect(result).toBe('string3')
+	})
+	test('calls generator methods with the provided action', () => {
+		const actionYield1 = jest.fn<() => string>()
+		const actionYield2 = jest.fn<() => string>()
+		evaluateAction({ action: actionYield1 }, testAction)
+		evaluateAction(actionYield2, testAction)
+
+		expect(actionYield1).toHaveBeenCalledTimes(1)
+		expect(actionYield1).toHaveBeenCalledWith(testAction)
+
+		expect(actionYield2).toHaveBeenCalledTimes(1)
+		expect(actionYield2).toHaveBeenCalledWith(testAction)
+	})
+})

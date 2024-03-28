@@ -10,8 +10,8 @@ import { ReactElement } from 'react'
  * @returns A list of ReactElements
  */
 const wrapElements = (
-	elements: null | ReactElement | Array<ReactElement>,
-): Array<ReactElement> => {
+	elements: null | string | ReactElement | Array<ReactElement | string | null>,
+): Array<ReactElement | string> => {
 	if (!elements) return []
 	if (Array.isArray(elements)) return elements
 	return [elements]

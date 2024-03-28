@@ -10,6 +10,10 @@ const style = createUseStyles({
 		justifyContent: 'space-between',
 		columnGap: '1em',
 		padding: '0.5em 1em',
+		borderTop: '1px solid #eee',
+		['&:first-child']: {
+			borderTop: 'none'
+		},
 		['&:hover']: {
 			background: '#44d',
 			color: '#fff',
@@ -29,6 +33,8 @@ const style = createUseStyles({
 	[classes.ContextMenuItemKeys]: {
 		color: '#999',
 		whiteSpace: 'nowrap',
+		fontSize: '0.8em',
+		paddingTop: '0.125em'
 	},
 })
 export default style

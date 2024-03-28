@@ -7,14 +7,15 @@ import {
 	ContextMenuOptionsPosition,
 	ContextMenuOptionsSize,
 	ContextMenuResult,
-} from 'types/system.types'
-import ContextMenu from 'components/ContextMenu'
-import { ContextData, ContextInterceptGroup } from 'types/index.types'
-import closeLevel from 'side-effects/close-level'
-import MENU_CLASS from 'constants/menu-class'
-import ROOT_ID from 'constants/root-id'
-import SystemContext from 'constants/system-context'
-import { EnvironmentApi } from 'types/environment.types'
+} from '@/types/system.types'
+import ContextMenu from '@/components/ContextMenu'
+import { ContextData, ContextId, ContextInterceptGroup } from '@/types/index.types'
+import closeLevel from '@/side-effects/close-level'
+import MENU_CLASS from '@/constants/menu-class'
+import ROOT_ID from '@/constants/root-id'
+import SystemContext from '@/constants/system-context'
+import { EnvironmentApi } from '@/types/environment.types'
+import closeAll from './close-all'
 
 /**
  * Positions a box of size `box` within `withinBox`, around the point `position`
@@ -141,9 +142,13 @@ const addMenu = (
 	return new Promise<ContextMenuResult | null>(resolve => {
 		const intercept: ContextInterceptGroup = {
 			'context-menu.action': action => {
-				// Close this menu (and its descedants)
-				closeLevel(environment, level - 1)
+				// Close Everything if complete
+				if (level === 0) {
+					closeAll(environment)
+				}
+				// Resolve with data
 				resolve({
+					id: action.data.ContextMenu_id as ContextId,
 					action: action.data.ContextMenu_action as string,
 					data: action.data.ContextMenu_data as ContextData,
 				})

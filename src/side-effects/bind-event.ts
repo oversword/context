@@ -1,4 +1,4 @@
-import { EventTypes, EVENT_NAMES } from 'types/dom-events.types'
+import { EventTypes, EVENT_NAMES } from '@/types/dom-events.types'
 
 const bindEvent = <E extends keyof EventTypes>(
 	element: HTMLElement,

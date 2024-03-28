@@ -1,25 +1,25 @@
 import React from 'react'
 
 import classes from './classes'
-import Context from 'components/Context'
-import { ContextConfig } from 'types/index.types'
+import Context from '@/components/Context'
+import { ContextConfig } from '@/types/index.types'
 import { ContextMenuItemProps } from './index.types'
-import displayKeys from 'generic/string/transformers/display-keys'
+import displayKeys from '@/generic/string/transformers/display-keys'
 import useStyles from './style'
-import iconMap from 'constants/icon-map'
+import iconMap from '@/constants/icon-map'
 
 const context: ContextConfig = {
 	type: 'context-menu-item',
-	keys: { select: ['Click', 'Enter', 'Space'] },
-	acts: {
-		'context-menu-item': (_action, acts) => ({
-			select: {},
-			...acts,
-		}),
-	},
+	acts: (_action, acts) => ({
+		select: {
+			keys: ['Click', 'Enter', 'Space'],
+		},
+		...acts,
+	}),
 }
 
 function ContextMenuItem({
+	id,
 	keys = [],
 	action = 'error',
 	data = null,
@@ -32,8 +32,9 @@ function ContextMenuItem({
 		<Context
 			context={context}
 			data={{
-				ContextMenuItem_action: action,
+				ContextMenuItem_id: id,
 				ContextMenuItem_data: data,
+				ContextMenuItem_action: action,
 			}}
 			className={classes.ContextMenuItem + ' ' + (disabled ? styles[classes.ContextMenuItemDisabled] : styles[classes.ContextMenuItem])}
 			{...passedProps}

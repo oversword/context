@@ -1,8 +1,8 @@
-import MENU_CLASS from 'constants/menu-class'
-import ROOT_ID from 'constants/root-id'
-import { EnvironmentApi } from 'types/environment.types'
-import closeAll from 'side-effects/close-all'
-import closeLevel from 'side-effects/close-level'
+import MENU_CLASS from '@/constants/menu-class'
+import ROOT_ID from '@/constants/root-id'
+import { EnvironmentApi } from '@/types/environment.types'
+import closeAll from '@/side-effects/close-all'
+import closeLevel from '@/side-effects/close-level'
 
 const cancel = (environment: EnvironmentApi, event: Event): void => {
 	if (!environment.exists())

@@ -3,9 +3,9 @@
  */
 const PREFIX = 'ContextMenuItem'
 const classes = {
-	ContextMenuItemLabel: `${PREFIX}-ContextMenuItemLabel`,
 	ContextMenuItem: `${PREFIX}-ContextMenuItem`,
 	ContextMenuItemKeys: `${PREFIX}-ContextMenuItemKeys`,
+	ContextMenuItemLabel: `${PREFIX}-ContextMenuItemLabel`,
 	ContextMenuItemDisabled: `${PREFIX}-ContextMenuItemDisabled`,
 }
 export default classes

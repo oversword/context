@@ -3,16 +3,27 @@ import {
 	ContextId,
 	StoreMetaList,
 	ContextEvent,
-	ContextMenuItemListFilled,
 	ContextConfig,
 	ContextData,
 	ContextDataGenerator,
 	ContextInterceptGroup,
 	ContextActionName,
 	ContextActionNameConfig,
+	ContextActMenuItemList,
+	ContextMenuItemList,
+	ContextMenuListGenerator,
+	ContextActsGroup,
+	ContextActsGroupGenerator,
 } from './index.types'
 
+
+export interface ContextSystemConfig {
+	strategy_mergeMenu: (staticMenu: ContextMenuItemList) => ContextMenuListGenerator,
+	strategy_mergeActs: (staticActs: ContextActsGroup) => ContextActsGroupGenerator,
+	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator
+}
 export interface ContextMenuResult {
+	id: ContextId;
 	data: ContextData;
 	action: ContextActionName;
 }
@@ -27,7 +38,7 @@ export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' |
 
 export interface ContextMenuOptions {
 	pos: ContextMenuOptionsPosition;
-	menu: ContextMenuItemListFilled;
+	menu: ContextActMenuItemList;
 	level?: number;
 }
 
@@ -38,9 +49,9 @@ export type ContextMenuRenderer = (
 
 export interface ContextSystemApi {
 	focussedContext: ContextId | null;
+	configuration: ContextSystemConfig;
 	newId: () => ContextId;
 	getContexts: (id: ContextId | null) => StoreMetaList;
-	decideMenuConfig: (id: ContextId, event: ContextEvent) => ContextMenuItemListFilled;
 	isFocus: (id: ContextId, event: Event) => boolean;
 	addContext: ({
 		id,
@@ -61,10 +72,14 @@ export interface ContextSystemApi {
 	}) => void;
 	removeContext: (contextId: ContextId) => void;
 
-	contextMenu: (
+	addMenu: (
 		pos: ContextMenuOptionsPosition,
-		menu: ContextMenuItemListFilled,
+		menu: ContextActMenuItemList,
 		level?: number,
+	) => Promise<ContextMenuResult | null>;
+	addContextMenu: (
+		id: ContextId,
+		event: MouseEvent,
 	) => Promise<ContextMenuResult | null>;
 
 	triggerAction: (

@@ -1,6 +1,6 @@
 import contextsExtractType from '.'
 import {expect, describe, test} from '@jest/globals'
-import { StoreMeta } from 'types/index.types'
+import { StoreMeta } from '@/types/index.types'
 
 describe('contextsExtractType', () => {
 	test('extracts the type of a context', () => {

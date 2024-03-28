@@ -1,4 +1,3 @@
-import bindEvent from 'side-effects/bind-event'
 import {
 	ContextId,
 	StoreMetaGroup,
@@ -7,35 +6,38 @@ import {
 	ContextData,
 	ContextInterceptGroup,
 	StoreMetaList,
-	ContextMenuItemListFilled,
 	ContextEvent,
 	ContextActionName,
 	ContextActionNameConfig,
 	ContextKeyList,
-} from 'types/index.types'
-import contextsExtractType from 'transformers/contexts-extract-type'
-import contextsExtractPath from 'transformers/contexts-extract-path'
-import contextsDecideData from 'transformers/contexts-decide-data'
-import contextsDecideActs from 'transformers/contexts-decide-acts'
-import contextsMenu from 'transformers/contexts-decide-menu'
-import contextsDecideKeys from 'transformers/contexts-decide-keys'
-import menuApplyKeys from 'transformers/menu-apply-keys'
-import menuApplyConditions from 'transformers/menu-apply-conditions'
-import CONTEXT_CLASS from 'constants/context-class'
-import { contextTriggerAction } from 'handle/action'
-import contextHandleGlobalEvent from 'handle/global'
-import contextHandleLocalEvent from 'handle/local'
-import provideEnvironment from 'system/render-environment'
-import { inactiveLog as log } from 'side-effects/debug-log'
-import keyDown from 'dom-events/key-down'
-import keyUp from 'dom-events/key-up'
-import click from 'dom-events/click'
-import doubleClick from 'dom-events/double-click'
-import mouseDown from 'dom-events/mouse-down'
-import mouseUp from 'dom-events/mouse-up'
-import { EventHandler, EVENT_NAMES } from 'types/dom-events.types'
-import { ContextSystemApi } from 'types/system.types'
-import { UNHANDLED } from 'constants/handled'
+	ContextActMenuItemList,
+} from '@/types/index.types'
+import { HandleConfig } from '@/types/dom-events.types'
+import { EventHandler, EVENT_NAMES } from '@/types/dom-events.types'
+import { ContextMenuResult, ContextSystemApi, ContextSystemConfig } from '@/types/system.types'
+import { UNHANDLED } from '@/constants/handled'
+
+import { inactiveLog as log } from '@/side-effects/debug-log'
+import bindEvent from '@/side-effects/bind-event'
+
+import CONTEXT_CLASS from '@/constants/context-class'
+import { contextTriggerAction } from '@/handle/action'
+import contextHandleGlobalEvent from '@/handle/global'
+import contextHandleLocalEvent from '@/handle/local'
+import provideEnvironment from '@/system/render-environment'
+
+import keyDown from '@/dom-events/key-down'
+import keyUp from '@/dom-events/key-up'
+import click from '@/dom-events/click'
+import doubleClick from '@/dom-events/double-click'
+import mouseDown from '@/dom-events/mouse-down'
+import mouseUp from '@/dom-events/mouse-up'
+import contextsDecideActMenu from '../transformers/contexts-decide-act-menu'
+import {actMenuApplyData} from '@/transformers/menu-apply-metadata'
+import { MENU_ITEM_ID } from '@/constants/menu-item'
+import humanise from '@/generic/string/transformers/humanise'
+import storeMetaHasType from '../transformers/store-meta-has-type'
+import defaultConfiguration from './default-config'
 
 /**
  * BUSSINESS LOGIC
@@ -46,7 +48,8 @@ import { UNHANDLED } from 'constants/handled'
  * @param rootElement the root element to be interacted with
  * @returns An API for creating context menus, triggering actions, and handling events
  */
-const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => {
+const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partial<ContextSystemConfig> = {}): ContextSystemApi => {
+	const fullConfiguration = Object.assign({}, defaultConfiguration, configuration)
 	let focussedContext: ContextId | null = null
 	let _contextId: number = 0
 	const contextMetas: StoreMetaGroup = {}
@@ -93,46 +96,23 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		data,
 		context,
 	}: {
-    id: ContextId;
-    parent: null | ContextId;
-    root: boolean;
-    context: ContextConfig | null;
-    data: ContextData | ContextDataGenerator | null;
-    intercept: ContextInterceptGroup | null;
-    outercept: ContextInterceptGroup | null;
-  }): void => {
+		id: ContextId;
+		parent: null | ContextId;
+		root: boolean;
+		context: ContextConfig | null;
+		data: ContextData | ContextDataGenerator | null;
+		intercept: ContextInterceptGroup | null;
+		outercept: ContextInterceptGroup | null;
+	}): void => {
 		contextMetas[id] = {
 			id,
 			parent,
 			root,
-			config: data
-				? {
-					...(context || {}),
-					moreData: data,
-				}
-				: context || {},
+			data,
+			config: context || {},
 			intercept,
 			outercept,
 		}
-	}
-
-	// TODO: test and jsdoc
-	const decideMenuConfig = (id: ContextId, event: ContextEvent): ContextMenuItemListFilled => {
-		const contexts = getContexts(id)
-
-		const type = contextsExtractType(contexts)
-		const path = contextsExtractPath(contexts)
-		const data = contextsDecideData(contexts, { path, type, event })
-		const menu = contextsMenu(contexts, { path, type, data, event })
-		const acts = contextsDecideActs(contexts, { path, type, data, event })
-		const keys = contextsDecideKeys(contexts, { path, type, data, event })
-
-		return menuApplyKeys(menuApplyConditions(menu, acts, { path, type, data, event }), keys, {
-			path,
-			type,
-			data,
-			event,
-		})
 	}
 
 	/**
@@ -150,10 +130,52 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	}
 
 	/**
-   * Trigger named actions from a specific context
-   * @param id
-   * @returns
-   */
+	 * Adds a context menu to the page,
+	 *  sourced from the context of the given ID
+	 *  positioned with the event data
+	 * 
+	 * @param id The ID of the context to build a menu for
+	 * @param event The source mouse event, to position the menu
+	 * 
+	 * @returns A promise which will resolve in the action to be triggered
+	 */
+	const addContextMenu = async (id: ContextId, event: MouseEvent): Promise<ContextMenuResult> => {
+		const contexts = getContexts(id)
+		const menu = contexts
+			.reverse().filter(storeMetaHasType)
+			.reduce((parentMenu: ContextActMenuItemList, { id: currentId }, index, list): ContextActMenuItemList => {
+				const parentMeta = index === 0 ? null : list[index - 1]
+				const parentInfo = parentMeta ? {
+					label: parentMeta.config.label || humanise(parentMeta.config.type),
+					type: parentMeta.config.type,
+					menu: parentMenu,
+					[MENU_ITEM_ID]: parentMeta.id,
+				} : null
+				const currentContexts = getContexts(currentId)
+				const actMenu = contextsDecideActMenu(fullConfiguration, currentContexts, event, parentInfo)
+				return actMenuApplyData(
+					actMenu,
+					{
+						[MENU_ITEM_ID]: currentId,
+					}
+				)
+			}, [])
+		if (!menu.length)
+			throw new Error('No menu items')
+
+		event.preventDefault()
+		const pos = {
+			x: event.pageX,
+			y: event.pageY,
+		}
+		return environment.addMenu(contextSystemApi, { pos, menu, level: 0 })
+	}
+
+	/**
+	 * Trigger named actions from a specific context
+	 * @param id
+	 * @returns
+	 */
 	const triggerAction =
 		(id: ContextId) =>
 			(
@@ -201,7 +223,8 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	 * @param handleConfig A config determining the handling process
 	 * @returns
 	 */
-	const handleGlobalEvent: EventHandler = handleConfig => event => {
+	const handleGlobalEvent: EventHandler = <E extends Event = Event>(handleConfig: HandleConfig<E>) => (event: E) => {
+		log('handleGlobalEvent', handleConfig)
 		let ret: undefined | false
 		if (handleConfig.before) {
 			const keySet = handleConfig.before(event)
@@ -237,8 +260,8 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 	bindEvent(rootElement, EVENT_NAMES.KEY_DOWN, handleGlobalEvent(keyDown))
 	bindEvent(rootElement, EVENT_NAMES.KEY_UP, handleGlobalEvent(keyUp))
 
-	bindEvent(rootElement, EVENT_NAMES.MOUSE_UP, handleGlobalEvent(mouseUp))
 	bindEvent(rootElement, EVENT_NAMES.MOUSE_DOWN, handleGlobalEvent(mouseDown))
+	bindEvent(rootElement, EVENT_NAMES.MOUSE_UP, handleGlobalEvent(mouseUp))
 
 	bindEvent(rootElement, EVENT_NAMES.CLICK, handleGlobalEvent(click))
 	bindEvent(rootElement, EVENT_NAMES.DOUBLE_CLICK, handleGlobalEvent(doubleClick))
@@ -252,16 +275,19 @@ const initialiseContextSystem = (rootElement: HTMLElement): ContextSystemApi => 
 		get focussedContext(): ContextId | null {
 			return focussedContext
 		},
+		get configuration() {
+			return fullConfiguration
+		},
 		newId: (): ContextId => String(++_contextId),
 		addContext,
 		removeContext,
 		getContexts,
-		decideMenuConfig,
 		isFocus,
 		triggerAction,
 		handleLocalEvent,
-		contextMenu: (pos, menu, level = 0) =>
-			environment.render(contextSystemApi, { pos, menu, level }),
+		addContextMenu,
+		addMenu: (pos, menu, level = 0) =>
+			environment.addMenu(contextSystemApi, { pos, menu, level }),
 	}
 
 	return contextSystemApi

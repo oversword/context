@@ -1,6 +1,7 @@
 import contextsDecideData from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction, StoreMeta } from 'types/index.types'
+import { ContextAction, StoreMeta } from '@/types/index.types'
+import defaultConfiguration from '@/system/default-config'
 
 const defaultStoreContext = {
 	outercept: {},
@@ -8,13 +9,14 @@ const defaultStoreContext = {
 	id: '0',
 	root: true,
 	parent: null,
+	data: null,
 }
 describe('contextsDecideData', () => {
 	test('returns the data options when defined in a context', () => {
 		const dataObject = {
 			uniqueKey: 'test'
 		}
-		const result = contextsDecideData([{
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
@@ -24,9 +26,8 @@ describe('contextsDecideData', () => {
 
 		expect(result).toEqual(dataObject)
 	})
-	// TODO: This behaviour differs from transformer to transformer, should be standardised or reasoned
-	test('Child overrides Parent: merges and overrides data configs when defined in both the parent and child', () => {
-		const result = contextsDecideData([{
+	test('Parent overrides Child: merges and overrides data configs when defined in both the parent and child', () => {
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -34,17 +35,21 @@ describe('contextsDecideData', () => {
 			config: {
 				type: 'contextType',
 				data: {
-					childKey: 'override'
+					childKey: 'test',
 				}
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
-				data: {
-					childKey: 'test',
-					parentKey: 'merge',
-				}
-			},
+				overrides: {
+					contextType: {
+						data: {
+							childKey: 'override',
+							parentKey: 'merge',
+						}
+					}
+				},
+			}
 		} as StoreMeta], {path:['contextType']} as ContextAction)
 
 		expect(result).toEqual({
@@ -52,7 +57,7 @@ describe('contextsDecideData', () => {
 			parentKey: 'merge',
 		})
 	})
-	test('Child overrides Parent: calls data generation methods, parent first when provided', () => {
+	test('Parent overrides Child: calls data generation methods, parent first when provided', () => {
 		const parentData = {
 			parentKey: 'test',
 		}
@@ -62,7 +67,7 @@ describe('contextsDecideData', () => {
 		const contextDataGen = jest.fn().mockReturnValue(childData)
 		const parentDataGen = jest.fn().mockReturnValue(parentData)
 		const action = {path:['parentType', 'contextType']} as ContextAction
-		const result = contextsDecideData([{
+		const result = contextsDecideData(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
@@ -75,14 +80,18 @@ describe('contextsDecideData', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				data: parentDataGen
+				overrides: {
+					contextType: {
+						data: parentDataGen
+					}
+				}
 			},
 		} as StoreMeta], action)
 
-		expect(result).toEqual(childData)
+		expect(result).toEqual(parentData)
 		expect(parentDataGen).toHaveBeenCalledTimes(1)
 		expect(contextDataGen).toHaveBeenCalledTimes(1)
-		expect(contextDataGen).toBeCalledWith(action, parentData)
-		expect(parentDataGen).toBeCalledWith(action, {})
+		expect(parentDataGen).toBeCalledWith(action, childData)
+		expect(contextDataGen).toBeCalledWith(action, {})
 	})
 })

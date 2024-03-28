@@ -1,10 +1,12 @@
 import contextsDecideMenu from '.'
 import {expect, describe, test} from '@jest/globals'
-import { ContextAction, StoreMeta } from 'types/index.types'
+import { ContextAction, StoreMeta } from '@/types/index.types'
+import defaultConfiguration from '@/system/default-config'
 
 const defaultStoreContext = {
 	outercept: {},
 	intercept: {},
+	data: null,
 	id: '0',
 	root: true,
 	parent: null,
@@ -14,40 +16,38 @@ describe('contextsDecideMenu', () => {
 		const menuObject = [
 			{action:'actionName',label:'test'}
 		]
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: menuObject
-				}
+				menu: menuObject
 			},
 		} as StoreMeta], {path:['contextType']} as ContextAction)
 
 		expect(result).toEqual(menuObject)
 	})
 	test('Parent overrides Child: merges and overrides menu configs when defined in both the parent and child', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					contextType: [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					contextType: {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'contextType']} as ContextAction)
@@ -58,27 +58,27 @@ describe('contextsDecideMenu', () => {
 		])
 	})
 	test('merges and overrides menu configs when defined in both the parent and child, with a strict relationship that is met', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType > contextType': [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					'parentType > contextType': {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'contextType']} as ContextAction)
@@ -89,18 +89,16 @@ describe('contextsDecideMenu', () => {
 		])
 	})
 	test('does not merge menu configs when defined in both the parent and child, with a strict relationship that is not met', () => {
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
 			parent: '2',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: [
-						{action:'actionName',label:'test'}
-					]
-				}
+				menu: [
+					{action:'actionName',label:'test'}
+				]
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
@@ -114,10 +112,12 @@ describe('contextsDecideMenu', () => {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType > contextType': [
-						{action:'parentAction',label:'merge'}
-					]
+				overrides: {
+					'parentType > contextType': {
+						menu: [
+							{action:'parentAction',label:'merge'}
+						]
+					}
 				}
 			},
 		} as StoreMeta], {path:['parentType', 'indirectType', 'contextType']} as ContextAction)
@@ -136,23 +136,21 @@ describe('contextsDecideMenu', () => {
 		const contextMenuGen = jest.fn().mockReturnValue(childMenu)
 		const parentMenuGen = jest.fn().mockReturnValue(parentMenu)
 		const action = {path:['parentType', 'contextType']} as ContextAction
-		const result = contextsDecideMenu([{
+		const result = contextsDecideMenu(defaultConfiguration, [{
 			...defaultStoreContext,
 			id: '1',
 			root: false,
 			parent: '0',
 			config: {
 				type: 'contextType',
-				menu: {
-					contextType: contextMenuGen
-				}
+				menu: contextMenuGen
 			},
 		} as StoreMeta, {
 			...defaultStoreContext,
 			config: {
 				type: 'parentType',
-				menu: {
-					'parentType contextType': parentMenuGen
+				overrides: {
+					'parentType contextType': {menu: parentMenuGen}
 				}
 			},
 		} as StoreMeta], action)
@@ -160,7 +158,7 @@ describe('contextsDecideMenu', () => {
 		expect(result).toEqual(parentMenu)
 		expect(parentMenuGen).toHaveBeenCalledTimes(1)
 		expect(contextMenuGen).toHaveBeenCalledTimes(1)
-		expect(contextMenuGen).toBeCalledWith(action, [])
-		expect(parentMenuGen).toBeCalledWith(action, childMenu)
+		expect(contextMenuGen).toBeCalledWith(action, [], null)
+		expect(parentMenuGen).toBeCalledWith(action, childMenu, null)
 	})
 })

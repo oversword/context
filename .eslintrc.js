@@ -20,12 +20,12 @@ module.exports = {
 				'sourceType': 'script'
 			},
 		},
-    {
-      "files": ["src/**/*.test.ts"],
-      "env": {
-        "jest": true
-      }
-    }
+		{
+			"files": ["src/**/*.test.ts"],
+			"env": {
+				"jest": true
+			}
+		}
 	],
 	'settings': {
 		'react': {

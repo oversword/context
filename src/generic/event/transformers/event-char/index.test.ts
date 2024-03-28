@@ -8,7 +8,7 @@ describe('eventChar', () => {
 			const result = eventChar({
 				key
 			} as KeyboardEvent)
-  
+
 			expect(result).toBe(key)
 		})
 	})
