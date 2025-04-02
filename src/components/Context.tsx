@@ -98,7 +98,15 @@ const Context = React.forwardRef(function Context(
 	}, [])
 
 	const handleFocus = (event: FocusEvent): void => {
-		if (event.target !== elementRef.current) return
+		// Focus this element if it is the closest context to the target
+		if (event.target !== elementRef.current) {
+			if (!(event.target instanceof Node) || !elementRef.current.contains(event.target)) return
+			let parent: Node | null = event.target
+			while (parent && (parent !== elementRef.current)) {
+				if ((parent instanceof HTMLElement) && ('contextid' in parent.dataset)) return
+				parent = parent.parentNode
+			}
+		}
 
 		if (onFocus) onFocus(event)
 		if (!contextSystem.isFocus(id, event)) return
