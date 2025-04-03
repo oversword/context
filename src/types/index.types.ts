@@ -1,3 +1,4 @@
+import { MENU_ITEM_ID, MENU_ITEM_PARENT } from '@/constants/menu-item'
 import PartialOmit from './partial-omit'
 import {ReactElement} from 'react'
 /**
@@ -53,6 +54,9 @@ export interface BasicContextMenuItem {
 
 	action: ContextActionName;
 	data?: ContextData | ContextDataGenerator;
+
+	[MENU_ITEM_ID]?: string;
+	[MENU_ITEM_PARENT]?: true;
 }
 export interface BranchContextMenuItem extends Omit<BasicContextMenuItem, 'action'> {
 	children: ContextMenuItemList;
@@ -69,6 +73,7 @@ export interface ContextParentMenuMeta {
 	label: string,
 	type: ContextType,
 	menu: ContextActMenuItemList
+	[MENU_ITEM_ID]: string;
 }
 
 type ActMenuItem<T extends ContextMenuItem> = T & {
@@ -123,7 +128,7 @@ export type ContextMenuListGenerator = (
 export interface ContextConfig {
 	type?: ContextType;
 	acts?: ContextActsGroup | ContextActsGroupGenerator;
-	menu?: ContextMenuItemList | ContextMenuListGenerator;
+	menu?: ContextMenuItemList | ContextMenuListGenerator | false;
 	data?: ContextData | ContextDataGenerator;
 	label?: string;
 	overrides?: Record<ContextSelector, ContextOverride>

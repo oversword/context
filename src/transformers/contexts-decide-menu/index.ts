@@ -35,10 +35,12 @@ const contextsDecideMenu = (
 		
 		return selfMenu.concat(matchingOverrides).reduce(
 			(current: ContextMenuItemList, [,config]): ContextMenuItemList => {
-				if (!(config && config.menu)) return current
+				if (!config || config.menu === false) return current
 				let menuGen: ContextMenuListGenerator
 				if (typeof config.menu === 'function')
 					menuGen = config.menu
+				else if (config.menu === undefined)
+					menuGen = configuration.strategy_mergeMenu([])
 				else if (Array.isArray(config.menu))
 					menuGen = configuration.strategy_mergeMenu(config.menu)
 

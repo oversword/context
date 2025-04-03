@@ -32,11 +32,11 @@ import click from '@/dom-events/click'
 import doubleClick from '@/dom-events/double-click'
 import mouseDown from '@/dom-events/mouse-down'
 import mouseUp from '@/dom-events/mouse-up'
-import contextsDecideActMenu from '../transformers/contexts-decide-act-menu'
+import contextsDecideActMenu from '@/transformers/contexts-decide-act-menu'
 import {actMenuApplyData} from '@/transformers/menu-apply-metadata'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import humanise from '@/generic/string/transformers/humanise'
-import storeMetaHasType from '../transformers/store-meta-has-type'
+import storeMetaHasType from '@/transformers/store-meta-has-type'
 import defaultConfiguration from './default-config'
 
 /**
