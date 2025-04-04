@@ -1,17 +1,17 @@
-import { ReactElement } from 'react'
+import { ReactNode } from 'react'
 /**
- * Ensures the result of the `children` property is an array of ReactElements
+ * Ensures the result of the `children` property is an array of ReactNodes
  * 
  * If the input is falsey, return an empty list
- * If the input is a single ReactElement, return it in a list
- * If the input is an array of ReactElements, return it as-is
+ * If the input is a single ReactNode, return it in a list
+ * If the input is an array of ReactNodes, return it as-is
  * 
  * @param elements 
- * @returns A list of ReactElements
+ * @returns A list of ReactNodes
  */
 const wrapElements = (
-	elements: null | string | ReactElement | Array<ReactElement | string | null>,
-): Array<ReactElement | string> => {
+	elements: ReactNode,
+): Array<ReactNode> => {
 	if (!elements) return []
 	if (Array.isArray(elements)) return elements
 	return [elements]

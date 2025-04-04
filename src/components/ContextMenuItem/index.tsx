@@ -5,8 +5,8 @@ import Context from '@/components/Context'
 import { ContextConfig } from '@/types/index.types'
 import { ContextMenuItemProps } from './index.types'
 import displayKeys from '@/generic/string/transformers/display-keys'
-import useStyles from './style'
 import iconMap from '@/constants/icon-map'
+import { jsx, css, Global, ClassNames } from '@emotion/react'
 
 const context: ContextConfig = {
 	type: 'context-menu-item',
@@ -27,7 +27,6 @@ function ContextMenuItem({
 	disabled = false,
 	...passedProps
 }: ContextMenuItemProps): React.ReactElement {
-	const styles = useStyles()
 	return (
 		<Context
 			context={context}
@@ -36,12 +35,32 @@ function ContextMenuItem({
 				ContextMenuItem_data: data,
 				ContextMenuItem_action: action,
 			}}
-			className={classes.ContextMenuItem + ' ' + (disabled ? styles[classes.ContextMenuItemDisabled] : styles[classes.ContextMenuItem])}
+			css={css`
+				display: flex;
+				justify-content: space-between;
+				column-gap: 1em;
+				padding: 0.5em 1em;
+				border-top: 1px solid #eee;
+				&:first-of-type {
+					borderTop: none;
+				}
+				${disabled ? `color: #bbb;` : `
+				&:hover {
+					background: #44d;
+					color: #fff;
+					cursor: pointer;
+				}`}`}
+			className={classes.ContextMenuItem + ' ' + (disabled ? classes.ContextMenuItemDisabled : '')}
 			{...passedProps}
 		>
-			<div className={styles[classes.ContextMenuItemLabel]}>{label || passedProps.title || '(Item)'}</div>
+			<div className={classes.ContextMenuItemLabel} css={css`white-space: nowrap;`}>{label || passedProps.title || '(Item)'}</div>
 			{keys && keys.length ? (
-				<div className={styles[classes.ContextMenuItemKeys]}>{displayKeys(keys, iconMap)}</div>
+				<div className={classes.ContextMenuItemKeys} css={css`
+					color: #999;
+					white-space: nowrap;
+					font-size: 0.8em;
+					padding-top: 0.125em;
+				`}>{displayKeys(keys, iconMap)}</div>
 			) : null}
 		</Context>
 	)

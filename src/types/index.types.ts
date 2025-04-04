@@ -1,6 +1,7 @@
+import React from 'react'
+
 import { MENU_ITEM_ID, MENU_ITEM_PARENT } from '@/constants/menu-item'
 import PartialOmit from './partial-omit'
-import {ReactElement} from 'react'
 /**
  * Atomic
  */
@@ -136,20 +137,19 @@ export interface ContextConfig {
 export type ContextOverride = Omit<ContextConfig, 'type' | 'overrides' | 'label'>
 
 export interface DataContextProps {
-	children: null | string | ReactElement | Array<ReactElement | string | null>;
 	DataContext?: ContextConfig | null;
 	context?: ContextConfig | null;
 	data?: ContextData | ContextDataGenerator | null;
 	intercept?: ContextInterceptGroup | null;
 	outercept?: ContextInterceptGroup | null;
 	root?: boolean;
+	ref?: React.Ref<ContextApi>
 }
 
-export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
+export interface ContextProps<P> extends Omit<DataContextProps, 'DataContext'> {
 	Context?: ContextConfig | null;
 	focus?: boolean;
 	onFocus?: ((event?: FocusEvent) => void) | null;
-	element?: /* React.FunctionComponent | */ string | null;
 	tabIndex?: number;
 	onClickAction?: ContextActionNameConfig | null;
 	onDoubleClickAction?: ContextActionNameConfig | null;
@@ -157,6 +157,7 @@ export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
 	onMouseUpAction?: ContextActionNameConfig | null;
 	onMouseMoveAction?: ContextActionNameConfig | null;
 	onChangeAction?: ContextActionNameConfig | null;
+	element?: React.FunctionComponent<P> | string | null;
 	[attr: string]: unknown;
 }
 

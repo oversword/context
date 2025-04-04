@@ -18,8 +18,8 @@ import { getKey, getLabel } from './utils'
 import SystemContext from '@/constants/system-context'
 import { ContextMenuResult } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
-import useStyles from './style'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
+import { css } from '@emotion/react'
 
 const OPEN_BRANCH = Symbol('open-branch')
 const MENU_ERROR = Symbol('menu-error')
@@ -36,14 +36,25 @@ const context: ContextConfig = {
 	}),
 }
 
-const renderMenuItem = (menuItem: ContextMenuItemType, styles: Record<string, string>) => {
+const renderMenuItem = (menuItem: ContextMenuItemType) => {
 	if ('mode' in menuItem && menuItem.mode === ContextMenuItemMode.section) {
 		return (
-			<div className={styles[classes.ContextMenuSection]} key={getKey(menuItem)}>
+			<div className={classes.ContextMenuSection} css={css`
+				padding: 0;
+				border-top: 1px solid;
+				display: block;
+				&:first-of-type {
+					borderTop: none;
+			}`} key={getKey(menuItem)}>
 				{getLabel(menuItem) ? (
-					<div className={styles[classes.ContextMenuSectionLabel]}>{getLabel(menuItem)}</div>
+					<div className={classes.ContextMenuSectionLabel} css={css`
+						padding: 0.5em 1em;
+						color: #888;
+						font-size: 0.9em;
+						white-space: nowrap;
+					`}>{getLabel(menuItem)}</div>
 				) : null}
-				{(menuItem.children || []).map(childItem => renderMenuItem(childItem, styles))}
+				{(menuItem.children || []).map(childItem => renderMenuItem(childItem))}
 			</div>
 		)
 	}
@@ -94,7 +105,7 @@ function ContextMenu({
 		throw new Error('A context system must be provided via the SystemContext.Provider component.')
 	}
 
-	const contextRef = React.useRef<ContextApi>()
+	const contextRef = React.useRef<ContextApi>(null)
 	React.useEffect(() => {
 		if (!(contextRef.current && contextRef.current.element)) return
 
@@ -153,11 +164,18 @@ function ContextMenu({
 			})
 		}
 	}
-	const styles = useStyles()
 
 	return (
 		<Context
-			className={styles[classes.ContextMenu]}
+			className={classes.ContextMenu}
+			css={css`
+				font-family: sans-serif;
+				font-size: 14px';
+				user-select: none;
+				background: #fff;
+				color: #111;
+				box-shadow: 0 3px 9px -2px rgba(0, 0, 0, 0.5);
+				border-radius: 3px;`}
 			{...passedProps}
 			ref={contextRef}
 			context={context}
@@ -168,7 +186,7 @@ function ContextMenu({
 			autoFocus
 			root
 		>
-			{menu.map(menuItem => renderMenuItem(menuItem, styles))}
+			{menu.map(renderMenuItem)}
 		</Context>
 	)
 }

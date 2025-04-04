@@ -7,13 +7,12 @@ global.IS_REACT_ACT_ENVIRONMENT = true
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import React from 'react'
 import { Root, createRoot } from 'react-dom/client'
-import { act } from 'react-dom/test-utils'
 import { fireEvent } from '@testing-library/react'
 
 import Context from './Context'
 import SystemContext from '@/constants/system-context'
 import initialiseContextSystem from '@/system/initialise'
-import { ContextConfig, ContextMenuItemMode } from '..'
+import { ContextConfig, ContextInterceptGroup, ContextMenuItemMode } from '..'
 // import { ContextInterceptGroup } from '@/types/index.types'
 
 const timeout = (n = 0) => new Promise<void>((resolve) => {
@@ -29,7 +28,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-	act(() => {
+	React.act(() => {
 		reactRoot.unmount()
 		container.remove()
 	})
@@ -132,18 +131,18 @@ describe('Context Component', () => {
 		}
 		const parentAction = jest.fn()
 		const childAction = jest.fn()
-		act(() => {
+		React.act(() => {
 			reactRoot.render(
 				<SystemContext.Provider value={contextSystem}>
 					<Context context={context} intercept={{
 						'test-type.test-act': parentAction
-					}} data={{ parent_key: 'test' }}>
+					} as ContextInterceptGroup} data={{ parent_key: 'test' }}>
 						<div className="parent-div">
 								Outside
 						</div>
 						<Context context={childContext} intercept={{
 							'child-type.child-act': childAction
-						}} data={{ child_key: 'test' }}>
+						} as ContextInterceptGroup} data={{ child_key: 'test' }}>
 							<div className="test-div">
 									Test
 							</div>

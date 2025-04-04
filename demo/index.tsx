@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { createRoot } from "react-dom/client"
 import { Context, ContextConfig, ContextInterceptGroup, DataContext, SystemContext, initialiseContextSystem } from "../src"
+
+import { jsx, css, Global, ClassNames } from '@emotion/react'
 
 const style = document.createElement('style')
 style.innerHTML = `
@@ -95,6 +97,22 @@ const buttonContext: ContextConfig = {
 		}
 	]
 }
+
+const color = 'white'
+
+function RefComponent(): React.ReactElement {
+  const inputRef = useRef(null)
+	return <div>
+		<Context ref={inputRef} >
+			<div onClick={() => {
+				console.log(inputRef)
+			}} >
+				This component uses a ref, clicking it will print the ref in the console
+			</div>
+		</Context>
+	</div>
+}
+
 reactRoot.render(
   <SystemContext.Provider value={contextSystem}>
 	<Context context={parentContext} intercept={parentIntercept} >
@@ -129,6 +147,23 @@ reactRoot.render(
 				</DataContext>
 			</DataContext>
 		</Context>
+		<div
+			css={css`
+				padding: 32px;
+				background-color: hotpink;
+				font-size: 24px;
+				border-radius: 4px;
+				&:hover {
+					color: ${color};
+				}
+			`}
+		>
+			Hover to change color.
+		</div>
 	</Context>
+	<RefComponent />
+
+  
   </SystemContext.Provider>
 )
+
