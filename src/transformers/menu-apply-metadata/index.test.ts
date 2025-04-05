@@ -21,11 +21,11 @@ describe('menuApplyMetaData', () => {
 			}
 		})
 		expect(result).toEqual([
-			{action: 'goodAction', label: 'Keys',keys:['a','b'],disabled: false},
-			{action: 'badAction', label: 'No Keys',keys:[],disabled: false},
-			{label: 'Parent', keys: [], disabled: false, mode: ContextMenuItemMode.section, children: [
-				{action: 'goodAction2', label: 'Keys', keys:['c','d'],disabled: false},
-				{action: 'badAction2', label: 'No Keys',keys:[],disabled: false},
+			{action: 'goodAction', label: 'Keys', id: 'Keys',keys:['a','b'],disabled: false},
+			{action: 'badAction', label: 'No Keys', id: 'No Keys',keys:[],disabled: false},
+			{label: 'Parent',id: 'Parent', keys: [], disabled: false, mode: ContextMenuItemMode.section, children: [
+				{action: 'goodAction2', label: 'Keys', id: 'Keys', keys:['c','d'],disabled: false},
+				{action: 'badAction2', label: 'No Keys', id: 'No Keys',keys:[],disabled: false},
 			]},
 		])
 	})
@@ -42,11 +42,11 @@ describe('menuApplyMetaData', () => {
 			}
 		})
 		expect(result).toEqual([
-			{action: 'goodAction', label: 'Valid', disabled: false, keys: []},
-			{action: 'conditionalAction', label: 'Maybe', disabled: true, keys: []},
+			{action: 'goodAction', label: 'Valid', id: 'Valid', disabled: false, keys: []},
+			{action: 'conditionalAction', label: 'Maybe', id: 'Maybe', disabled: true, keys: []},
 		])
 		expect(conditionMock).toHaveBeenCalledTimes(1)
-		expect(conditionMock).toHaveBeenCalledWith(action)
+		expect(conditionMock).toHaveBeenCalledWith({...action,action:'conditionalAction'})
 	})
 	test('applies conditions recursively', () => {
 		const action = { type: 'uniqeAction' } as ContextAction
@@ -62,9 +62,9 @@ describe('menuApplyMetaData', () => {
 			},
 		})
 		expect(result).toEqual([
-			{action: 'goodAction', label: 'Valid', keys: [], disabled: false, },
-			{label: 'Parent', mode: ContextMenuItemMode.section, keys: [], disabled: false, children: [
-				{action: 'goodAction2', label: 'Valid', disabled: true,  keys: []},
+			{action: 'goodAction', label: 'Valid', id: 'Valid', keys: [], disabled: false, },
+			{label: 'Parent', id: 'Parent', mode: ContextMenuItemMode.section, keys: [], disabled: false, children: [
+				{action: 'goodAction2', label: 'Valid', id: 'Valid', disabled: true,  keys: []},
 			]},
 		])
 	})

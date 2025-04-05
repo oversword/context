@@ -14,7 +14,6 @@ import DataContext from '@/components/DataContext'
 import classes from './classes'
 import itemClasses from '@/components/ContextMenuItem/classes'
 import { ContextMenuProps } from './index.types'
-import { getKey, getLabel } from './utils'
 import SystemContext from '@/constants/system-context'
 import { ContextMenuResult } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
@@ -45,14 +44,14 @@ const renderMenuItem = (menuItem: ContextMenuItemType) => {
 				display: block;
 				&:first-of-type {
 					borderTop: none;
-			}`} key={getKey(menuItem)}>
-				{getLabel(menuItem) ? (
+			}`} key={menuItem.id}>
+				{menuItem.label ? (
 					<div className={classes.ContextMenuSectionLabel} css={css`
 						padding: 0.5em 1em;
 						color: #888;
 						font-size: 0.9em;
 						white-space: nowrap;
-					`}>{getLabel(menuItem)}</div>
+					`}>{menuItem.label}</div>
 				) : null}
 				{(menuItem.children || []).map(childItem => renderMenuItem(childItem))}
 			</div>
@@ -62,13 +61,13 @@ const renderMenuItem = (menuItem: ContextMenuItemType) => {
 		return (
 			<DataContext
 				data={{
-					ContextMenu_key: getKey(menuItem),
+					ContextMenu_key: menuItem.id,
 				}}
-				key={getKey(menuItem)}
+				key={menuItem.id}
 			>
 				<ContextMenuItem
 					id={menuItem[MENU_ITEM_ID]}
-					label={`${getLabel(menuItem)}...`}
+					label={`${menuItem.label}...`}
 					action={OPEN_BRANCH}
 					disabled={menuItem.disabled}
 				/>
@@ -78,13 +77,13 @@ const renderMenuItem = (menuItem: ContextMenuItemType) => {
 	return (
 		<DataContext
 			data={{
-				ContextMenu_key: getKey(menuItem),
+				ContextMenu_key: menuItem.id,
 			}}
-			key={getKey(menuItem)}
+			key={menuItem.id}
 		>
 			<ContextMenuItem
 				id={menuItem[MENU_ITEM_ID]}
-				label={getLabel(menuItem)}
+				label={menuItem.label}
 				action={menuItem.action || MENU_ERROR}
 				data={menuItem.data}
 				disabled={menuItem.disabled}
@@ -95,7 +94,7 @@ const renderMenuItem = (menuItem: ContextMenuItemType) => {
 }
 
 function ContextMenu({
-	menu = [{ label: 'No Actions', mode: ContextMenuItemMode.section, action: '', keys: [], disabled: true } as BasicContextActMenuItem],
+	menu = [{ id: 'no-actions', label: 'No Actions', mode: ContextMenuItemMode.section, action: '', keys: [], disabled: true, data: {}, [MENU_ITEM_ID]: 'no-actions' } as BasicContextActMenuItem],
 	level = 0,
 	intercept = {},
 	...passedProps
@@ -116,7 +115,7 @@ function ContextMenu({
 		if (data.ContextMenuItem_action === OPEN_BRANCH) {
 			const key = data.ContextMenu_key
 			const item = menu.find(
-				menuItem => 'mode' in menuItem && menuItem.mode === ContextMenuItemMode.branch && getKey(menuItem) === key,
+				menuItem => 'mode' in menuItem && menuItem.mode === ContextMenuItemMode.branch && menuItem.id === key,
 			)
 
 			if (!item) throw new Error('Menu item does not exist')

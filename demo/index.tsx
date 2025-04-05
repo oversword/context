@@ -63,7 +63,7 @@ const parentContext: ContextConfig = {
 			menu: [
 				{
 					action: 'additional-child-act',
-					label: 'Extra Child Action'
+					label: () => 'Extra Child Action - '+Math.floor(Math.random()*10),
 				}
 			]
 		}

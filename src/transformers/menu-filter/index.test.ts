@@ -15,7 +15,7 @@ describe('menuFilter', () => {
 		])
 	})
 	test('applies action conditions if they exist, filter out falsey', () => {
-		const action = { type: 'uniqeAction' } as ContextAction
+		const action = { action: 'conditionalAction', type: 'uniqeAction' } as ContextAction
 		const conditionMock = jest.fn().mockReturnValue(false)
 		const result = menuFilter([
 			{action: 'goodAction', label: 'Valid'},
@@ -34,7 +34,7 @@ describe('menuFilter', () => {
 		expect(conditionMock).toHaveBeenCalledWith(action)
 	})
 	test('applies action conditions if they exist, allow truthy', () => {
-		const action = { type: 'uniqeAction' } as ContextAction
+		const action = { action: 'conditionalAction', type: 'uniqeAction' } as ContextAction
 		const conditionMock = jest.fn().mockReturnValue(true)
 		const result = menuFilter([
 			{action: 'goodAction', label: 'Valid'},

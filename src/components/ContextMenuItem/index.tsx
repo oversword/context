@@ -6,7 +6,7 @@ import { ContextConfig } from '@/types/index.types'
 import { ContextMenuItemProps } from './index.types'
 import displayKeys from '@/generic/string/transformers/display-keys'
 import iconMap from '@/constants/icon-map'
-import { jsx, css, Global, ClassNames } from '@emotion/react'
+import { css } from '@emotion/react'
 
 const context: ContextConfig = {
 	type: 'context-menu-item',
@@ -44,7 +44,7 @@ function ContextMenuItem({
 				&:first-of-type {
 					borderTop: none;
 				}
-				${disabled ? `color: #bbb;` : `
+				${disabled ? 'color: #bbb;' : `
 				&:hover {
 					background: #44d;
 					color: #fff;
