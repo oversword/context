@@ -2,6 +2,8 @@ import evaluateDisabled from '@/conditions/evaluate-disabled'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import { ContextAction, ContextActsGroup, ContextMenuItem, ContextMenuItemList, ContextActMenuItem, ContextActMenuItemList } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
+import humanise from '@/generic/string/transformers/humanise'
+import { evaluateString } from '@/conditions/evaluate-string'
 
 /**
  * Apply the given properties to each item of the given menu - 
@@ -39,22 +41,31 @@ const menuApplyActData = (menu: ContextMenuItemList, action: PartialOmit<Context
 		if (menuItem[MENU_ITEM_ID])
 			return menuItem as ContextActMenuItem
 
-		const actionDefinition = ('action' in menuItem && menuItem.action && acts[menuItem.action]) ? acts[menuItem.action] : null
+		const actionName = evaluateString((('action' in menuItem) && menuItem.action) || undefined)(action)
+		const fullAction: ContextAction = {
+			...action,
+			action: actionName
+		}
+		const actionDefinition = (actionName && acts[actionName]) ? acts[actionName] : null
 		const actionKeys = actionDefinition && actionDefinition.keys || []
-		const disabled = Boolean(actionDefinition ? evaluateDisabled(actionDefinition, action): false)
+		const disabled = Boolean(actionDefinition ? evaluateDisabled(actionDefinition, fullAction): false)
+		const label = evaluateString(menuItem.label, menuItem.title, () => actionName && humanise(actionName))(fullAction) || ''
+		const id = evaluateString(menuItem.key, menuItem.id, menuItem.label, menuItem.title, actionName, String(menuItem))(fullAction)
+		const newObj = {
+			...menuItem,
+			action: actionName,
+			id,
+			label,
+			disabled,
+			keys: actionKeys,
+		} as ContextActMenuItem
 		if ('children' in menuItem) {
 			return {
-				...menuItem,
+				...newObj,
 				children: menuApplyActData(menuItem.children, action, acts),
-				disabled,
-				keys: actionKeys,
 			}
 		} else {
-			return {
-				...menuItem,
-				disabled,
-				keys: actionKeys,
-			}
+			return newObj
 		}
 	})
   

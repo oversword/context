@@ -6,7 +6,6 @@ global.IS_REACT_ACT_ENVIRONMENT = true
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import React from 'react'
 import { Root, createRoot } from 'react-dom/client'
-import { act } from 'react-dom/test-utils'
 import { fireEvent } from '@testing-library/react'
 
 import Context from './Context'
@@ -31,7 +30,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-	act(() => {
+	React.act(() => {
 		reactRoot.unmount()
 		container.remove()
 	})
@@ -41,7 +40,7 @@ describe('Context Component', () => {
 	describe('A ContextSystem must be provided', () => {
 		test('Throws as error if a context system is not provided', () => {
 			expect(() => {
-				act(() => {
+				React.act(() => {
 					reactRoot.render(
 						<Context></Context>
 					)
@@ -50,7 +49,7 @@ describe('Context Component', () => {
 		})
 		test('Does not throw an error if context system is provided', () => {
 			expect(() => {
-				act(() => {
+				React.act(() => {
 					const contextSystem = initialiseContextSystem(container)
 					reactRoot.render(
 						<SystemContext.Provider value={contextSystem}>
@@ -63,7 +62,7 @@ describe('Context Component', () => {
 	})
 	describe('Element display', () => {
 		test('Adds no extra text content to an element', () => {
-			act(() => {
+			React.act(() => {
 				const contextSystem = initialiseContextSystem(container)
 				reactRoot.render(
 					<SystemContext.Provider value={contextSystem}>
@@ -91,7 +90,7 @@ describe('Context Component', () => {
 					{label:'Item Label',action:'test-act'}
 				]
 			}
-			act(() => {
+			React.act(() => {
 				reactRoot.render(
 					<SystemContext.Provider value={contextSystem}>
 						<Context context={context} >
@@ -128,7 +127,7 @@ describe('Context Component', () => {
 			const intercept: ContextInterceptGroup = {
 				'test-type.test-act': mockIntercept
 			}
-			act(() => {
+			React.act(() => {
 				reactRoot.render(
 					<SystemContext.Provider value={contextSystem}>
 						<Context context={context} intercept={intercept} >
@@ -182,7 +181,7 @@ describe('Context Component', () => {
 			const intercept: ContextInterceptGroup = {
 				'test-type.test-act': mockIntercept
 			}
-			act(() => {
+			React.act(() => {
 				reactRoot.render(
 					<SystemContext.Provider value={contextSystem}>
 						<Context context={context} intercept={intercept} >
@@ -242,7 +241,7 @@ describe('Context Component', () => {
 					}
 				}
 			}
-			act(() => {
+			React.act(() => {
 				reactRoot.render(
 					<SystemContext.Provider value={contextSystem}>
 						<DataContext context={context} intercept={intercept} >

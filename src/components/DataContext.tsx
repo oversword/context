@@ -5,7 +5,7 @@ import SystemContext from '@/constants/system-context'
 import { ContextApi, ContextId, DataContextProps } from '@/types/index.types'
 import wrapElements from './wrap-elements'
 
-const DataContext = React.forwardRef(function Context(
+const DataContext = function Context(
 	{
 		children = null,
 		DataContext = null,
@@ -14,15 +14,15 @@ const DataContext = React.forwardRef(function Context(
 		intercept = null,
 		outercept = null,
 		root = false,
-	}: DataContextProps,
-	forwardRef,
+		ref = undefined,
+	}: React.PropsWithChildren<DataContextProps>,
 ): React.ReactElement {
 	const contextSystem = React.useContext(SystemContext) || null
 	if (!contextSystem) {
 		throw new Error('A context system must be provided via the SystemContext.Provider component.')
 	}
 
-	const idRef = React.useRef<ContextId>()
+	const idRef = React.useRef<ContextId>('')
 	if (!idRef.current) idRef.current = contextSystem.newId()
 	const id = idRef.current
 
@@ -31,7 +31,7 @@ const DataContext = React.forwardRef(function Context(
 
 	const parent = React.useContext(ReactContext) || null
 
-	React.useImperativeHandle(forwardRef, (): ContextApi => {
+	React.useImperativeHandle(ref, (): ContextApi => {
 		const trigger = contextSystem.triggerAction(id)
 		return {
 			trigger,
@@ -56,6 +56,6 @@ const DataContext = React.forwardRef(function Context(
 	}, [id, parent, root, intercept, outercept, internalContext, data])
 
 	return <ReactContext.Provider value={id}>{...internalChildren}</ReactContext.Provider>
-})
+}
 
 export default DataContext

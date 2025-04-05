@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"esModuleInterop": true,
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"target": "ES6",
 		"module": "ESNext",
 		"moduleResolution": "Node",
@@ -14,7 +14,8 @@
 			"@/*": ["./src/*"]
 		},
 		"lib": ["es2019.object","scripthost","dom.iterable"],
-    "resolveJsonModule": true,
+		"resolveJsonModule": true,
+		"jsxImportSource": "@emotion/react"
 
 	},
   "ts-node": {

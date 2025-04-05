@@ -1,6 +1,7 @@
+import React from 'react'
+
 import { MENU_ITEM_ID, MENU_ITEM_PARENT } from '@/constants/menu-item'
 import PartialOmit from './partial-omit'
-import {ReactElement} from 'react'
 /**
  * Atomic
  */
@@ -47,14 +48,15 @@ export enum ContextMenuItemMode {
 	branch = 'branch',
 }
 export interface BasicContextMenuItem {
-	key?: string;
-	id?: string;
-	title?: string;
-	label: string;
+	key?: ((action: ContextAction) => string | undefined) | string;
+	id?: ((action: ContextAction) => string | undefined) | string;
+	title?: ((action: ContextAction) => string | undefined) | string;
+	label?: ((action: ContextAction) => string | undefined) | string;
 
-	action: ContextActionName;
+	action: ((action: Omit<ContextAction, 'action'>) => ContextActionName) | ContextActionName;
 	data?: ContextData | ContextDataGenerator;
 
+	// TODO: needed? Move to ContextActMenuItem?
 	[MENU_ITEM_ID]?: string;
 	[MENU_ITEM_PARENT]?: true;
 }
@@ -76,16 +78,24 @@ export interface ContextParentMenuMeta {
 	[MENU_ITEM_ID]: string;
 }
 
-type ActMenuItem<T extends ContextMenuItem> = T & {
+export type BasicContextActMenuItem = {
+	id: string;
+	label: string;
+	action: ContextActionName;
+	data: ContextData;
 	keys: Array<string>;
 	disabled: boolean;
+	[MENU_ITEM_ID]: string;
 }
-type ActMenuItem_with_Children<T extends ContextMenuItem> = Omit<ActMenuItem<T>, 'children'> & {
+
+export interface BranchContextActMenuItem extends Omit<BasicContextActMenuItem, 'action'> {
 	children: ContextActMenuItemList;
+	mode: ContextMenuItemMode.branch;
 }
-export type BasicContextActMenuItem = ActMenuItem<BasicContextMenuItem>
-export type BranchContextActMenuItem = ActMenuItem_with_Children<BranchContextMenuItem>
-export type SectionContextActMenuItem = ActMenuItem_with_Children<SectionContextMenuItem>
+export interface SectionContextActMenuItem extends Omit<BasicContextActMenuItem, 'action'> {
+	children: ContextActMenuItemList;
+	mode: ContextMenuItemMode.section;
+}
 
 export type ContextActMenuItem = BasicContextActMenuItem | BranchContextActMenuItem | SectionContextActMenuItem;
 
@@ -136,20 +146,19 @@ export interface ContextConfig {
 export type ContextOverride = Omit<ContextConfig, 'type' | 'overrides' | 'label'>
 
 export interface DataContextProps {
-	children: null | string | ReactElement | Array<ReactElement | string | null>;
 	DataContext?: ContextConfig | null;
 	context?: ContextConfig | null;
 	data?: ContextData | ContextDataGenerator | null;
 	intercept?: ContextInterceptGroup | null;
 	outercept?: ContextInterceptGroup | null;
 	root?: boolean;
+	ref?: React.Ref<ContextApi>
 }
 
-export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
+export interface ContextProps<P> extends Omit<DataContextProps, 'DataContext'> {
 	Context?: ContextConfig | null;
 	focus?: boolean;
 	onFocus?: ((event?: FocusEvent) => void) | null;
-	element?: /* React.FunctionComponent | */ string | null;
 	tabIndex?: number;
 	onClickAction?: ContextActionNameConfig | null;
 	onDoubleClickAction?: ContextActionNameConfig | null;
@@ -157,6 +166,7 @@ export interface ContextProps extends Omit<DataContextProps, 'DataContext'> {
 	onMouseUpAction?: ContextActionNameConfig | null;
 	onMouseMoveAction?: ContextActionNameConfig | null;
 	onChangeAction?: ContextActionNameConfig | null;
+	element?: React.FunctionComponent<P> | string | null;
 	[attr: string]: unknown;
 }
 

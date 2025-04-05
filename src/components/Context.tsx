@@ -13,7 +13,7 @@ import { inactiveLog as log } from '@/side-effects/debug-log'
  *
  * Too complex, see README for API
  */
-const Context = React.forwardRef(function Context(
+const Context = function Context<P extends object>(
 	{
 		children = null,
 		Context = null,
@@ -32,16 +32,16 @@ const Context = React.forwardRef(function Context(
 		onMouseMoveAction = null,
 		onChangeAction = null,
 		root = false,
+		ref = undefined,
 		...passedProps
-	}: ContextProps,
-	forwardRef,
+	}: React.PropsWithChildren<ContextProps<P> & P>,
 ): React.ReactElement {
 	const contextSystem = React.useContext(SystemContext) || null
 	if (!contextSystem) {
 		throw new Error('A context system must be provided via the SystemContext.Provider component.')
 	}
 
-	const idRef = React.useRef<ContextId>()
+	const idRef = React.useRef<ContextId>('')
 	if (!idRef.current) idRef.current = contextSystem.newId()
 	const id = idRef.current
 
@@ -49,7 +49,7 @@ const Context = React.forwardRef(function Context(
 	const internalContext = Context || context
 	const internalElement = element || 'div'
 
-	const elementRef = React.useRef<HTMLElement>()
+	const elementRef = React.useRef<HTMLElement>(null)
 	const parent = React.useContext(ReactContext) || null
 
 	const userEvent = (
@@ -62,7 +62,7 @@ const Context = React.forwardRef(function Context(
 			}
 			: {}
 
-	React.useImperativeHandle(forwardRef, (): ContextApi => {
+	React.useImperativeHandle(ref, (): ContextApi => {
 		const trigger = contextSystem.triggerAction(id)
 		return {
 			trigger,
@@ -157,11 +157,11 @@ const Context = React.forwardRef(function Context(
 					...userEvent('onChange', onChangeAction),
 					'data-contextid': id,
 					ref: elementRef,
-				},
+				} as P,
 				...internalChildren,
 			)}
 		</ReactContext.Provider>
 	)
-})
+}
 
 export default Context
