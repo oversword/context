@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { createRoot } from "react-dom/client"
-import { Context, ContextConfig, ContextInterceptGroup, DataContext, SystemContext, initialiseContextSystem } from "../src"
+import { Context, ContextConfig, ContextInterceptGroup, ContextMenuItemMode, DataContext, SystemContext, initialiseContextSystem } from "../src"
 
 import { jsx, css, Global, ClassNames } from '@emotion/react'
 
@@ -98,6 +98,44 @@ const buttonContext: ContextConfig = {
 	]
 }
 
+const complexContext: ContextConfig = {
+	type: 'Complex',
+	acts: {
+		someAct1: {},
+		someAct2: {},
+		someAct3: {},
+		someAct4: {},
+		someAct5: {},
+		someAct6: {},
+		someAct7: {},
+		someAct8: {},
+		someAct9: {},
+	},
+	menu: [
+		{ action: 'someAct1' },
+		{ action: 'someAct2' },
+		{ action: 'someAct3' },
+		{
+			label: "Section",
+			mode: ContextMenuItemMode.section,
+			children: [
+				{ action: 'someAct4' },
+				{ action: 'someAct5' },
+				{ action: 'someAct6' },
+				{
+					label: 'Branch',
+					mode: ContextMenuItemMode.branch,
+					children: [
+						{ action: 'someAct7' },
+						{ action: 'someAct8' },
+						{ action: 'someAct9' },
+					]
+				}
+			]
+		}
+	]
+}
+
 const color = 'white'
 
 function RefComponent(): React.ReactElement {
@@ -134,6 +172,7 @@ reactRoot.render(
 			<br/>
 			<br/>
 			<hr/>
+			<DataContext data={{ }}>
 			<DataContext data={{extraDataGoesWhere3: 457467}} >
 				<DataContext data={{extraDataGoesWhere2: 457467}} >
 					<Context
@@ -146,8 +185,9 @@ reactRoot.render(
 					</Context>
 				</DataContext>
 			</DataContext>
+			</DataContext>
 		</Context>
-		<div
+		<Context context={complexContext}
 			css={css`
 				padding: 32px;
 				background-color: hotpink;
@@ -159,7 +199,7 @@ reactRoot.render(
 			`}
 		>
 			Hover to change color.
-		</div>
+		</Context>
 	</Context>
 	<RefComponent />
 
