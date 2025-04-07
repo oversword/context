@@ -19,6 +19,7 @@ import { ContextMenuResult } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import { css } from '@emotion/react'
+import menuFindItem from '@/transformers/menu-find-item'
 
 const OPEN_BRANCH = Symbol('open-branch')
 const MENU_ERROR = Symbol('menu-error')
@@ -114,9 +115,7 @@ function ContextMenu({
 	const handleItemSelect: ContextIntercept = ({ event, data }) => {
 		if (data.ContextMenuItem_action === OPEN_BRANCH) {
 			const key = data.ContextMenu_key
-			const item = menu.find(
-				menuItem => 'mode' in menuItem && menuItem.mode === ContextMenuItemMode.branch && menuItem.id === key,
-			)
+			const item = menuFindItem(menu, menuItem => 'mode' in menuItem && menuItem.mode === ContextMenuItemMode.branch && menuItem.id === key)
 
 			if (!item) throw new Error('Menu item does not exist')
 			if (!('children' in item)) throw new Error('Menu item has no children to open')
