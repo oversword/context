@@ -42,7 +42,7 @@ function ContextMenuItem({
 				padding: 0.5em 1em;
 				border-top: 1px solid #eee;
 				&:first-of-type {
-					borderTop: none;
+					border-top: none;
 				}
 				${disabled ? 'color: #bbb;' : `
 				&:hover {

@@ -44,7 +44,7 @@ const renderMenuItem = (menuItem: ContextMenuItemType) => {
 				border-top: 1px solid;
 				display: block;
 				&:first-of-type {
-					borderTop: none;
+					border-top: none;
 			}`} key={menuItem.id}>
 				{menuItem.label ? (
 					<div className={classes.ContextMenuSectionLabel} css={css`
