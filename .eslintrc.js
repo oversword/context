@@ -53,7 +53,7 @@ module.exports = {
 	'rules': {
     "@emotion/pkg-renaming": "error",
     "react/no-unknown-property": ["error", { "ignore": ["css"] }],
-		'@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+		'@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
 		'indent': [
 			'error',
 			'tab'

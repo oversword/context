@@ -1,4 +1,6 @@
 # React ContextMenus
+## 
+
 ## <a name="basics"></a>Basic Behaviour
 
 ### <a name="basics-context"></a>Context (with element)
@@ -632,11 +634,12 @@ Properties that may be modfied before passing them through to the rendered compo
 tabIndex
 onFocus
 className
+ref
 ```
 
 Properties that will be overridden, even if they are passed through to the rendered component:
 ```
-ref
+apiRef
 data-contextid
 
 onContextMenu (if the Context is focussable)

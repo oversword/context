@@ -14,7 +14,7 @@ const DataContext = function Context(
 		intercept = null,
 		outercept = null,
 		root = false,
-		ref = undefined,
+		apiRef = undefined,
 	}: React.PropsWithChildren<DataContextProps>,
 ): React.ReactElement {
 	const contextSystem = React.useContext(SystemContext) || null
@@ -31,7 +31,7 @@ const DataContext = function Context(
 
 	const parent = React.useContext(ReactContext) || null
 
-	React.useImperativeHandle(ref, (): ContextApi => {
+	React.useImperativeHandle(apiRef, (): ContextApi => {
 		const trigger = contextSystem.triggerAction(id)
 		return {
 			trigger,

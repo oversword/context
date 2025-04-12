@@ -5,6 +5,10 @@ export enum EVENT_NAMES {
 	DOUBLE_CLICK = 'dblclick',
 	MOUSE_DOWN = 'mousedown',
 	MOUSE_UP = 'mouseup',
+	MOUSE_ENTER = 'mouseenter',
+	MOUSE_LEAVE = 'mouseleave',
+	MOUSE_OVER = 'mouseover',
+	MOUSE_OUT = 'mouseout',
 }
 export interface EventTypes {
 	[EVENT_NAMES.CLICK]: (event: MouseEvent) => false | void;

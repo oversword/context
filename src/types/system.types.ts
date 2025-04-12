@@ -15,12 +15,18 @@ import {
 	ContextActsGroup,
 	ContextActsGroupGenerator,
 } from './index.types'
+import { Interpolation, Theme } from '@emotion/react'
+import Cancelable from '@/generic/promise/classes/cancelable'
 
 
 export interface ContextSystemConfig {
 	strategy_mergeMenu: (staticMenu: ContextMenuItemList) => ContextMenuListGenerator,
 	strategy_mergeActs: (staticActs: ContextActsGroup) => ContextActsGroupGenerator,
-	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator
+	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator,
+	structure: Interpolation<Theme>;
+	color: Interpolation<Theme>;
+	size: Interpolation<Theme>;
+	branchIcon: React.ReactElement
 }
 export interface ContextMenuResult {
 	id: ContextId;
@@ -45,7 +51,7 @@ export interface ContextMenuOptions {
 export type ContextMenuRenderer = (
 	contextSystemApi: ContextSystemApi,
 	opts: ContextMenuOptions,
-) => Promise<ContextMenuResult | null>;
+) => Cancelable<ContextMenuResult | null>;
 
 export interface ContextSystemApi {
 	focussedContext: ContextId | null;
@@ -76,7 +82,7 @@ export interface ContextSystemApi {
 		pos: ContextMenuOptionsPosition,
 		menu: ContextActMenuItemList,
 		level?: number,
-	) => Promise<ContextMenuResult | null>;
+	) => Cancelable<ContextMenuResult | null>;
 	addContextMenu: (
 		id: ContextId,
 		event: MouseEvent,

@@ -16,6 +16,8 @@ import ROOT_ID from '@/constants/root-id'
 import SystemContext from '@/constants/system-context'
 import { EnvironmentApi } from '@/types/environment.types'
 import closeAll from './close-all'
+import { Global } from '@emotion/react'
+import Cancelable from '@/generic/promise/classes/cancelable'
 
 /**
  * Positions a box of size `box` within `withinBox`, around the point `position`
@@ -91,7 +93,7 @@ const addMenu = (
 	contextSystemApi: ContextSystemApi,
 	environment: EnvironmentApi,
 	{ pos, menu, level = 0 }: ContextMenuOptions,
-): Promise<ContextMenuResult | null> => {
+): Cancelable<ContextMenuResult | null> => {
 	if (!environment.exists()) {
 		const globalContainer = document.createElement('div')
 		globalContainer.id = ROOT_ID
@@ -139,9 +141,20 @@ const addMenu = (
 		menuContainer.style.left = `${position.x}px`
 	}
 
-	return new Promise<ContextMenuResult | null>(resolve => {
+	const styles = React.createElement(Global, {
+		styles: [
+			contextSystemApi.configuration.structure,
+			contextSystemApi.configuration.size,
+			contextSystemApi.configuration.color,
+		]
+	})
+
+	return new Cancelable<ContextMenuResult | null>((resolve, _reject, onCancel) => {
+		onCancel(() => {
+			closeLevel(environment, level - 1)
+		})
 		const intercept: ContextInterceptGroup = {
-			'context-menu.action': action => {
+			'ContextMenu.action': action => {
 				// Close Everything if complete
 				if (level === 0) {
 					closeAll(environment)
@@ -153,8 +166,8 @@ const addMenu = (
 					data: action.data.ContextMenu_data as ContextData,
 				})
 			},
-			'context-menu.load': positionMenu,
-			'context-menu.close': () => {
+			'ContextMenu.load': positionMenu,
+			'ContextMenu.close': () => {
 				// Close this menu (and its descedants)
 				closeLevel(environment, level - 1)
 				resolve(null)
@@ -166,6 +179,7 @@ const addMenu = (
 			{
 				value: contextSystemApi,
 			},
+			styles,
 			React.createElement(ContextMenu, {
 				menu,
 				intercept,

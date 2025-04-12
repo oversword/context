@@ -13,5 +13,7 @@ export interface ContextMenuItemProps {
 	label?: string | null;
 	disabled?: boolean;
 	title?: string | null;
+	icon?: React.ReactNode;
+	endIcon?: React.ReactNode;
 	id: ContextId
 }

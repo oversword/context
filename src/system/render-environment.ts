@@ -2,6 +2,7 @@ import addMenu from '@/side-effects/add-menu'
 import cancel from '@/side-effects/cancel'
 import { ContextSystemApi, ContextMenuOptions, ContextMenuResult } from '@/types/system.types'
 import { Environment, EnvironmentApi, EnvironmentMenus } from '@/types/environment.types'
+import Cancelable from '@/generic/promise/classes/cancelable'
 
 /**
  * Create a scoped environment and returns an api for updating it
@@ -28,7 +29,7 @@ const provideEnvironment = (rootElement: HTMLElement): EnvironmentApi => {
 		addMenu: (
 			contextSystemApi: ContextSystemApi,
 			options: ContextMenuOptions,
-		): Promise<ContextMenuResult | null> => addMenu(contextSystemApi, api, options),
+		): Cancelable<ContextMenuResult | null> => addMenu(contextSystemApi, api, options),
 		get menus(): EnvironmentMenus {
 			if (environment === null) return []
 			return [...environment.menus.map(menu => ({ ...menu }))]

@@ -52,6 +52,7 @@ export interface BasicContextMenuItem {
 	id?: ((action: ContextAction) => string | undefined) | string;
 	title?: ((action: ContextAction) => string | undefined) | string;
 	label?: ((action: ContextAction) => string | undefined) | string;
+	icon?: React.ReactNode;
 
 	action: ((action: Omit<ContextAction, 'action'>) => ContextActionName) | ContextActionName;
 	data?: ContextData | ContextDataGenerator;
@@ -81,6 +82,7 @@ export interface ContextParentMenuMeta {
 export type BasicContextActMenuItem = {
 	id: string;
 	label: string;
+	icon: React.ReactNode;
 	action: ContextActionName;
 	data: ContextData;
 	keys: Array<string>;
@@ -152,10 +154,10 @@ export interface DataContextProps {
 	intercept?: ContextInterceptGroup | null;
 	outercept?: ContextInterceptGroup | null;
 	root?: boolean;
-	ref?: React.Ref<ContextApi>
+	apiRef?: React.Ref<ContextApi>
 }
 
-export interface ContextProps<P> extends Omit<DataContextProps, 'DataContext'> {
+export interface ContextProps<P extends object = React.PropsWithChildren> extends Omit<DataContextProps, 'DataContext'> {
 	Context?: ContextConfig | null;
 	focus?: boolean;
 	onFocus?: ((event?: FocusEvent) => void) | null;
@@ -165,8 +167,13 @@ export interface ContextProps<P> extends Omit<DataContextProps, 'DataContext'> {
 	onMouseDownAction?: ContextActionNameConfig | null;
 	onMouseUpAction?: ContextActionNameConfig | null;
 	onMouseMoveAction?: ContextActionNameConfig | null;
+	onMouseEnterAction?: ContextActionNameConfig | null;
+	onMouseLeaveAction?: ContextActionNameConfig | null;
+	onMouseOverAction?: ContextActionNameConfig | null;
+	onMouseOutAction?: ContextActionNameConfig | null;
 	onChangeAction?: ContextActionNameConfig | null;
 	element?: React.FunctionComponent<P> | string | null;
+	ref?: React.Ref<HTMLElement>
 	[attr: string]: unknown;
 }
 
@@ -220,7 +227,7 @@ export interface ContextApi {
 		event?: ContextEvent,
 		data?: ContextData | ContextDataGenerator,
 	) => symbol | Promise<unknown>;
-	triggerAction?: (
+	triggerAction: (
 		action: ContextActionName,
 		event?: ContextEvent,
 		data?: ContextData | ContextDataGenerator,

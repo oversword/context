@@ -25,14 +25,19 @@ const Context = function Context<P extends object>(
 		intercept = null,
 		outercept = null,
 		tabIndex = 0,
+		onChangeAction = null,
 		onClickAction = null,
 		onDoubleClickAction = null,
 		onMouseDownAction = null,
 		onMouseUpAction = null,
 		onMouseMoveAction = null,
-		onChangeAction = null,
+		onMouseEnterAction = null,
+		onMouseLeaveAction = null,
+		onMouseOverAction = null,
+		onMouseOutAction = null,
 		root = false,
 		ref = undefined,
+		apiRef = undefined,
 		...passedProps
 	}: React.PropsWithChildren<ContextProps<P> & P>,
 ): React.ReactElement {
@@ -62,7 +67,7 @@ const Context = function Context<P extends object>(
 			}
 			: {}
 
-	React.useImperativeHandle(ref, (): ContextApi => {
+	React.useImperativeHandle(apiRef, (): ContextApi => {
 		const trigger = contextSystem.triggerAction(id)
 		return {
 			trigger,
@@ -72,6 +77,8 @@ const Context = function Context<P extends object>(
 			},
 		}
 	})
+	React.useImperativeHandle(ref, (): HTMLElement => elementRef.current)
+
 
 	React.useEffect(() => {
 		contextSystem.addContext({
@@ -153,6 +160,10 @@ const Context = function Context<P extends object>(
 					...userEvent('onDoubleClick', onDoubleClickAction),
 					...userEvent('onMouseMove', onMouseMoveAction),
 					...userEvent('onMouseDown', onMouseDownAction),
+					...userEvent('onMouseEnter', onMouseEnterAction),
+					...userEvent('onMouseLeave', onMouseLeaveAction),
+					...userEvent('onMouseOver', onMouseOverAction),
+					...userEvent('onMouseOut', onMouseOutAction),
 					...userEvent('onMouseUp', onMouseUpAction),
 					...userEvent('onChange', onChangeAction),
 					'data-contextid': id,

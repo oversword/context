@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import { Context, ContextConfig, ContextInterceptGroup, ContextMenuItemMode, DataContext, SystemContext, initialiseContextSystem } from "../src"
 
 import { jsx, css, Global, ClassNames } from '@emotion/react'
+import BranchIcon from '@/components/BranchIcon'
 
 const style = document.createElement('style')
 style.innerHTML = `
@@ -24,7 +25,9 @@ container.id = 'root'
 document.body.appendChild(container)
 const reactRoot = createRoot(container)
 
-const contextSystem = initialiseContextSystem(container)
+const contextSystem = initialiseContextSystem(container, {
+	// styles
+})
 const parentIntercept: ContextInterceptGroup = {
 	'parent-context-type.parent-act': (action) => {
 		console.log('Parent Action:', action)
@@ -47,7 +50,8 @@ const parentContext: ContextConfig = {
 	menu: [
 		{
 			action: 'parent-act',
-			label: 'Parent Action'
+			label: 'Parent Action',
+			icon: <BranchIcon />
 		}
 	],
 	overrides: {
@@ -102,7 +106,7 @@ const complexContext: ContextConfig = {
 	type: 'Complex',
 	acts: {
 		someAct1: {},
-		someAct2: {},
+		someAct2: {disabled:true},
 		someAct3: {},
 		someAct4: {},
 		someAct5: {},
@@ -116,7 +120,7 @@ const complexContext: ContextConfig = {
 		{ action: 'someAct2' },
 		{ action: 'someAct3' },
 		{
-			label: "Section",
+			// label: "Section",
 			mode: ContextMenuItemMode.section,
 			children: [
 				{ action: 'someAct4' },
@@ -141,7 +145,7 @@ const color = 'white'
 function RefComponent(): React.ReactElement {
   const inputRef = useRef(null)
 	return <div>
-		<Context ref={inputRef} >
+		<Context apiRef={inputRef} >
 			<div onClick={() => {
 				console.log(inputRef)
 			}} >
@@ -150,6 +154,17 @@ function RefComponent(): React.ReactElement {
 		</Context>
 	</div>
 }
+
+
+
+interface Props {
+
+}
+const CustomComponent: React.FunctionComponent<Props> = ({
+}: Props): React.ReactElement => {
+	return <div ></div>
+}
+
 
 reactRoot.render(
   <SystemContext.Provider value={contextSystem}>
@@ -200,6 +215,24 @@ reactRoot.render(
 		>
 			Hover to change color.
 		</Context>
+		<Context
+			element={CustomComponent}
+		></Context>
+
+		<ClassNames>
+      {({ css, cx }) => (
+				<>
+        <div
+          className={cx(
+            'some-class',
+            css`
+              color: yellow;
+            `
+          )}
+        > Styled?</div>
+				</>
+      )}
+    </ClassNames>
 	</Context>
 	<RefComponent />
 
