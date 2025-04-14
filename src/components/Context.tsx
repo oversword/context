@@ -25,14 +25,20 @@ const Context = function Context<P extends object>(
 		intercept = null,
 		outercept = null,
 		tabIndex = 0,
+		onFocusAction = null,
+		onChangeAction = null,
 		onClickAction = null,
 		onDoubleClickAction = null,
 		onMouseDownAction = null,
 		onMouseUpAction = null,
 		onMouseMoveAction = null,
-		onChangeAction = null,
+		onMouseEnterAction = null,
+		onMouseLeaveAction = null,
+		onMouseOverAction = null,
+		onMouseOutAction = null,
 		root = false,
 		ref = undefined,
+		apiRef = undefined,
 		...passedProps
 	}: React.PropsWithChildren<ContextProps<P> & P>,
 ): React.ReactElement {
@@ -62,7 +68,7 @@ const Context = function Context<P extends object>(
 			}
 			: {}
 
-	React.useImperativeHandle(ref, (): ContextApi => {
+	React.useImperativeHandle(apiRef, (): ContextApi => {
 		const trigger = contextSystem.triggerAction(id)
 		return {
 			trigger,
@@ -72,6 +78,8 @@ const Context = function Context<P extends object>(
 			},
 		}
 	})
+	React.useImperativeHandle(ref, (): HTMLElement => elementRef.current)
+
 
 	React.useEffect(() => {
 		contextSystem.addContext({
@@ -88,13 +96,8 @@ const Context = function Context<P extends object>(
 
 	React.useEffect(() => {
 		// AutoFocus the element if enabled
-
 		if (!passedProps.autoFocus) return
-
 		elementRef.current?.focus()
-		if (onFocus) onFocus()
-
-		contextSystem.focussedContext = id
 	}, [])
 
 	const handleFocus = (event: FocusEvent): void => {
@@ -109,6 +112,7 @@ const Context = function Context<P extends object>(
 		}
 
 		if (onFocus) onFocus(event)
+		if (onFocusAction) contextSystem.handleLocalEvent(id, onFocusAction)(event)
 		if (!contextSystem.isFocus(id, event)) return
 
 		contextSystem.focussedContext = id
@@ -130,13 +134,10 @@ const Context = function Context<P extends object>(
 				log('Context Menu Done', { action, overrideData, id: actionContextId })
 				return contextSystem.triggerAction(actionContextId)(action, persistentEvent, overrideData)
 			})
-			.then(() => {
-				// Re-focus this element
-				elementRef.current?.focus()
-				if (onFocus) onFocus()
-
-				contextSystem.focussedContext = id
-			})
+			// .then(() => {
+			// 	// Re-focus this element
+			// 	makeFocus(new FocusEvent('Focus when Child Destroyed', { relatedTarget: elementRef.current }))
+			// })
 		return log('Context Menu Success', { id, event })
 	}
 
@@ -153,6 +154,10 @@ const Context = function Context<P extends object>(
 					...userEvent('onDoubleClick', onDoubleClickAction),
 					...userEvent('onMouseMove', onMouseMoveAction),
 					...userEvent('onMouseDown', onMouseDownAction),
+					...userEvent('onMouseEnter', onMouseEnterAction),
+					...userEvent('onMouseLeave', onMouseLeaveAction),
+					...userEvent('onMouseOver', onMouseOverAction),
+					...userEvent('onMouseOut', onMouseOutAction),
 					...userEvent('onMouseUp', onMouseUpAction),
 					...userEvent('onChange', onChangeAction),
 					'data-contextid': id,

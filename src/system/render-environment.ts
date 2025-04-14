@@ -1,7 +1,8 @@
 import addMenu from '@/side-effects/add-menu'
 import cancel from '@/side-effects/cancel'
-import { ContextSystemApi, ContextMenuOptions, ContextMenuResult } from '@/types/system.types'
+import { ContextSystemApi, ContextMenuOptions, ContxtMenuRendererInterruptable } from '@/types/system.types'
 import { Environment, EnvironmentApi, EnvironmentMenus } from '@/types/environment.types'
+
 
 /**
  * Create a scoped environment and returns an api for updating it
@@ -28,7 +29,7 @@ const provideEnvironment = (rootElement: HTMLElement): EnvironmentApi => {
 		addMenu: (
 			contextSystemApi: ContextSystemApi,
 			options: ContextMenuOptions,
-		): Promise<ContextMenuResult | null> => addMenu(contextSystemApi, api, options),
+		): ContxtMenuRendererInterruptable => addMenu(contextSystemApi, api, options),
 		get menus(): EnvironmentMenus {
 			if (environment === null) return []
 			return [...environment.menus.map(menu => ({ ...menu }))]
@@ -51,11 +52,10 @@ const provideEnvironment = (rootElement: HTMLElement): EnvironmentApi => {
 					throw new Error(
 						`Menus must be an array of EnvironmentMenus, with a numeric level. ${typeof menu.level} given at index ${index}.`,
 					)
-				if (!('container' in menu) || !menu.container)
+				if (!('destroy' in menu) || !menu.destroy)
 					throw new Error(
-						`Menus must be an array of EnvironmentMenus, object without container given at index ${index}.`,
+						`Menus must be an array of EnvironmentMenus, object without destroy method given at index ${index}.`,
 					)
-				// TODO: test for HTML element in container?
 			})
 			environment.menus = menus
 		},

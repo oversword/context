@@ -168,7 +168,7 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 			x: event.pageX,
 			y: event.pageY,
 		}
-		return environment.addMenu(contextSystemApi, { pos, menu, level: 0 })
+		return environment.addMenu(contextSystemApi, { pos, menu, level: 0, id: '1', parentId: null })
 	}
 
 	/**
@@ -286,8 +286,15 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 		triggerAction,
 		handleLocalEvent,
 		addContextMenu,
-		addMenu: (pos, menu, level = 0) =>
-			environment.addMenu(contextSystemApi, { pos, menu, level }),
+		addMenu: (pos, menu, parentId = null, level = 0) =>
+			environment.addMenu(contextSystemApi, { pos, menu, level, parentId, id: Math.random().toString() }),
+		removeMenu: () => {
+			if (!Object.values(currentKeys).some(Boolean)) return
+			// TODO: this should be smarter, perhaps trigger events? Perhaps use unique current key dict for each menu?
+			Object.entries(currentKeys).forEach(([key]) => {
+				setKey(key, false)
+			})
+		}
 	}
 
 	return contextSystemApi

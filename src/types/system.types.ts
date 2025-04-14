@@ -15,12 +15,18 @@ import {
 	ContextActsGroup,
 	ContextActsGroupGenerator,
 } from './index.types'
+import { Interpolation, Theme } from '@emotion/react'
+import Interruptable from '@/generic/promise/classes/interruptable'
 
 
 export interface ContextSystemConfig {
 	strategy_mergeMenu: (staticMenu: ContextMenuItemList) => ContextMenuListGenerator,
 	strategy_mergeActs: (staticActs: ContextActsGroup) => ContextActsGroupGenerator,
-	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator
+	strategy_mergeData: (staticData: ContextData) => ContextDataGenerator,
+	structure: Interpolation<Theme>;
+	color: Interpolation<Theme>;
+	size: Interpolation<Theme>;
+	branchIcon: React.ReactElement
 }
 export interface ContextMenuResult {
 	id: ContextId;
@@ -37,15 +43,20 @@ export type ContextMenuOptionsPosition = PartialOmit<ContextMenuOptionsBounds, '
 export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' | 'y'>;
 
 export interface ContextMenuOptions {
+	id: string;
+	parentId: string | null;
 	pos: ContextMenuOptionsPosition;
 	menu: ContextActMenuItemList;
 	level?: number;
 }
 
+export class CanceledError extends Error {}
+export type ContextMenuRendererInterrupt = CanceledError | FocusEvent
+export type ContxtMenuRendererInterruptable = Interruptable<ContextMenuResult | null, ContextMenuRendererInterrupt>
 export type ContextMenuRenderer = (
 	contextSystemApi: ContextSystemApi,
 	opts: ContextMenuOptions,
-) => Promise<ContextMenuResult | null>;
+) => ContxtMenuRendererInterruptable;
 
 export interface ContextSystemApi {
 	focussedContext: ContextId | null;
@@ -75,8 +86,10 @@ export interface ContextSystemApi {
 	addMenu: (
 		pos: ContextMenuOptionsPosition,
 		menu: ContextActMenuItemList,
+		parentId: string,
 		level?: number,
-	) => Promise<ContextMenuResult | null>;
+	) => ContxtMenuRendererInterruptable;
+	removeMenu: () => void;
 	addContextMenu: (
 		id: ContextId,
 		event: MouseEvent,
@@ -92,5 +105,5 @@ export interface ContextSystemApi {
 	handleLocalEvent: (
 		id: ContextId,
 		onAction: ContextActionNameConfig,
-	) => (event: Event) => false | void;
+	) => (event: ContextEvent) => false | void;
 }

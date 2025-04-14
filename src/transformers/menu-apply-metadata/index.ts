@@ -37,10 +37,9 @@ export const actMenuApplyData = (menu: ContextActMenuItemList, additionalPropert
  * @returns The given menu, with `disbaled` flags and `keys` lists derived from the given acts
  */
 const menuApplyActData = (menu: ContextMenuItemList, action: PartialOmit<ContextAction, 'action'>, acts: ContextActsGroup): ContextActMenuItemList =>
-	menu.map((menuItem: ContextMenuItem): ContextActMenuItem => {
+	menu.map((menuItem: ContextMenuItem, index): ContextActMenuItem => {
 		if (menuItem[MENU_ITEM_ID])
 			return menuItem as ContextActMenuItem
-
 		const actionName = evaluateString((('action' in menuItem) && menuItem.action) || undefined)(action)
 		const fullAction: ContextAction = {
 			...action,
@@ -50,7 +49,7 @@ const menuApplyActData = (menu: ContextMenuItemList, action: PartialOmit<Context
 		const actionKeys = actionDefinition && actionDefinition.keys || []
 		const disabled = Boolean(actionDefinition ? evaluateDisabled(actionDefinition, fullAction): false)
 		const label = evaluateString(menuItem.label, menuItem.title, () => actionName && humanise(actionName))(fullAction) || ''
-		const id = evaluateString(menuItem.key, menuItem.id, menuItem.label, menuItem.title, actionName, String(menuItem))(fullAction)
+		const id = evaluateString(menuItem.key, menuItem.id, menuItem.label, menuItem.title, actionName, String(menuItem)+index)(fullAction)
 		const newObj = {
 			...menuItem,
 			action: actionName,
