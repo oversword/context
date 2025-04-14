@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
 	ContextSystemApi,
@@ -7,17 +7,20 @@ import {
 	ContextMenuOptionsPosition,
 	ContextMenuOptionsSize,
 	ContextMenuResult,
+	ContxtMenuRendererInterruptable,
+	ContextMenuRendererInterrupt,
+	CanceledError,
 } from '@/types/system.types'
 import ContextMenu from '@/components/ContextMenu'
-import { ContextData, ContextId, ContextInterceptGroup } from '@/types/index.types'
-import closeLevel from '@/side-effects/close-level'
+import { ContextApi, ContextData, ContextId, ContextInterceptGroup } from '@/types/index.types'
+import closeMenu from '@/side-effects/close-level'
 import MENU_CLASS from '@/constants/menu-class'
 import ROOT_ID from '@/constants/root-id'
 import SystemContext from '@/constants/system-context'
 import { EnvironmentApi } from '@/types/environment.types'
 import closeAll from './close-all'
 import { Global } from '@emotion/react'
-import Cancelable from '@/generic/promise/classes/cancelable'
+import Interruptable from '@/generic/promise/classes/interruptable'
 
 /**
  * Positions a box of size `box` within `withinBox`, around the point `position`
@@ -92,8 +95,8 @@ const boundBox = (
 const addMenu = (
 	contextSystemApi: ContextSystemApi,
 	environment: EnvironmentApi,
-	{ pos, menu, level = 0 }: ContextMenuOptions,
-): Cancelable<ContextMenuResult | null> => {
+	{ pos, menu, level = 0, id, parentId }: ContextMenuOptions,
+): ContxtMenuRendererInterruptable => {
 	if (!environment.exists()) {
 		const globalContainer = document.createElement('div')
 		globalContainer.id = ROOT_ID
@@ -148,54 +151,76 @@ const addMenu = (
 			contextSystemApi.configuration.color,
 		]
 	})
-
-	return new Cancelable<ContextMenuResult | null>((resolve, _reject, onCancel) => {
-		onCancel(() => {
-			closeLevel(environment, level - 1)
+	return new Interruptable<ContextMenuResult | null, ContextMenuRendererInterrupt>((resolve, reject, receive) => {
+		receive((intercept) => {
+			if (intercept instanceof CanceledError && environment.exists()) {
+				closeMenu(environment, id, true)
+				return
+			}
+			if (intercept instanceof FocusEvent) {
+				ref.element.focus()
+				return
+			}
 		})
-		const intercept: ContextInterceptGroup = {
-			'ContextMenu.action': action => {
-				// Close Everything if complete
-				if (level === 0) {
-					closeAll(environment)
-				}
-				// Resolve with data
-				resolve({
-					id: action.data.ContextMenu_id as ContextId,
-					action: action.data.ContextMenu_action as string,
-					data: action.data.ContextMenu_data as ContextData,
-				})
-			},
-			'ContextMenu.load': positionMenu,
-			'ContextMenu.close': () => {
-				// Close this menu (and its descedants)
-				closeLevel(environment, level - 1)
-				resolve(null)
-			},
+		let ref: ContextApi = null
+		function Comp() {
+			const apiRef = useRef<ContextApi>(null)
+			ref = apiRef.current
+			useEffect(() => {
+				ref = apiRef.current
+			}, [apiRef.current])
+			const intercept: ContextInterceptGroup = {
+				'ContextMenu.action': action => {
+					// Close Everything if complete
+					if (level === 0) {
+						closeAll(environment, false)
+					}
+					// Resolve with data
+					resolve({
+						id: action.data.ContextMenu_id as ContextId,
+						action: action.data.ContextMenu_action as string,
+						data: action.data.ContextMenu_data as ContextData,
+					})
+				},
+				'ContextMenu.load': positionMenu,
+				'ContextMenu.close': () => {
+					// Close this menu (and its descedants)
+					closeMenu(environment, id, false)
+					resolve(null)
+				},
+			}
+
+			return React.createElement(
+				SystemContext.Provider,
+				{
+					value: contextSystemApi,
+				},
+				styles,
+				React.createElement(ContextMenu, {
+					menu,
+					intercept,
+					apiRef,
+					id
+				}),
+			)
 		}
 
-		const reactEl = React.createElement(
-			SystemContext.Provider,
-			{
-				value: contextSystemApi,
-			},
-			styles,
-			React.createElement(ContextMenu, {
-				menu,
-				intercept,
-			}),
-		)
-
 		const reactRoot = createRoot(menuContainer)
-		reactRoot.render(reactEl)
+		reactRoot.render(React.createElement(Comp))
 
 		// Add the menu to the environment
 		environment.menus = [
 			...environment.menus,
 			{
-				reactRoot,
+				id, parentId,
 				level,
-				container: menuContainer,
+				destroy: (shouldReject: boolean) => {
+					contextSystemApi.removeMenu()
+					reactRoot.unmount()
+					menuContainer.remove()
+					if (shouldReject)
+						reject()
+				}
 			},
 		]
 	})

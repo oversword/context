@@ -40,7 +40,6 @@ const menuApplyActData = (menu: ContextMenuItemList, action: PartialOmit<Context
 	menu.map((menuItem: ContextMenuItem, index): ContextActMenuItem => {
 		if (menuItem[MENU_ITEM_ID])
 			return menuItem as ContextActMenuItem
-
 		const actionName = evaluateString((('action' in menuItem) && menuItem.action) || undefined)(action)
 		const fullAction: ContextAction = {
 			...action,

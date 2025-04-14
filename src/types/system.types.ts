@@ -16,7 +16,7 @@ import {
 	ContextActsGroupGenerator,
 } from './index.types'
 import { Interpolation, Theme } from '@emotion/react'
-import Cancelable from '@/generic/promise/classes/cancelable'
+import Interruptable from '@/generic/promise/classes/interruptable'
 
 
 export interface ContextSystemConfig {
@@ -43,15 +43,20 @@ export type ContextMenuOptionsPosition = PartialOmit<ContextMenuOptionsBounds, '
 export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' | 'y'>;
 
 export interface ContextMenuOptions {
+	id: string;
+	parentId: string | null;
 	pos: ContextMenuOptionsPosition;
 	menu: ContextActMenuItemList;
 	level?: number;
 }
 
+export class CanceledError extends Error {}
+export type ContextMenuRendererInterrupt = CanceledError | FocusEvent
+export type ContxtMenuRendererInterruptable = Interruptable<ContextMenuResult | null, ContextMenuRendererInterrupt>
 export type ContextMenuRenderer = (
 	contextSystemApi: ContextSystemApi,
 	opts: ContextMenuOptions,
-) => Cancelable<ContextMenuResult | null>;
+) => ContxtMenuRendererInterruptable;
 
 export interface ContextSystemApi {
 	focussedContext: ContextId | null;
@@ -81,8 +86,10 @@ export interface ContextSystemApi {
 	addMenu: (
 		pos: ContextMenuOptionsPosition,
 		menu: ContextActMenuItemList,
+		parentId: string,
 		level?: number,
-	) => Cancelable<ContextMenuResult | null>;
+	) => ContxtMenuRendererInterruptable;
+	removeMenu: () => void;
 	addContextMenu: (
 		id: ContextId,
 		event: MouseEvent,
@@ -98,5 +105,5 @@ export interface ContextSystemApi {
 	handleLocalEvent: (
 		id: ContextId,
 		onAction: ContextActionNameConfig,
-	) => (event: Event) => false | void;
+	) => (event: ContextEvent) => false | void;
 }

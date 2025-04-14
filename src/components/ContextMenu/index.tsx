@@ -16,11 +16,11 @@ import classes from './classes'
 import itemClasses from '@/components/ContextMenuItem/classes'
 import { ContextMenuProps } from './index.types'
 import SystemContext from '@/constants/system-context'
-import { ContextMenuResult, ContextSystemApi } from '@/types/system.types'
+import { CanceledError, ContextMenuResult, ContextSystemApi, ContxtMenuRendererInterruptable } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import menuFindItem from '@/transformers/menu-find-item'
-import Cancelable, { CanceledError } from '@/generic/promise/classes/cancelable'
+import Interruptable from '@/generic/promise/classes/interruptable'
 
 const OPEN_BRANCH = Symbol('open-branch')
 const MENU_ERROR = Symbol('menu-error')
@@ -37,7 +37,7 @@ const context: ContextConfig = {
 	}),
 }
 
-const renderMenuItem = (menuItem: ContextMenuItemType, contextSystem: ContextSystemApi, openMenus: Record<string, Cancelable<ContextMenuResult>>) => {
+const renderMenuItem = (menuItem: ContextMenuItemType, contextSystem: ContextSystemApi, openMenus: Record<string, ContxtMenuRendererInterruptable>) => {
 	if ('mode' in menuItem && menuItem.mode === ContextMenuItemMode.section) {
 		return (
 			<div className={classes.ContextMenuSection} key={menuItem.id}>
@@ -55,6 +55,20 @@ const renderMenuItem = (menuItem: ContextMenuItemType, contextSystem: ContextSys
 					ContextMenu_key: menuItem.id,
 				}}
 				key={menuItem.id}
+				context={{
+					overrides: {
+						ContextMenuItem: {
+							acts: {
+								select: {
+									keys: ['Click'],
+								},
+								goto: {
+									keys: ['Enter', 'Space'],
+								}
+							}
+						}
+					}
+				}}
 			>
 				<ContextMenuItem
 					id={menuItem[MENU_ITEM_ID]}
@@ -90,7 +104,9 @@ const renderMenuItem = (menuItem: ContextMenuItemType, contextSystem: ContextSys
 function ContextMenu({
 	menu = [{ id: 'no-actions', label: 'No Actions', mode: ContextMenuItemMode.section, action: '', keys: [], disabled: true, data: {}, icon: null, [MENU_ITEM_ID]: 'no-actions' } as BasicContextActMenuItem],
 	level = 0,
+	id,
 	intercept = {},
+	apiRef = null,
 	...passedProps
 }: ContextMenuProps): React.ReactElement {
 	const contextSystem = React.useContext(SystemContext) || null
@@ -99,14 +115,17 @@ function ContextMenu({
 	}
 
 	const contextRef = React.useRef<ContextApi>(null)
+	React.useImperativeHandle(apiRef, (): ContextApi => contextRef.current)
+	
 	React.useEffect(() => {
 		if (!(contextRef.current && contextRef.current.element)) return
 
 		contextRef.current.trigger('load')
 	}, [contextRef.current && contextRef.current.element])
 
-	const [openMenus, setOpenMenus] = React.useState<Record<string, Cancelable<ContextMenuResult>>>({})
-	const [canceledMenus, setCanceledMenus] = React.useState<Record<string, Cancelable<void>>>({})
+
+	const [openMenus, setOpenMenus] = React.useState<Record<string, ContxtMenuRendererInterruptable>>({})
+	const [canceledMenus, setCanceledMenus] = React.useState<Record<string, Interruptable<void, CanceledError>>>({})
 
 	const open_branch = ({ event, data }: ContextAction) => {
 		const key = data.ContextMenu_key as string
@@ -131,12 +150,15 @@ function ContextMenu({
 		}
 
 		const cancelable = contextSystem
-			.addMenu(pos, item.children, level + 1)
+			.addMenu(pos, item.children, id, level + 1)
 
 		setOpenMenus({...openMenus,[key]: cancelable})
 
-		cancelable.catch(() => ({}) as ContextMenuResult)
+		cancelable
+			.catch(() => ({}) as ContextMenuResult)
 			.then(result => {
+				close_branch(key)
+				clear_canceled(key)
 				log(result)
 				if (!result) return
 				const { action, data, id } = result
@@ -154,14 +176,22 @@ function ContextMenu({
 			})
 	}
 	const close_branch = (key: string) => {
-		const { [key]: _, ...newOpenMenus } = openMenus
-		setOpenMenus({ ...newOpenMenus })
+		setOpenMenus((openMenus) => {
+			const { [key]: _, ...newOpenMenus } = openMenus
+			return { ...newOpenMenus }
+		})
+	}
+	const clear_canceled = (key: string) => {
+		setCanceledMenus((value) => {
+			const { [key]: _, ...rest } = value
+			return rest
+		})
 	}
 	const handleItemSelect: ContextIntercept = action => {
 		if (action.data.ContextMenuItem_action === OPEN_BRANCH) {
 			const key = action.data.ContextMenu_key as string
 			if (openMenus[key]) {
-				openMenus[key].cancel()
+				openMenus[key].interrupt(new CanceledError('Clicked Branch While Open'))
 				close_branch(key)
 				return
 			}
@@ -174,7 +204,7 @@ function ContextMenu({
 			})
 		}
 	}
-	const handleItemHover: ContextIntercept = action => {
+	const handleItemFocus: ContextIntercept = action => {
 		const key = action.data.ContextMenu_key as string
 		if (!openMenus[key]) {
 			if (action.data.ContextMenuItem_action === OPEN_BRANCH) {
@@ -182,29 +212,52 @@ function ContextMenu({
 				return
 			}
 		} if (!canceledMenus[key]) {
-			setCanceledMenus({...canceledMenus, ...Object.fromEntries(Object.entries(openMenus).map(([key,menuCancelable]) => {
-				const cancelable = new Cancelable<void>((resolve, _reject, onCancel) => {
-					let timeout = null;
-					(new Promise((resolve, reject) => {
-						timeout = setTimeout(resolve, 500)
-						onCancel(reason => {
-							if (timeout !== null) clearInterval(timeout)
-							reject(reason)
+			setCanceledMenus({
+				...canceledMenus,
+				...Object.fromEntries(Object.entries(openMenus)
+					.filter(([otherKey]) => otherKey!==key && !(otherKey in canceledMenus))
+					.map(([otherKey,menuCancelable]) => {
+						const cancelable = new Interruptable<void, CanceledError>((resolve, reject, receive) => {
+							let timeout = null;
+							(new Promise((resolve, reject) => {
+								timeout = setTimeout(resolve, 500)
+								receive(interrupt => {
+									if (interrupt instanceof CanceledError) {
+										if (timeout !== null) clearTimeout(timeout)
+										reject(interrupt)
+									}
+								})
+							})).then(() => {
+								menuCancelable.interrupt(new CanceledError('Timeout After De-focus'))
+								timeout = null
+								close_branch(otherKey)
+								clear_canceled(otherKey)
+								resolve(undefined)
+							}).catch((reason) => {
+								clear_canceled(otherKey)
+								reject(reason)
+							})
 						})
-					})).then(() => {
-						menuCancelable.cancel('Timeout')
-						timeout = null
-						close_branch(key)
-						resolve(undefined)
-					}).catch(() => {})
-				})
-				cancelable.catch(e => { if (!(e instanceof CanceledError)) throw e })
-				return [key,cancelable]
-			}))})
+						cancelable.catch(e => { if (!(e instanceof CanceledError)) throw e })
+						return [otherKey,cancelable]
+					})
+				)
+			})
 		} else {
-			canceledMenus[key].cancel('Re-enter')
+			canceledMenus[key].interrupt(new CanceledError('Re-enter Branch While Open'))
 			const { [key]: _, ...newCanceledMenus } = canceledMenus
 			setCanceledMenus({ ...newCanceledMenus })
+		}
+	}
+	const handleItemGoto: ContextIntercept = action => {
+		const key = action.data.ContextMenu_key as string
+		if (openMenus[key]) {
+			if (canceledMenus[key]) {
+				canceledMenus[key].interrupt(new CanceledError('Re-focus Branch While Open'))
+				const { [key]: _, ...newCanceledMenus } = canceledMenus
+				setCanceledMenus({ ...newCanceledMenus })
+			}
+			openMenus[key].interrupt(new FocusEvent('Focus menu'))
 		}
 	}
 
@@ -216,10 +269,10 @@ function ContextMenu({
 			context={context}
 			intercept={{
 				'ContextMenuItem.select': handleItemSelect,
-				'ContextMenuItem.hover': handleItemHover,
+				'ContextMenuItem.focus': handleItemFocus,
+				'ContextMenuItem.goto': handleItemGoto,
 				...intercept,
 			}}
-			autoFocus
 			root
 		>
 			{menu.map(menuItem => renderMenuItem(menuItem, contextSystem, openMenus))}

@@ -1,4 +1,3 @@
-import { Root } from 'react-dom/client'
 import { ContextMenuRenderer } from './system.types'
 
 export interface Environment {
@@ -7,9 +6,10 @@ export interface Environment {
 }
 
 export interface EnvironmentMenu {
+	id: string;
+	parentId: null | string;
 	level: number;
-	container: HTMLElement;
-	reactRoot: Root;
+	destroy: ((shouldReject: boolean) => void);
 }
 export type EnvironmentMenus = Array<EnvironmentMenu>;
 

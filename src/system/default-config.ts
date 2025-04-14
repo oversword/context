@@ -13,6 +13,7 @@ const getParentMenu = (parentInfo: ContextParentMenuMeta): ContextMenuItemList =
 			return parentInfo.menu
 		} else {
 			return [{
+				id: `parent-section-${parentInfo[MENU_ITEM_ID]}`,
 				mode: ContextMenuItemMode.section,
 				label: parentInfo.label,
 				children: parentInfo.menu,
@@ -93,6 +94,9 @@ const defaultConfiguration: ContextSystemConfig = {
 				color: #bbb;
 			}
 			&:not(.${itemClasses.ContextMenuItemDisabled}):hover {
+				background: #aaf;
+			}
+			&:not(.${itemClasses.ContextMenuItemDisabled}):focus {
 				background: #44d;
 				color: #fff;
 			}

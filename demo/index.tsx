@@ -118,7 +118,13 @@ const complexContext: ContextConfig = {
 	menu: [
 		{ action: 'someAct1' },
 		{ action: 'someAct2' },
-		{ action: 'someAct3' },
+		{
+			label: 'Branch2',
+			mode: ContextMenuItemMode.branch,
+			children: [
+				{ action: 'someAct3' },
+			]
+		},
 		{
 			// label: "Section",
 			mode: ContextMenuItemMode.section,
@@ -132,7 +138,23 @@ const complexContext: ContextConfig = {
 					children: [
 						{ action: 'someAct7' },
 						{ action: 'someAct8' },
-						{ action: 'someAct9' },
+						{
+							label: 'Branch 1',
+							mode: ContextMenuItemMode.branch,
+							children: [
+								{ action: 'someAct7' },
+								{ action: 'someAct8' },
+								{
+									label: 'Branch 2',
+									mode: ContextMenuItemMode.branch,
+									children: [
+										{ action: 'someAct7' },
+										{ action: 'someAct8' },
+										{ action: 'someAct9' },
+									]
+								}
+							]
+						}
 					]
 				}
 			]

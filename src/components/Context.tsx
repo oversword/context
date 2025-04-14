@@ -25,6 +25,7 @@ const Context = function Context<P extends object>(
 		intercept = null,
 		outercept = null,
 		tabIndex = 0,
+		onFocusAction = null,
 		onChangeAction = null,
 		onClickAction = null,
 		onDoubleClickAction = null,
@@ -95,13 +96,8 @@ const Context = function Context<P extends object>(
 
 	React.useEffect(() => {
 		// AutoFocus the element if enabled
-
 		if (!passedProps.autoFocus) return
-
 		elementRef.current?.focus()
-		if (onFocus) onFocus()
-
-		contextSystem.focussedContext = id
 	}, [])
 
 	const handleFocus = (event: FocusEvent): void => {
@@ -116,6 +112,7 @@ const Context = function Context<P extends object>(
 		}
 
 		if (onFocus) onFocus(event)
+		if (onFocusAction) contextSystem.handleLocalEvent(id, onFocusAction)(event)
 		if (!contextSystem.isFocus(id, event)) return
 
 		contextSystem.focussedContext = id
@@ -137,13 +134,10 @@ const Context = function Context<P extends object>(
 				log('Context Menu Done', { action, overrideData, id: actionContextId })
 				return contextSystem.triggerAction(actionContextId)(action, persistentEvent, overrideData)
 			})
-			.then(() => {
-				// Re-focus this element
-				elementRef.current?.focus()
-				if (onFocus) onFocus()
-
-				contextSystem.focussedContext = id
-			})
+			// .then(() => {
+			// 	// Re-focus this element
+			// 	makeFocus(new FocusEvent('Focus when Child Destroyed', { relatedTarget: elementRef.current }))
+			// })
 		return log('Context Menu Success', { id, event })
 	}
 

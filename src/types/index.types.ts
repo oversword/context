@@ -162,6 +162,7 @@ export interface ContextProps<P extends object = React.PropsWithChildren> extend
 	focus?: boolean;
 	onFocus?: ((event?: FocusEvent) => void) | null;
 	tabIndex?: number;
+	onFocusAction?: ContextActionNameConfig | null;
 	onClickAction?: ContextActionNameConfig | null;
 	onDoubleClickAction?: ContextActionNameConfig | null;
 	onMouseDownAction?: ContextActionNameConfig | null;

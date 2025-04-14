@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import classes from './classes'
 import Context from '@/components/Context'
-import { ContextConfig, ContextProps } from '@/types/index.types'
+import { ContextApi, ContextConfig, ContextProps } from '@/types/index.types'
 import { ContextMenuItemProps } from './index.types'
 import displayKeys from '@/generic/string/transformers/display-keys'
 import iconMap from '@/constants/icon-map'
@@ -11,6 +11,7 @@ const context: ContextConfig = {
 	type: 'ContextMenuItem',
 	acts: (action, acts) => ({
 		hover: {},
+		focus: {},
 		select: {
 			keys: ['Click', 'Enter', 'Space'],
 			disabled: Boolean(action.data.ContextMenuItem_disabled)
@@ -28,8 +29,10 @@ function ContextMenuItem({
 	disabled = false,
 	icon = null,
 	endIcon = null,
+	intercept = {},
 	...passedProps
 }: React.PropsWithChildren<ContextMenuItemProps & ContextProps>): React.ReactElement {
+	const apiRef = useRef<ContextApi>(null)
 	return (
 		<Context
 			context={context}
@@ -41,6 +44,14 @@ function ContextMenuItem({
 			}}
 			className={classes.ContextMenuItem + ' ' + (disabled ? classes.ContextMenuItemDisabled : '')}
 			onMouseEnterAction="hover"
+			onFocusAction="focus"
+			intercept={{
+				'ContextMenuItem.hover': () => {
+					apiRef.current.element?.focus()
+				},
+				...intercept
+			}}
+			apiRef={apiRef}
 			{...passedProps}
 		>
 			<div className={classes.ContextMenuItemContent}>
