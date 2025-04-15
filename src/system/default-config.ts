@@ -68,7 +68,10 @@ const defaultConfiguration: ContextSystemConfig = {
 		[`.${itemClasses.ContextMenuItemContent}`]: css`display: flex;`,
 		[`.${itemClasses.ContextMenuItemLabel}`]: css`white-space: nowrap;`,
 		[`.${itemClasses.ContextMenuItemIconEmpty}`]: css`display: none;`,
-		svg: css`display: inline-block; vertical-align: bottom;`
+		[`.${classes.ContextMenu} svg`]: css`
+			display: inline-block;
+			vertical-align: bottom;
+		`
 	},
 	color: {
 		[`.${classes.ContextMenu}`]: css`
@@ -125,7 +128,14 @@ const defaultConfiguration: ContextSystemConfig = {
 			font-size: 0.8em;
 			padding-top: 0.125em;
 		`,
-		[`.${itemClasses.ContextMenuItemIcon}`]: css`width: 1em; height: 1em;`,
+		[`.${itemClasses.ContextMenuItemIcon}`]: css`
+			width: 1em;
+			height: 1em;
+			margin-right: 0.5em;
+		`,
+		[`.${classes.ContextMenu} svg`]: css`
+			font-size: 1em;
+		`
 	},
 }
 export default defaultConfiguration
