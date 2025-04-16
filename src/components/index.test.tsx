@@ -143,14 +143,18 @@ describe('Context Component', () => {
 			expect(testDiv).toBeInstanceOf(HTMLElement)
 			if (!testDiv) { return }
 
-			fireEvent.contextMenu(testDiv)
+			React.act(() => {
+				fireEvent.contextMenu(testDiv)
+			})
 			const menuItem = container.querySelector(`.${menuItemClasses.ContextMenuItem}`)
 			expect(menuItem).toBeInstanceOf(HTMLElement)
 			if (!menuItem) { return }
 
-			fireEvent.focus(menuItem)
-			fireEvent.click(menuItem)
-			await timeout()
+			await React.act(async () => {
+				fireEvent.focus(menuItem)
+				fireEvent.click(menuItem)
+				await timeout()
+			})
 
 			expect(mockIntercept).toHaveBeenCalledTimes(1)
 			expect(mockIntercept).toHaveBeenCalledWith({

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import {
 	ContextSystemApi,
@@ -9,16 +9,16 @@ import {
 	ContextMenuResult,
 	ContxtMenuRendererInterruptable,
 	ContextMenuRendererInterrupt,
-	CanceledError,
+	CanceledEvent,
+	ClosedEvent,
+	DestroyedEvent,
 } from '@/types/system.types'
 import ContextMenu from '@/components/ContextMenu'
-import { ContextApi, ContextData, ContextId, ContextInterceptGroup } from '@/types/index.types'
-import closeMenu from '@/side-effects/close-level'
+import { ContextData, ContextId, ContextInterceptGroup, ContextMenuApi } from '@/types/index.types'
 import MENU_CLASS from '@/constants/menu-class'
 import ROOT_ID from '@/constants/root-id'
 import SystemContext from '@/constants/system-context'
 import { EnvironmentApi } from '@/types/environment.types'
-import closeAll from './close-all'
 import { Global } from '@emotion/react'
 import Interruptable from '@/generic/promise/classes/interruptable'
 
@@ -95,7 +95,7 @@ const boundBox = (
 const addMenu = (
 	contextSystemApi: ContextSystemApi,
 	environment: EnvironmentApi,
-	{ pos, menu, level = 0, id, parentId }: ContextMenuOptions,
+	{ pos, menu, level = 0, id, parent }: ContextMenuOptions,
 ): ContxtMenuRendererInterruptable => {
 	if (!environment.exists()) {
 		const globalContainer = document.createElement('div')
@@ -153,28 +153,19 @@ const addMenu = (
 	})
 	return new Interruptable<ContextMenuResult | null, ContextMenuRendererInterrupt>((resolve, reject, receive) => {
 		receive((intercept) => {
-			if (intercept instanceof CanceledError && environment.exists()) {
-				closeMenu(environment, id, true)
+			if (intercept instanceof CanceledEvent) {
+				reject(intercept)
 				return
 			}
 			if (intercept instanceof FocusEvent) {
-				ref.element.focus()
+				apiRef.current.element.focus()
 				return
 			}
 		})
-		let ref: ContextApi = null
+		const apiRef: { current: ContextMenuApi } = { current: null }
 		function Comp() {
-			const apiRef = useRef<ContextApi>(null)
-			ref = apiRef.current
-			useEffect(() => {
-				ref = apiRef.current
-			}, [apiRef.current])
 			const intercept: ContextInterceptGroup = {
 				'ContextMenu.action': action => {
-					// Close Everything if complete
-					if (level === 0) {
-						closeAll(environment, false)
-					}
 					// Resolve with data
 					resolve({
 						id: action.data.ContextMenu_id as ContextId,
@@ -184,9 +175,7 @@ const addMenu = (
 				},
 				'ContextMenu.load': positionMenu,
 				'ContextMenu.close': () => {
-					// Close this menu (and its descedants)
-					closeMenu(environment, id, false)
-					resolve(null)
+					reject(new ClosedEvent('Closed Intentionally'))
 				},
 			}
 
@@ -212,14 +201,17 @@ const addMenu = (
 		environment.menus = [
 			...environment.menus,
 			{
-				id, parentId,
+				id, parentId: parent,
 				level,
-				destroy: (shouldReject: boolean) => {
+				destroy: () => {
+					for (const menuRef of Object.values(apiRef.current.openMenus))
+						menuRef.interrupt(new DestroyedEvent('Destroyed'))
+					for (const menuRef of Object.values(apiRef.current.canceledMenus))
+						menuRef.interrupt(new DestroyedEvent('Destroyed'))
+
 					contextSystemApi.removeMenu()
 					reactRoot.unmount()
 					menuContainer.remove()
-					if (shouldReject)
-						reject()
 				}
 			},
 		]

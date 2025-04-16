@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 global.IS_REACT_ACT_ENVIRONMENT = true
-// import prettify from 'beautify'
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import React from 'react'
@@ -12,8 +11,7 @@ import { fireEvent } from '@testing-library/react'
 import Context from './Context'
 import SystemContext from '@/constants/system-context'
 import initialiseContextSystem from '@/system/initialise'
-import { ContextConfig, ContextInterceptGroup, ContextMenuItemMode } from '..'
-// import { ContextInterceptGroup } from '@/types/index.types'
+import { ContextConfig, ContextInterceptGroup, ContextMenuItemMode, DataContext } from '..'
 
 const timeout = (n = 0) => new Promise<void>((resolve) => {
 	setTimeout(resolve, n)
@@ -22,9 +20,11 @@ const timeout = (n = 0) => new Promise<void>((resolve) => {
 let container: HTMLElement
 let reactRoot: Root
 beforeEach(() => {
-	container = document.createElement('div')
-	document.body.appendChild(container)
-	reactRoot = createRoot(container)
+	React.act(() => {
+		container = document.createElement('div')
+		document.body.appendChild(container)
+		reactRoot = createRoot(container)
+	})
 })
 
 afterEach(() => {
@@ -34,73 +34,68 @@ afterEach(() => {
 	})
 })
 describe('Context Component', () => {
-	// test('Actions can be triggered by another context forwarding an action', async () => {
-	//   const contextSystem = initialiseContextSystem(container)
-	//   const context = {
-	//     type: 'test-type',
-	//     acts: {
-	//       'test-type': {
-	//         'test-act': {}
-	//       }
-	//     },
-	//   }
-	//   const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
-	//   const intercept: ContextInterceptGroup = {
-	//     'test-type.test-act': mockIntercept,
-	//     'child-type.child-act': 'test-act'
-	//   }
-	//   const childContext = {
-	//     type: 'child-type',
-	//     acts: {
-	//       'child-type': {
-	//         'child-act': {}
-	//       }
-	//     },
-	//     keys: {
-	//       'child-act': ['Click']
-	//     }
-	//   }
-	//   act(() => {
-	//     reactRoot.render(
-	//       <SystemContext.Provider value={contextSystem}>
-	//         <DataContext context={context} intercept={intercept} >
-	//           <Context context={childContext} >
-	//             <div className="test-div">
-	//               Test
-	//             </div>
-	//           </Context>
-	//         </DataContext>
-	//       </SystemContext.Provider>
-	//     )
-	//   })
+	test('Actions can be triggered by another context forwarding an action', async () => {
+		const contextSystem = initialiseContextSystem(container)
+		const context: ContextConfig = {
+			type: 'test-type',
+			acts: {
+				'test-act': {}
+			},
+		}
+		const mockIntercept = jest.fn<() => void>().mockReturnValue(undefined)
+		const intercept: ContextInterceptGroup = {
+			'test-type.test-act': mockIntercept,
+			'child-type.child-act': 'test-act'
+		}
+		const childContext: ContextConfig = {
+			type: 'child-type',
+			acts: {
+				'child-act': {
+					keys: ['Click']
+				}
+			},
+		}
+		React.act(() => {
+			reactRoot.render(
+				<SystemContext.Provider value={contextSystem}>
+					<DataContext context={context} intercept={intercept} >
+						<Context context={childContext} >
+							<div className="test-div">
+								Test
+							</div>
+						</Context>
+					</DataContext>
+				</SystemContext.Provider>
+			)
+		})
 
-	//   const testDiv = container.querySelector('.test-div')
-	//   expect(testDiv).toBeInstanceOf(HTMLElement)
-	//   if (!testDiv) { return }
-	//   expect(testDiv.parentElement).toBeInstanceOf(HTMLElement)
-	//   if (!testDiv.parentElement) { return }
+		const testDiv = container.querySelector('.test-div')
+		expect(testDiv).toBeInstanceOf(HTMLElement)
+		if (!testDiv) { return }
+		expect(testDiv.parentElement).toBeInstanceOf(HTMLElement)
+		if (!testDiv.parentElement) { return }
 
-	//   fireEvent.focus(testDiv.parentElement)
-	//   fireEvent.click(testDiv)
-	//   await timeout()
+		fireEvent.focus(testDiv.parentElement)
+		fireEvent.click(testDiv)
+		await timeout()
 
-	//   expect(mockIntercept).toHaveBeenCalledTimes(1)
-	//   expect(mockIntercept).toHaveBeenCalledWith({
-	//     data: {},
-	//     action: 'test-act',
-	//     type: 'test-type',
-	//     path: ['test-type'],
-	//     event: expect.objectContaining({
-	//       'char': '',
-	//       'combination': [
-	//         'Click',
-	//       ],
-	//       'pos': 'MouseClick',
-	//       'symbol': 'Click',
-	//       target: testDiv
-	//     })
-	//   })
-	// })
+		expect(mockIntercept).toHaveBeenCalledTimes(1)
+		expect(mockIntercept).toHaveBeenCalledWith({
+			data: {},
+			action: 'test-act',
+			type: 'test-type',
+			path: ['test-type'],
+			event: expect.objectContaining({
+				'char': '',
+				'combination': [
+					'Click',
+				],
+				'pos': 'MouseClick',
+				'symbol': 'Click',
+				target: testDiv
+			})
+		})
+	})
 
 	test('Inheritance from parent', async () => {
 		const contextSystem = initialiseContextSystem(container)
@@ -156,19 +151,23 @@ describe('Context Component', () => {
 		expect(testDiv).toBeInstanceOf(HTMLElement)
 		if (!testDiv) { return }
 
-		fireEvent.contextMenu(testDiv)
-		const parentItem = container.querySelectorAll('.ContextMenuItem-ContextMenuItem')[1]
-		fireEvent.focus(parentItem)
-		fireEvent.click(parentItem)
-		await timeout()
+		await React.act(async () => {
+			fireEvent.contextMenu(testDiv)
+			await timeout()
+			const parentItem = container.querySelectorAll('.ContextMenuItem-ContextMenuItem')[1]
+			fireEvent.focus(parentItem)
+			fireEvent.click(parentItem)
+		})
 		expect(parentAction).toHaveBeenCalledTimes(1)
 		expect(parentAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'test-act', data: { parent_key: 'test' }, type: 'test-type', path: ['test-type'] }))
 
-		fireEvent.contextMenu(testDiv)
-		const childItem = container.querySelectorAll('.ContextMenuItem-ContextMenuItem')[0]
-		fireEvent.focus(childItem)
-		fireEvent.click(childItem)
-		await timeout()
+		await React.act(async() => {
+			fireEvent.contextMenu(testDiv)
+			await timeout()
+			const childItem = container.querySelectorAll('.ContextMenuItem-ContextMenuItem')[0]
+			fireEvent.focus(childItem)
+			fireEvent.click(childItem)
+		})
 		expect(childAction).toHaveBeenCalledTimes(1)
 		expect(childAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'child-act', data: { child_key: 'test' }, type: 'child-type', path: ['test-type', 'child-type'] }))
 	})

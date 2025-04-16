@@ -2,6 +2,8 @@ import React from 'react'
 
 import { MENU_ITEM_ID, MENU_ITEM_PARENT } from '@/constants/menu-item'
 import PartialOmit from './partial-omit'
+import { CanceledEvent, ContxtMenuRendererInterruptable } from './system.types'
+import Interruptable from '@/generic/promise/classes/interruptable'
 /**
  * Atomic
  */
@@ -233,6 +235,10 @@ export interface ContextApi {
 		event?: ContextEvent,
 		data?: ContextData | ContextDataGenerator,
 	) => symbol | Promise<unknown>;
+}
+export interface ContextMenuApi extends ContextApi {
+	openMenus: Record<string, ContxtMenuRendererInterruptable>
+	canceledMenus: Record<string, Interruptable<void, CanceledEvent>>
 }
 
 export interface KeyInfo {

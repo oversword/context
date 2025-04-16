@@ -9,7 +9,7 @@ export interface EnvironmentMenu {
 	id: string;
 	parentId: null | string;
 	level: number;
-	destroy: ((shouldReject: boolean) => void);
+	destroy: (() => void);
 }
 export type EnvironmentMenus = Array<EnvironmentMenu>;
 
@@ -22,4 +22,5 @@ export interface EnvironmentApi {
 	root: HTMLElement;
 	cancel: (event: Event) => void;
 	addMenu: ContextMenuRenderer;
+	closeMenu: (id: string) => void;
 }

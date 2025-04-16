@@ -44,14 +44,16 @@ export type ContextMenuOptionsSize = PartialOmit<ContextMenuOptionsBounds, 'x' |
 
 export interface ContextMenuOptions {
 	id: string;
-	parentId: string | null;
+	parent?: string | null;
 	pos: ContextMenuOptionsPosition;
 	menu: ContextActMenuItemList;
 	level?: number;
 }
 
-export class CanceledError extends Error {}
-export type ContextMenuRendererInterrupt = CanceledError | FocusEvent
+export class CanceledEvent extends Event {}
+export class ClosedEvent extends Event {}
+export class DestroyedEvent extends CanceledEvent {}
+export type ContextMenuRendererInterrupt = CanceledEvent | FocusEvent
 export type ContxtMenuRendererInterruptable = Interruptable<ContextMenuResult | null, ContextMenuRendererInterrupt>
 export type ContextMenuRenderer = (
 	contextSystemApi: ContextSystemApi,
@@ -83,11 +85,11 @@ export interface ContextSystemApi {
 	}) => void;
 	removeContext: (contextId: ContextId) => void;
 
+	closeMenu: (
+		id: string
+	) => void
 	addMenu: (
-		pos: ContextMenuOptionsPosition,
-		menu: ContextActMenuItemList,
-		parentId: string,
-		level?: number,
+		options: ContextMenuOptions
 	) => ContxtMenuRendererInterruptable;
 	removeMenu: () => void;
 	addContextMenu: (

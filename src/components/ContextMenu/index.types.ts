@@ -1,6 +1,6 @@
 import {
-	ContextApi,
 	ContextInterceptGroup,
+	ContextMenuApi,
 	ContextActMenuItem as ContextMenuItemType,
 } from '@/types/index.types'
 
@@ -9,5 +9,5 @@ export interface ContextMenuProps {
 	menu?: Array<ContextMenuItemType>;
 	level?: number;
 	intercept?: ContextInterceptGroup;
-	apiRef?: React.Ref<ContextApi>
+	apiRef?: React.Ref<ContextMenuApi>
 }

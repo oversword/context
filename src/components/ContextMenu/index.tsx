@@ -9,6 +9,7 @@ import {
 	ContextActMenuItem as ContextMenuItemType,
 	BasicContextActMenuItem,
 	ContextAction,
+	ContextMenuApi,
 } from '@/types/index.types'
 import ContextMenuItem from '@/components/ContextMenuItem'
 import DataContext from '@/components/DataContext'
@@ -16,7 +17,7 @@ import classes from './classes'
 import itemClasses from '@/components/ContextMenuItem/classes'
 import { ContextMenuProps } from './index.types'
 import SystemContext from '@/constants/system-context'
-import { CanceledError, ContextMenuResult, ContextSystemApi, ContxtMenuRendererInterruptable } from '@/types/system.types'
+import { CanceledEvent, ClosedEvent, ContextSystemApi, ContxtMenuRendererInterruptable, DestroyedEvent } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 import { MENU_ITEM_ID } from '@/constants/menu-item'
 import menuFindItem from '@/transformers/menu-find-item'
@@ -77,6 +78,7 @@ const renderMenuItem = (menuItem: ContextMenuItemType, contextSystem: ContextSys
 					endIcon={contextSystem.configuration.branchIcon}
 					action={OPEN_BRANCH}
 					disabled={menuItem.disabled}
+					data-menuid={menuItem.id}
 				/>
 			</DataContext>
 		)
@@ -109,13 +111,12 @@ function ContextMenu({
 	apiRef = null,
 	...passedProps
 }: ContextMenuProps): React.ReactElement {
-	const contextSystem = React.useContext(SystemContext) || null
+	const contextSystem = React.useContext<ContextSystemApi>(SystemContext) || null
 	if (!contextSystem) {
 		throw new Error('A context system must be provided via the SystemContext.Provider component.')
 	}
 
 	const contextRef = React.useRef<ContextApi>(null)
-	React.useImperativeHandle(apiRef, (): ContextApi => contextRef.current)
 	
 	React.useEffect(() => {
 		if (!(contextRef.current && contextRef.current.element)) return
@@ -125,7 +126,15 @@ function ContextMenu({
 
 
 	const [openMenus, setOpenMenus] = React.useState<Record<string, ContxtMenuRendererInterruptable>>({})
-	const [canceledMenus, setCanceledMenus] = React.useState<Record<string, Interruptable<void, CanceledError>>>({})
+	const [canceledMenus, setCanceledMenus] = React.useState<Record<string, Interruptable<void, CanceledEvent>>>({})
+
+	React.useImperativeHandle(apiRef, (): ContextMenuApi => {
+		return {
+			...contextRef.current,
+			openMenus,
+			canceledMenus
+		}
+	}, [openMenus, canceledMenus])
 
 	const open_branch = ({ event, data }: ContextAction) => {
 		const key = data.ContextMenu_key as string
@@ -150,14 +159,19 @@ function ContextMenu({
 		}
 
 		const cancelable = contextSystem
-			.addMenu(pos, item.children, id, level + 1)
+			.addMenu({
+				id: id+key,
+				pos,
+				menu: item.children,
+				parent: id,
+				level: level + 1
+			})
 
-		setOpenMenus({...openMenus,[key]: cancelable})
+		setOpenMenus({ ...openMenus, [key]: cancelable })
 
 		cancelable
-			.catch(() => ({}) as ContextMenuResult)
 			.then(result => {
-				close_branch(key)
+				clear_menu(key)
 				clear_canceled(key)
 				log(result)
 				if (!result) return
@@ -174,8 +188,19 @@ function ContextMenu({
 					ContextMenu_data: data,
 				})
 			})
+			.catch((reason) => {
+				if (reason instanceof DestroyedEvent) return
+				if (reason instanceof ClosedEvent) {
+					const branch = contextRef.current.element.querySelector<HTMLElement>(`[data-menuid='${key}']`)
+					branch?.focus()
+				}
+				clear_menu(key)
+				clear_canceled(key)
+				contextSystem.closeMenu(id+key)
+			})
+		return cancelable
 	}
-	const close_branch = (key: string) => {
+	const clear_menu = (key: string) => {
 		setOpenMenus((openMenus) => {
 			const { [key]: _, ...newOpenMenus } = openMenus
 			return { ...newOpenMenus }
@@ -191,8 +216,8 @@ function ContextMenu({
 		if (action.data.ContextMenuItem_action === OPEN_BRANCH) {
 			const key = action.data.ContextMenu_key as string
 			if (openMenus[key]) {
-				openMenus[key].interrupt(new CanceledError('Clicked Branch While Open'))
-				close_branch(key)
+				openMenus[key].interrupt(new CanceledEvent('Clicked Branch While Open'))
+				clear_menu(key)
 				return
 			}
 			open_branch(action)
@@ -217,20 +242,20 @@ function ContextMenu({
 				...Object.fromEntries(Object.entries(openMenus)
 					.filter(([otherKey]) => otherKey!==key && !(otherKey in canceledMenus))
 					.map(([otherKey,menuCancelable]) => {
-						const cancelable = new Interruptable<void, CanceledError>((resolve, reject, receive) => {
+						const cancelable = new Interruptable<void, CanceledEvent>((resolve, reject, receive) => {
 							let timeout = null;
 							(new Promise((resolve, reject) => {
 								timeout = setTimeout(resolve, 500)
 								receive(interrupt => {
-									if (interrupt instanceof CanceledError) {
+									if (interrupt instanceof CanceledEvent) {
 										if (timeout !== null) clearTimeout(timeout)
 										reject(interrupt)
 									}
 								})
 							})).then(() => {
-								menuCancelable.interrupt(new CanceledError('Timeout After De-focus'))
+								menuCancelable.interrupt(new CanceledEvent('Timeout After De-focus'))
 								timeout = null
-								close_branch(otherKey)
+								clear_menu(otherKey)
 								clear_canceled(otherKey)
 								resolve(undefined)
 							}).catch((reason) => {
@@ -238,13 +263,13 @@ function ContextMenu({
 								reject(reason)
 							})
 						})
-						cancelable.catch(e => { if (!(e instanceof CanceledError)) throw e })
+						cancelable.catch(e => { if (!(e instanceof CanceledEvent)) throw e })
 						return [otherKey,cancelable]
 					})
 				)
 			})
 		} else {
-			canceledMenus[key].interrupt(new CanceledError('Re-enter Branch While Open'))
+			canceledMenus[key].interrupt(new CanceledEvent('Re-enter Branch While Open'))
 			const { [key]: _, ...newCanceledMenus } = canceledMenus
 			setCanceledMenus({ ...newCanceledMenus })
 		}
@@ -253,11 +278,14 @@ function ContextMenu({
 		const key = action.data.ContextMenu_key as string
 		if (openMenus[key]) {
 			if (canceledMenus[key]) {
-				canceledMenus[key].interrupt(new CanceledError('Re-focus Branch While Open'))
+				canceledMenus[key].interrupt(new CanceledEvent('Re-focus Branch While Open'))
 				const { [key]: _, ...newCanceledMenus } = canceledMenus
 				setCanceledMenus({ ...newCanceledMenus })
 			}
 			openMenus[key].interrupt(new FocusEvent('Focus menu'))
+		} else {
+			const menu = open_branch(action)
+			menu.interrupt(new FocusEvent('Focus menu'))
 		}
 	}
 
