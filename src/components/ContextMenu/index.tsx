@@ -31,6 +31,7 @@ const context: ContextConfig = {
 	acts: (_action, acts) => ({
 		load: {},
 		action: {},
+		hover: {},
 		close: {
 			keys: ['Escape']
 		},
@@ -164,10 +165,19 @@ function ContextMenu({
 				pos,
 				menu: item.children,
 				parent: id,
-				level: level + 1
+				level: level + 1,
+				onHover: ({ event }) => {
+					contextRef.current.trigger('hover', event)
+					setCanceledMenus((canceledMenus) => {
+						if (!canceledMenus[key]) return canceledMenus
+						canceledMenus[key].interrupt(new CanceledEvent('Re-enter Branch While Open'))
+						const { [key]: _, ...newCanceledMenus } = canceledMenus
+						return newCanceledMenus
+					})
+				}
 			})
 
-		setOpenMenus({ ...openMenus, [key]: cancelable })
+		setOpenMenus((openMenus) => ({ ...openMenus, [key]: cancelable }))
 
 		cancelable
 			.then(result => {
@@ -236,8 +246,9 @@ function ContextMenu({
 				open_branch(action)
 				return
 			}
-		} if (!canceledMenus[key]) {
-			setCanceledMenus({
+		}
+		if (!canceledMenus[key]) {
+			setCanceledMenus((canceledMenus) => ({
 				...canceledMenus,
 				...Object.fromEntries(Object.entries(openMenus)
 					.filter(([otherKey]) => otherKey!==key && !(otherKey in canceledMenus))
@@ -267,21 +278,25 @@ function ContextMenu({
 						return [otherKey,cancelable]
 					})
 				)
-			})
+			}))
 		} else {
-			canceledMenus[key].interrupt(new CanceledEvent('Re-enter Branch While Open'))
-			const { [key]: _, ...newCanceledMenus } = canceledMenus
-			setCanceledMenus({ ...newCanceledMenus })
+			setCanceledMenus((canceledMenus) => {
+				if (!canceledMenus[key]) return canceledMenus
+				canceledMenus[key].interrupt(new CanceledEvent('Re-enter Branch While Open'))
+				const { [key]: _, ...newCanceledMenus } = canceledMenus
+				return newCanceledMenus
+			})
 		}
 	}
 	const handleItemGoto: ContextIntercept = action => {
 		const key = action.data.ContextMenu_key as string
 		if (openMenus[key]) {
-			if (canceledMenus[key]) {
+			setCanceledMenus((canceledMenus) => {
+				if (!canceledMenus[key]) return canceledMenus
 				canceledMenus[key].interrupt(new CanceledEvent('Re-focus Branch While Open'))
 				const { [key]: _, ...newCanceledMenus } = canceledMenus
-				setCanceledMenus({ ...newCanceledMenus })
-			}
+				return newCanceledMenus
+			})
 			openMenus[key].interrupt(new FocusEvent('Focus menu'))
 		} else {
 			const menu = open_branch(action)
@@ -301,6 +316,7 @@ function ContextMenu({
 				'ContextMenuItem.goto': handleItemGoto,
 				...intercept,
 			}}
+			onMouseEnterAction="hover"
 			root
 		>
 			{menu.map(menuItem => renderMenuItem(menuItem, contextSystem, openMenus))}

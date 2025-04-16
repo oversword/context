@@ -14,6 +14,7 @@ import {
 	ContextMenuListGenerator,
 	ContextActsGroup,
 	ContextActsGroupGenerator,
+	ContextAction,
 } from './index.types'
 import { Interpolation, Theme } from '@emotion/react'
 import Interruptable from '@/generic/promise/classes/interruptable'
@@ -48,6 +49,7 @@ export interface ContextMenuOptions {
 	pos: ContextMenuOptionsPosition;
 	menu: ContextActMenuItemList;
 	level?: number;
+	onHover?: (action: ContextAction) => void
 }
 
 export class CanceledEvent extends Event {}

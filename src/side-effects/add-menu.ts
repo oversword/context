@@ -95,7 +95,7 @@ const boundBox = (
 const addMenu = (
 	contextSystemApi: ContextSystemApi,
 	environment: EnvironmentApi,
-	{ pos, menu, level = 0, id, parent }: ContextMenuOptions,
+	{ pos, menu, level = 0, id, parent, onHover }: ContextMenuOptions,
 ): ContxtMenuRendererInterruptable => {
 	if (!environment.exists()) {
 		const globalContainer = document.createElement('div')
@@ -177,6 +177,7 @@ const addMenu = (
 				'ContextMenu.close': () => {
 					reject(new ClosedEvent('Closed Intentionally'))
 				},
+				'ContextMenu.hover': onHover
 			}
 
 			return React.createElement(

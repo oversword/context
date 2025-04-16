@@ -4,7 +4,6 @@ export class Interruptable<T, I, R = void> extends Promise<T> {
 	#settled = false
 	#interruptHandlers: Array<Handler<I, R>> = []
 	#waited = false
-	#interrupts = []
 	constructor(executor: (
       resolve: ((value: T | PromiseLike<T>) => void), 
       reject: ((reason?: any) => void),
@@ -35,7 +34,6 @@ export class Interruptable<T, I, R = void> extends Promise<T> {
 	async interrupt(interrupt: I): Promise<R> {
 		if (this.#settled) return
 
-		this.#interrupts.push(interrupt)
 		if (!this.#waited) await new Promise(resolve => setTimeout(resolve))
 
 		for (const handler of this.#interruptHandlers) {

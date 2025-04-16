@@ -22,6 +22,7 @@ const findIntercept =
 			{ callback }: InterceptDefinition,
 		): ContextActionName | ContextIntercept | false => {
 			if (found) return found
+			if (!callback) return false
 			if (typeof callback === 'string') return callback
 			if ('condition' in callback && !evaluateCondition(callback, action)) return false
 			if (typeof callback === 'function') return callback

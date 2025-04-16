@@ -288,8 +288,8 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 		addContextMenu,
 		closeMenu: id =>
 			environment.closeMenu(id),
-		addMenu: ({ id, pos, menu, parent = null, level = 0 }) =>
-			environment.addMenu(contextSystemApi, { pos, menu, level, parent, id }),
+		addMenu: ({ id, pos, menu, parent = null, level = 0, onHover }) =>
+			environment.addMenu(contextSystemApi, { pos, menu, level, parent, id, onHover }),
 		removeMenu: () => {
 			if (!Object.values(currentKeys).some(Boolean)) return
 			// TODO: this should be smarter, perhaps trigger events? Perhaps use unique current key dict for each menu?
