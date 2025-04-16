@@ -2,6 +2,7 @@ import addMenu from '@/side-effects/add-menu'
 import cancel from '@/side-effects/cancel'
 import { ContextSystemApi, ContextMenuOptions, ContxtMenuRendererInterruptable } from '@/types/system.types'
 import { Environment, EnvironmentApi, EnvironmentMenus } from '@/types/environment.types'
+import closeMenu from '@/side-effects/close-menu'
 
 
 /**
@@ -30,6 +31,9 @@ const provideEnvironment = (rootElement: HTMLElement): EnvironmentApi => {
 			contextSystemApi: ContextSystemApi,
 			options: ContextMenuOptions,
 		): ContxtMenuRendererInterruptable => addMenu(contextSystemApi, api, options),
+		closeMenu: (
+			id: string
+		) => closeMenu(api, id),
 		get menus(): EnvironmentMenus {
 			if (environment === null) return []
 			return [...environment.menus.map(menu => ({ ...menu }))]

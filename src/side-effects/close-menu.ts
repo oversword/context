@@ -1,6 +1,5 @@
 import partition from '@/generic/array/iterators/partition'
 import { EnvironmentApi, EnvironmentMenus } from '@/types/environment.types'
-import closeAll from '@/side-effects/close-all'
 
 const allDescendents = (id: string, menus: EnvironmentMenus) => {
 	return menus.filter(menu => id === menu.parentId)
@@ -9,7 +8,7 @@ const allDescendents = (id: string, menus: EnvironmentMenus) => {
 		])
 }
 
-const closeMenu = (environment: EnvironmentApi, menu: string, shouldReject: boolean): void => {
+const closeMenu = (environment: EnvironmentApi, menu: string): void => {
 	if (!environment.exists())
 		throw new Error('Could not close menus because the environment does not exist.')
 
@@ -22,22 +21,25 @@ const closeMenu = (environment: EnvironmentApi, menu: string, shouldReject: bool
 
 	// If there are none to keep, destroy everything
 	if (keep.length === 0) {
-		closeAll(environment, shouldReject)
+		// Delete all existing menus from React
+		for (const menu of environment.menus)
+			menu.destroy()
+
+		// Remove event listener
+		environment.root.removeEventListener('mousedown', environment.cancel)
+		// Remove the root element
+		environment.container?.remove()
+		// Remove the environment
+		environment.delete()
 		return
 	}
 
 	// If we keep some and remove others
 	// Remove each menu marked for removal
-	remove.forEach(menu => {
-		menu.destroy(shouldReject)
-	})
+	for (const menu of remove)
+		menu.destroy()
 
 	// Only keep menus marked for keeping
 	environment.menus = keep
-
-	// Re-focus the next highest level menu
-	// const currentMenu = keep.find(menu => menu.level === level)
-	// if (currentMenu) (currentMenu.container.childNodes[0] as HTMLElement).focus()
-
 }
 export default closeMenu

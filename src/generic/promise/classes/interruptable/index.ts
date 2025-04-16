@@ -32,11 +32,8 @@ export class Interruptable<T, I, R = void> extends Promise<T> {
 		})
 	}
 	async interrupt(interrupt: I): Promise<R> {
-		if (this.#settled) {
-			// console.error('Unhandled interrupt', interrupt)
-			// return Promise.reject('Already Settled')
-			return
-		}
+		if (this.#settled) return
+
 		if (!this.#waited) await new Promise(resolve => setTimeout(resolve))
 
 		for (const handler of this.#interruptHandlers) {

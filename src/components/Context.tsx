@@ -5,7 +5,6 @@ import wrapElements from './wrap-elements'
 import ReactContext from '@/constants/react-context'
 import SystemContext from '@/constants/system-context'
 import CONTEXT_CLASS from '@/constants/context-class'
-import { ContextMenuResult } from '@/types/system.types'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 
 /**
@@ -124,8 +123,8 @@ const Context = function Context<P extends object>(
 		const persistentEvent = { ...event }
 		contextSystem
 			.addContextMenu(id, event)
-			.catch(() => ({}) as ContextMenuResult)
 			.then(result => {
+				contextSystem.closeMenu('root')
 				if (!result) return log('Context Menu: No Result', { result })
 
 				const { action, data: overrideData, id: actionContextId } = result
@@ -134,10 +133,9 @@ const Context = function Context<P extends object>(
 				log('Context Menu Done', { action, overrideData, id: actionContextId })
 				return contextSystem.triggerAction(actionContextId)(action, persistentEvent, overrideData)
 			})
-			// .then(() => {
-			// 	// Re-focus this element
-			// 	makeFocus(new FocusEvent('Focus when Child Destroyed', { relatedTarget: elementRef.current }))
-			// })
+			.catch(() => {
+				contextSystem.closeMenu('root')
+			})
 		return log('Context Menu Success', { id, event })
 	}
 
