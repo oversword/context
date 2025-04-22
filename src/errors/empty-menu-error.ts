@@ -1,0 +1,1 @@
+export default class EmptyMenuError extends Error {}

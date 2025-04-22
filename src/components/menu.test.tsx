@@ -169,6 +169,6 @@ describe('Context Component', () => {
 			fireEvent.click(childItem)
 		})
 		expect(childAction).toHaveBeenCalledTimes(1)
-		expect(childAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'child-act', data: { child_key: 'test' }, type: 'child-type', path: ['test-type', 'child-type'] }))
+		expect(childAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'child-act', data: { child_key: 'test', parent_key: 'test' }, type: 'child-type', path: ['test-type', 'child-type'] }))
 	})
 })

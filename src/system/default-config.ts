@@ -30,10 +30,15 @@ const defaultConfiguration: ContextSystemConfig = {
 			item[MENU_ITEM_PARENT] &&
 			item[MENU_ITEM_ID] === parentInfo[MENU_ITEM_ID]
 		))
-
-		return [
+		const merged = [
 			...staticMenu,
 			...cleanCurrent,
+		]
+		if (merged.length === 1 && merged[0][MENU_ITEM_PARENT])
+			return merged
+
+		return [
+			...merged,
 			...getParentMenu(parentInfo),
 		]
 	},

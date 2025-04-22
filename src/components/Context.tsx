@@ -1,5 +1,7 @@
 import React from 'react'
 
+import EmptyMenuError from '@/errors/empty-menu-error'
+
 import { ContextActionNameConfig, ContextApi, ContextId, ContextProps } from '@/types/index.types'
 import wrapElements from './wrap-elements'
 import ReactContext from '@/constants/react-context'
@@ -133,7 +135,8 @@ const Context = function Context<P extends object>(
 				log('Context Menu Done', { action, overrideData, id: actionContextId })
 				return contextSystem.triggerAction(actionContextId)(action, persistentEvent, overrideData)
 			})
-			.catch(() => {
+			.catch((error) => {
+				if (error instanceof EmptyMenuError) return
 				contextSystem.closeMenu('root')
 			})
 		return log('Context Menu Success', { id, event })
