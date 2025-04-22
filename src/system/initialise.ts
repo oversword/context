@@ -26,6 +26,8 @@ import contextHandleGlobalEvent from '@/handle/global'
 import contextHandleLocalEvent from '@/handle/local'
 import provideEnvironment from '@/system/render-environment'
 
+import EmptyMenuError from '@/errors/empty-menu-error'
+
 import keyDown from '@/dom-events/key-down'
 import keyUp from '@/dom-events/key-up'
 import click from '@/dom-events/click'
@@ -161,7 +163,7 @@ const initialiseContextSystem = (rootElement: HTMLElement, configuration: Partia
 				)
 			}, [])
 		if (!menu.length)
-			throw new Error('No menu items')
+			throw new EmptyMenuError('No menu items')
 
 		event.preventDefault()
 		const pos = {

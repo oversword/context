@@ -8,7 +8,7 @@ import {
 } from '@/types/index.types'
 import PartialOmit from '@/types/partial-omit'
 import { ContextSystemConfig } from '@/types/system.types'
-import storeMetaHasType from '../store-meta-has-type'
+// import storeMetaHasType from '../store-meta-has-type'
 import selectorMatch from '@/selector'
 import { inactiveLog as log } from '@/side-effects/debug-log'
 
@@ -43,11 +43,11 @@ const contextsDecideData = (
 ): ContextData => {
 	log('contextsDecideData', {contexts,action})
 	const merger = dataMerge(configuration, action)
-	const firstType = contexts.findIndex(storeMetaHasType)
-	const typeAfter = firstType === -1 ? contexts.length : contexts.slice(firstType + 1).findIndex(storeMetaHasType)
-	const nextType = typeAfter === -1 ? contexts.length : firstType + 1 + typeAfter
-	return contexts.reduce((current: ContextData, { config, data }, index): ContextData => {
-		const selfConfig = (data || config) && (index < nextType)
+	// const firstType = contexts.findIndex(storeMetaHasType)
+	// const typeAfter = firstType === -1 ? contexts.length : contexts.slice(firstType + 1).findIndex(storeMetaHasType)
+	// const nextType = typeAfter === -1 ? contexts.length : firstType + 1 + typeAfter
+	return contexts.reduce((current: ContextData, { config, data }, _index): ContextData => {
+		const selfConfig = (data || config)// && (index < nextType)
 		const { overrides } = config
 		log('contextsDecideData:', {selfConfig,overrides,data,config})
 		if (!(selfConfig || overrides)) return current
